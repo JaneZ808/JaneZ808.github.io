@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://wpc1122.github.io/JaneZ/sitemap.xml
+Sitemap: https://janez808.github.io/sitemap.xml

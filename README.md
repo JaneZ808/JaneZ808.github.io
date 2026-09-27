@@ -49,7 +49,7 @@ zhangliangying/
 
 ## 部署
 
-已部署于 GitHub Pages：**https://wpc1122.github.io/JaneZ/**
+已部署于 GitHub Pages：**https://janez808.github.io/**
 
 
 
