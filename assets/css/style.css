@@ -345,30 +345,30 @@ img { max-width: 100%; display: block; }
 .sec-profile { padding: 0; }
 .sec-profile::before, .sec-profile::after { display: none; }
 .resume-stage {
-  position: relative; display: grid; grid-template-columns: 62% 1fr;
+  position: relative; display: grid; grid-template-columns: 1fr 66%;
   min-height: 620px; background: linear-gradient(180deg, #12111a, #0a090f);
 }
 .rs-photo { position: relative; overflow: hidden; }
 .rs-photo img {
-  position: absolute; top: 0; bottom: 0; right: 0; width: 116%;
+  position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover; object-position: center 28%;
   transform: scale(1.08); transition: transform 1.8s var(--ease);
 }
 .rs-photo.in img { transform: scale(1); }
-/* 右缘融入面板色，上下与相邻区块衔接 */
+/* 左缘融入左侧面板色，上下与相邻区块衔接 */
 .rs-photo::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background:
-    linear-gradient(90deg, transparent 76%, #0d0c14 100%),
+    linear-gradient(90deg, #0d0c14 0%, transparent 22%),
     linear-gradient(180deg, rgba(7,7,11,.6) 0%, transparent 18%, transparent 80%, rgba(7,7,11,.65) 100%);
 }
 .rs-panel {
   position: relative; z-index: 2;
   display: flex; flex-direction: column; justify-content: center;
-  padding: 72px min(6.5vw, 84px) 72px 44px; color: #fff;
+  padding: 72px 44px 72px min(6.5vw, 84px); color: #fff;
   text-shadow: 0 2px 14px rgba(0,0,0,.45);
 }
-.rs-title { text-align: right; line-height: 1; }
+.rs-title { text-align: left; line-height: 1; }
 .rs-title b {
   display: block; font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 44px; font-weight: 600; font-variant: small-caps;
@@ -377,7 +377,7 @@ img { max-width: 100%; display: block; }
 .rs-title span { display: block; font-size: 33px; font-weight: 300; letter-spacing: .3em; margin-right: -.3em; }
 .rs-title::after {
   content: ""; display: block; width: 34px; height: 4px;
-  background: var(--gold); margin: 18px 4px 0 auto;
+  background: var(--gold); margin: 18px 0 0 4px;
 }
 .rs-intro {
   margin: 28px 0 4px; font-size: 13px; line-height: 1.95;
@@ -689,6 +689,7 @@ img { max-width: 100%; display: block; }
   .resume-stage { grid-template-columns: 1fr; min-height: 0; }
   .rs-photo { height: 340px; }
   .rs-photo img { width: 100%; }
+  .rs-photo::after { background: linear-gradient(180deg, rgba(7,7,11,.5) 0%, transparent 16%, transparent 82%, rgba(7,7,11,.6) 100%); }
   .rs-panel { padding: 44px 6vw 56px; }
   .news-grid { grid-template-columns: repeat(2, 1fr); }
   .news-card:first-child { grid-column: span 2; }

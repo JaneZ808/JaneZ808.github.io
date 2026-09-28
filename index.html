@@ -31,7 +31,7 @@
 <meta name="twitter:image" content="https://janez808.github.io/assets/img/hero.jpg">
 <!-- 结构化数据（外链，避开 CSP 对内联 script 的限制；Google 支持 link rel=ld+json） -->
 <link rel="ld+json" href="assets/json/ld.json">
-<link rel="stylesheet" href="assets/css/style.css?v=19">
+<link rel="stylesheet" href="assets/css/style.css?v=20">
 </head>
 <body>
 
@@ -130,17 +130,17 @@
 <!-- ============ 个人档案（参考官网 Resume 版式：左侧大图 + 右侧信息面板） ============ -->
 <section id="profile" class="sec sec-profile">
   <div class="resume-stage">
-    <div class="rs-photo reveal rl-left">
-      <img src="assets/img/gallery-5.jpg" alt="张靓颖写真" decoding="async">
-    </div>
     <div class="rs-panel">
-      <h2 class="rs-title reveal rl-right">
+      <h2 class="rs-title reveal rl-left">
         <b>Profile</b>
         <span>个人档案</span>
       </h2>
-      <p class="rs-intro reveal rl-right" id="pcIntro"></p>
+      <p class="rs-intro reveal rl-left" id="pcIntro"></p>
       <ul class="rs-facts" id="factsTable"></ul>
-      <div class="rs-tags reveal" id="pcTags"></div>
+      <div class="rs-tags reveal rl-left" id="pcTags"></div>
+    </div>
+    <div class="rs-photo reveal rl-right">
+      <img src="assets/img/gallery-5.jpg" alt="张靓颖写真" decoding="async">
     </div>
   </div>
 </section>
