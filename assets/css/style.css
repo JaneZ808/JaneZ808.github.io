@@ -350,7 +350,7 @@ img { max-width: 100%; display: block; }
 }
 .rs-photo { position: relative; overflow: hidden; }
 .rs-photo img {
-  position: absolute; inset: 0; width: 100%; height: 100%;
+  position: absolute; top: 0; bottom: 0; right: 0; width: 116%;
   object-fit: cover; object-position: center 28%;
   transform: scale(1.08); transition: transform 1.8s var(--ease);
 }
@@ -688,6 +688,7 @@ img { max-width: 100%; display: block; }
   .album-grid { grid-template-columns: repeat(3, 1fr); }
   .resume-stage { grid-template-columns: 1fr; min-height: 0; }
   .rs-photo { height: 340px; }
+  .rs-photo img { width: 100%; }
   .rs-panel { padding: 44px 6vw 56px; }
   .news-grid { grid-template-columns: repeat(2, 1fr); }
   .news-card:first-child { grid-column: span 2; }
