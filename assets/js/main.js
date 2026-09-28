@@ -58,14 +58,11 @@
     $('#pcIntro').textContent = P.intro;
     $('#pcTags').innerHTML = (P.tags && P.tags.length ? P.tags : ['流行 Pop', 'R&B', '爵士 Jazz', '灵魂乐 Soul', '海豚音', 'OST 女王'])
       .map(t => `<span>${t}</span>`).join('');
-    $('#factsTable').innerHTML = P.facts.map(f => `
-      <div class="fact-row">
-        <span class="fact-k">${f.k}</span>
-        <span class="fact-v">${f.v}</span>
-      </div>`).join('');
-    // 头像加载失败时移除，露出底层渐变字牌
-    const av = $('.avatar-img');
-    if (av) av.addEventListener('error', () => av.remove(), { once: true });
+    $('#factsTable').innerHTML = P.facts.map((f, i) => `
+      <li class="fact-row reveal rl-right" style="transition-delay:${i * 55}ms">
+        <b class="fact-k">${f.k}</b><span class="fact-v">${f.v}</span>
+      </li>`).join('');
+    observeReveal();
   }
 
   /* ================= 渲染：音乐专辑 ================= */

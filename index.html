@@ -31,7 +31,7 @@
 <meta name="twitter:image" content="https://janez808.github.io/assets/img/hero.jpg">
 <!-- 结构化数据（外链，避开 CSP 对内联 script 的限制；Google 支持 link rel=ld+json） -->
 <link rel="ld+json" href="assets/json/ld.json">
-<link rel="stylesheet" href="assets/css/style.css?v=17">
+<link rel="stylesheet" href="assets/css/style.css?v=18">
 </head>
 <body>
 
@@ -127,33 +127,20 @@
   </div>
 </section>
 
-<!-- ============ 个人档案 ============ -->
-<section id="profile" class="sec sec-alt">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="sh-left">
-        <span class="sh-en">Profile</span>
-        <h2 class="sh-cn">个人档案</h2>
-      </div>
-      <p class="sh-desc">基本信息与音乐关键词</p>
+<!-- ============ 个人档案（参考官网 Resume 版式：左侧大图 + 右侧信息面板） ============ -->
+<section id="profile" class="sec sec-profile">
+  <div class="resume-stage">
+    <div class="rs-photo reveal rl-left">
+      <img src="assets/img/gallery-5.jpg" alt="张靓颖写真" decoding="async">
     </div>
-    <div class="profile-grid">
-      <div class="profile-card reveal">
-        <div class="pc-avatar" id="pcAvatar">
-          <div class="avatar-art">
-            <span class="av-cn">张靓颖</span>
-            <span class="av-en">JANE ZHANG</span>
-          </div>
-          <img class="avatar-img" src="assets/img/avatar.jpg" alt="张靓颖" decoding="async">
-        </div>
-        <div class="pc-meta">
-          <h3 class="pc-name">张靓颖</h3>
-          <p class="pc-en">Jane Zhang</p>
-          <p class="pc-intro" id="pcIntro"></p>
-          <div class="pc-tags" id="pcTags"></div>
-        </div>
-      </div>
-      <div class="facts-table reveal" id="factsTable"></div>
+    <div class="rs-panel">
+      <h2 class="rs-title reveal rl-right">
+        <b>Profile</b>
+        <span>个人档案</span>
+      </h2>
+      <p class="rs-intro reveal rl-right" id="pcIntro"></p>
+      <ul class="rs-facts" id="factsTable"></ul>
+      <div class="rs-tags reveal" id="pcTags"></div>
     </div>
   </div>
 </section>
@@ -333,6 +320,6 @@
 
 <script src="assets/js/data.js?v=17"></script>
 <script src="assets/js/data-bridge.js?v=9"></script>
-<script src="assets/js/main.js?v=17"></script>
+<script src="assets/js/main.js?v=18"></script>
 </body>
 </html>

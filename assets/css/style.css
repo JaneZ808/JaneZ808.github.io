@@ -289,7 +289,6 @@ img { max-width: 100%; display: block; }
 }
 /* 各模块对应的真实照片（均为已核实张靓颖舞台/肖像影像，绝不放错图） */
 #news::before    { background-image: url('../../assets/img/gallery-9.jpg'); }  /* 影视金曲之夜 */
-#profile::before { background-image: url('../../assets/img/avatar.jpg'); }     /* 肖像 */
 #music::before   { background-image: url('../../assets/img/gallery-6.jpg'); }  /* Past Progressive */
 #tour::before    { background-image: url('../../assets/img/gallery-1.jpg'); }  /* 追 世界巡演 */
 #awards::before  { background-image: url('../../assets/img/gallery-4.jpg'); }  /* TMEA 年度女歌手 */
@@ -314,6 +313,9 @@ img { max-width: 100%; display: block; }
 .sub-head-sm { margin: 0 0 22px; }
 
 .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+/* 方向变体：从左 / 从右滑入（须置于 .reveal.in 之前以便被其复位） */
+.reveal.rl-left { transform: translateX(-64px); }
+.reveal.rl-right { transform: translateX(64px); }
 .reveal.in { opacity: 1; transform: none; }
 
 /* ============ 动态 ============ */
@@ -339,59 +341,65 @@ img { max-width: 100%; display: block; }
 .nc-title { font-size: 16.5px; font-weight: 500; line-height: 1.6; margin-bottom: 10px; }
 .nc-desc { font-size: 13.5px; color: var(--muted); line-height: 1.85; }
 
-/* ============ 档案 ============ */
-.profile-grid { display: grid; grid-template-columns: 400px 1fr; gap: 34px; align-items: start; }
-.profile-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 30px; position: sticky; top: 100px;
+/* ============ 档案（参考官网 Resume 版式：左侧大图 + 右侧信息面板） ============ */
+.sec-profile { padding: 0; }
+.sec-profile::before, .sec-profile::after { display: none; }
+.resume-stage {
+  position: relative; display: grid; grid-template-columns: 62% 1fr;
+  min-height: 620px; background: linear-gradient(180deg, #12111a, #0a090f);
 }
-.pc-avatar { border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
-.avatar-art {
-  aspect-ratio: 4 / 5; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 12px; position: relative;
+.rs-photo { position: relative; overflow: hidden; }
+.rs-photo img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 28%;
+  transform: scale(1.08); transition: transform 1.8s var(--ease);
+}
+.rs-photo.in img { transform: scale(1); }
+/* 右缘融入面板色，上下与相邻区块衔接 */
+.rs-photo::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
   background:
-    radial-gradient(ellipse at 50% 22%, rgba(216, 180, 108, .3), transparent 58%),
-    radial-gradient(ellipse at 30% 80%, rgba(156, 139, 245, .28), transparent 60%),
-    linear-gradient(160deg, #1c1a2a, #0c0b12);
+    linear-gradient(90deg, transparent 76%, #0d0c14 100%),
+    linear-gradient(180deg, rgba(7,7,11,.6) 0%, transparent 18%, transparent 80%, rgba(7,7,11,.65) 100%);
 }
-html[data-theme="light"] .avatar-art {
-  background:
-    radial-gradient(ellipse at 50% 22%, rgba(168, 129, 58, .22), transparent 58%),
-    radial-gradient(ellipse at 30% 80%, rgba(109, 91, 208, .2), transparent 60%),
-    linear-gradient(160deg, #f0edf6, #e2dcef);
+.rs-panel {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 72px min(6.5vw, 84px) 72px 44px; color: #fff;
+  text-shadow: 0 2px 14px rgba(0,0,0,.45);
 }
-.avatar-art::after {
-  content: ""; position: absolute; inset: 26px; border: 1px solid rgba(216, 180, 108, .28); border-radius: 6px;
+.rs-title { text-align: right; line-height: 1; }
+.rs-title b {
+  display: block; font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 44px; font-weight: 600; font-variant: small-caps;
+  letter-spacing: .08em; color: var(--gold); margin-bottom: 12px;
 }
-.av-cn { font-size: 40px; letter-spacing: .22em; font-weight: 300; margin-right: -.22em; }
-.av-en {
-  font-family: "Cormorant Garamond", Georgia, serif; font-size: 10px;
-  letter-spacing: .42em; color: var(--gold); margin-right: -.42em;
+.rs-title span { display: block; font-size: 33px; font-weight: 300; letter-spacing: .3em; margin-right: -.3em; }
+.rs-title::after {
+  content: ""; display: block; width: 34px; height: 4px;
+  background: var(--gold); margin: 18px 4px 0 auto;
 }
-.pc-name { font-size: 26px; font-weight: 400; letter-spacing: .16em; }
-.pc-en {
-  font-family: "Cormorant Garamond", Georgia, serif; font-size: 12px;
-  letter-spacing: .3em; color: var(--gold); margin: 6px 0 18px;
+.rs-intro {
+  margin: 28px 0 4px; font-size: 13px; line-height: 1.95;
+  color: rgba(255,255,255,.72); text-align: justify;
 }
-.pc-intro { font-size: 13.5px; color: var(--muted); line-height: 1.95; text-align: justify; }
-.pc-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
-.pc-tags span {
-  font-size: 11.5px; padding: 5px 13px; border-radius: 999px;
-  border: 1px solid var(--border-strong); color: var(--text-2);
-}
-
-.facts-table {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 40px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 14px 32px;
-}
+.rs-facts { margin-top: 16px; }
 .fact-row {
-  display: flex; align-items: baseline; gap: 14px; padding: 15px 0;
-  border-bottom: 1px dashed var(--border); font-size: 14px;
+  display: flex; align-items: baseline; padding: 11px 0;
+  font-size: 14px; letter-spacing: .05em; line-height: 1.7;
+  border-bottom: 1px solid rgba(255,255,255,.09);
 }
-.fact-row:nth-last-child(-n+2) { border-bottom: 0; }
-.fact-k { color: var(--muted); font-size: 12.5px; letter-spacing: .1em; flex-shrink: 0; min-width: 74px; }
-.fact-v { color: var(--text); }
+.fact-row:last-child { border-bottom: 0; }
+.fact-k {
+  flex-shrink: 0; width: 5.2em; margin-right: 26px;
+  font-weight: 600; color: #fff; letter-spacing: .12em;
+}
+.fact-v { color: rgba(255,255,255,.9); }
+.rs-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.rs-tags span {
+  font-size: 11.5px; padding: 5px 13px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.24); color: rgba(255,255,255,.78);
+}
 
 /* ============ 时间线 ============ */
 .timeline { position: relative; padding: 10px 0; }
@@ -678,8 +686,9 @@ html[data-theme="light"] .avatar-art {
 /* ============ 响应式 ============ */
 @media (max-width: 1100px) {
   .album-grid { grid-template-columns: repeat(3, 1fr); }
-  .profile-grid { grid-template-columns: 1fr; }
-  .profile-card { position: static; }
+  .resume-stage { grid-template-columns: 1fr; min-height: 0; }
+  .rs-photo { height: 340px; }
+  .rs-panel { padding: 44px 6vw 56px; }
   .news-grid { grid-template-columns: repeat(2, 1fr); }
   .news-card:first-child { grid-column: span 2; }
   .tour-item { grid-template-columns: 160px 1fr 140px; }
@@ -699,8 +708,9 @@ html[data-theme="light"] .avatar-art {
   .sec { padding: 84px 0; }
   .news-grid, .ost-list, .award-list, .screen-grid, .global-grid { grid-template-columns: 1fr; }
   .news-card:first-child { grid-column: span 1; }
-  .facts-table { grid-template-columns: 1fr; padding: 6px 24px; }
-  .fact-row:nth-last-child(2) { border-bottom: 1px dashed var(--border); }
+  .rs-title span { font-size: 26px; }
+  .rs-title b { font-size: 36px; }
+  .fact-k { width: 4.6em; margin-right: 16px; }
   .album-grid, .gallery-grid, .contact-grid { grid-template-columns: repeat(2, 1fr); }
   .hero-inner { gap: 22px; }
   .hero-side { display: none; }
@@ -754,14 +764,6 @@ html[data-theme="light"] .hero-photo-overlay {
 }
 .hero-bg .grid-lines { opacity: .35; }
 .hero-bg .noise { opacity: .5; }
-
-/* 档案头像 */
-.pc-avatar { position: relative; }
-.avatar-img {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; object-position: center 22%;
-  display: block;
-}
 
 /* 图集照片 */
 .gi-img {
