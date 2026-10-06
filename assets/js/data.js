@@ -125,7 +125,7 @@ const ALBUMS = [
     songs: 2,
     desc: '生日当天推出的英文EP，收录《Do What Makes You Feel Alive》《Down With You》两首流行风格曲目，传递挣脱生活压力、跟随内心感受生活的态度。',
     tags: ['英文EP'],
-    award: '腾讯音乐浪潮榜2025年10月榜第7位'
+    award: '腾讯音乐浪潮榜2025年10月榜第7位；2026.10 推出 CD / 黑胶实体版'
   },
   {
     name: '感谢',
@@ -247,6 +247,17 @@ const ALBUMS = [
     desc: '邓丽君经典作品致敬现场专辑，延续她自 2006 年《我爱邓丽君》以来对邓丽君音乐的致敬。',
     tags: ['致敬经典'],
     award: ''
+  },
+  {
+    name: '过期食品',
+    cn: '华语EP',
+    date: '2026.09.20',
+    type: 'ep',
+    label: '靡之音乐',
+    songs: 3,
+    desc: '华语EP，收录《我所知道的修辞手法》《加码》《过期食品》三首作品，以戏剧性故事的结局回望情感，传递"坚硬的话，柔软的心"。',
+    tags: ['华语EP'],
+    award: ''
   }
 ];
 
@@ -282,7 +293,8 @@ const OSTS = [
   { song: '最可爱的人', work: '电影《长津湖》', year: '2021', note: '电影宣传主题曲' },
   { song: '无忘', work: '动画《魔道祖师》', year: '2021', note: '完结篇主题曲 / 片尾曲' },
   { song: '约定', work: '网络剧《约定》', year: '2021', note: '网络剧主题曲' },
-  { song: '偏星', work: '电视剧《沉香如屑》', year: '2022', note: '电视剧片尾曲' }
+  { song: '偏星', work: '电视剧《沉香如屑》', year: '2022', note: '电视剧片尾曲' },
+  { song: '技能照亮前程', work: '第48届世界技能大赛主题歌', year: '2026', note: '与黄子弘凡合唱 · 致敬技能从业者、鼓励青年走技能成才之路' }
 ];
 
 /* ---------- 4. 英文单曲 / 国际化作品 ---------- */
@@ -297,7 +309,8 @@ const GLOBAL_SONGS = [
   { name: 'Dream It Possible', year: '2015', work: '面向国际市场的英文单曲', note: '单曲，面向国际市场的英文作品' },
   { name: 'Battlefield', year: '2016', work: '电影《长城》全球推广曲', note: '电影《长城》全球推广曲 · 登上美国 iTunes 即时下载总榜第50位、电影原声带榜第2位' },
   { name: 'Dust My Shoulders Off (Steve Aoki Remix)', year: '2018', work: '与 Steve Aoki 的混音版', note: '与 DJ Steve Aoki 的混音版 · 收录于《Billboard Presents Electric Asia Vol.1》' },
-  { name: 'Make It Big', year: '2016', work: '面向国际市场的英文单曲', note: '面向国际市场的英文单曲' }
+  { name: 'Make It Big', year: '2016', work: '面向国际市场的英文单曲', note: '面向国际市场的英文单曲' },
+  { name: 'Mmm', year: '2026', work: '英文单曲', note: '2026.09.26 发行的英文单曲，延续走向国际的英文路线' }
 ];
 
 /* ---------- 5. 星路历程（时间线） ---------- */
@@ -335,7 +348,7 @@ const TOURS = [
   { name: 'BANG THE WORLD', en: 'Bang The World', year: '2015', note: '世界巡回演唱会，后推出巡演纪录片《光芒背后》' },
   { name: '珍相', en: "Jane's Secret", year: '2018', note: '美国站单场动员人数位居全美第45位' },
   { name: '光', en: 'Light', year: '2023—2024', note: '自北京起步的大型世界巡回演唱会，覆盖国内多座城市' },
-  { name: '追', en: 'Chase', year: '2025—', note: '已走过深圳、广州、杭州、成都、郑州、马来西亚、新加坡等十余座城市' }
+  { name: '追', en: 'Chase', year: '2025—2026', note: '已走过深圳、广州、杭州、成都、郑州、上海、新加坡等十余座城市；海外巡演以 2026.08.29 新加坡站收官，2026.09.26 南京站、2026.10.10 澳门站为内地及收官场次' }
 ];
 
 /* ---------- 7. 荣誉墙 ---------- */
@@ -401,6 +414,30 @@ const VARIETY = [
 
 /* ---------- 9. 最新动态 ---------- */
 const NEWS = [
+  {
+    date: '2026.10.06',
+    tag: '新碟',
+    title: '英文EP《Do What Makes You Feel Alive》实体专辑开启预售',
+    desc: '实体专辑（CD 版 / 黑胶版）于 10.6 中午 12:00 在 JVIBE STORE「珍好喔」开启预售，10.8 中午 12:00 数字版在 QQ 音乐与小红书同步上线，传递「去做让你觉得鲜活的事」的态度。'
+  },
+  {
+    date: '2026.09.26',
+    tag: '新歌',
+    title: '发行英文单曲《Mmm》',
+    desc: '英文单曲《Mmm》发行，洛杉矶风格的制作与词曲，延续她走向国际的英文路线。'
+  },
+  {
+    date: '2026.09.20',
+    tag: '新专',
+    title: '发行华语EP《过期食品》',
+    desc: '由靡之音乐推出华语EP《过期食品》，收录《我所知道的修辞手法》《加码》《过期食品》三首作品，以戏剧性故事的结局回望一段段情感，传递「坚硬的话，柔软的心」。'
+  },
+  {
+    date: '2026.09',
+    tag: '合作',
+    title: '与黄子弘凡合唱第48届世界技能大赛主题歌',
+    desc: '与黄子弘凡合唱第48届世界技能大赛主题歌《技能照亮前程》，致敬技能从业者、鼓励青年走技能成才之路；本届世赛于 9.22–27 在上海举办。'
+  },
   {
     date: '2026.08.29',
     tag: '巡演',
@@ -469,7 +506,7 @@ const COVER_MAP = {
     'assets/img/covers/album-9.jpg', 'assets/img/covers/album-10.jpg', 'assets/img/covers/album-11.jpg',
     'assets/img/covers/album-12.jpg', 'assets/img/covers/album-13.jpg', 'assets/img/covers/album-14.jpg',
     'assets/img/covers/album-15.jpg', 'assets/img/covers/album-16.jpg', 'assets/img/covers/album-17.jpg',
-    'assets/img/covers/album-18.jpg'
+    'assets/img/covers/album-18.jpg', ''
   ],
   ost: [
     'assets/img/osts/ost-0.jpg', 'assets/img/osts/ost-1.jpg', 'assets/img/osts/ost-2.jpg',
@@ -482,13 +519,13 @@ const COVER_MAP = {
     'assets/img/osts/WritingOnTheWall.jpg', 'assets/img/osts/Battlefield.jpg', 'assets/img/osts/女儿国.jpg',
     'assets/img/osts/红蔷薇.jpg', 'assets/img/osts/双生焰.jpg', 'assets/img/osts/蝴蝶飓风.jpg',
     'assets/img/osts/她.jpg', 'assets/img/osts/无华.jpg', 'assets/img/osts/最可爱的人.jpg',
-    'assets/img/osts/无忘.jpg', 'assets/img/osts/约定.jpg', 'assets/img/osts/偏星.jpg'
+    'assets/img/osts/无忘.jpg', 'assets/img/osts/约定.jpg', 'assets/img/osts/偏星.jpg', ''
   ],
   global: [
     'assets/img/globals/DustMyShouldersOff.jpg', 'assets/img/globals/808.jpg', 'assets/img/globals/FightingShadows.jpg',
     'assets/img/globals/GreenLight.jpg', 'assets/img/globals/WorkForIt.jpg', 'assets/img/globals/印象西湖雨.jpg',
     'assets/img/globals/ChangeYourWorld.jpg', 'assets/img/globals/DreamItPossible.jpg', 'assets/img/osts/Battlefield.jpg',
-    'assets/img/globals/DustMyShouldersOffSteveAokiRemix.jpg', 'assets/img/globals/MakeItBig.jpg'
+    'assets/img/globals/DustMyShouldersOffSteveAokiRemix.jpg', 'assets/img/globals/MakeItBig.jpg', ''
   ]
 };
 /* 星路历程每项对应的背景图：
