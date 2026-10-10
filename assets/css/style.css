@@ -223,7 +223,7 @@ img { max-width: 100%; display: block; }
 }
 .hero-title { line-height: 1; margin-bottom: 26px; }
 .ht-cn {
-  display: block; font-size: clamp(56px, 11vw, 116px); font-weight: 300;
+  display: block; font-size: clamp(56px, 11vw, 116px); font-weight: 700; font-style: italic;
   font-family: "STZhongSong", "FangZheng DaBiaoSong", "SimSun", "Noto Serif SC", serif;
   letter-spacing: .12em; margin-right: -.12em;
   background: linear-gradient(120deg, #ffffff 20%, var(--gold) 55%, #f0d890 80%);
