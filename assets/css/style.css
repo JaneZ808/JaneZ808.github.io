@@ -1938,23 +1938,27 @@ html[data-theme-event] .hero-quote { color: color-mix(in srgb, var(--gold) 78%, 
    ══════════════════════════════════════════════════════════════ */
 
 /* ============ all.html 全屏壁纸背景 ============ */
+.full-shell { position: relative; }
+.full-shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg);
+  background-image: var(--sec-bg, none);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image .6s ease;
+}
 .f-sec[data-sec] {
   position: relative;
   padding: 120px 0 80px;
   border-top: 1px solid var(--border);
-  background-color: var(--bg);
-  background-attachment: fixed;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: transparent;
 }
-.f-sec[data-sec="news"]    { background-image: linear-gradient(135deg, rgba(18,16,24,.85), rgba(26,22,36,.80)), url('../img/gallery-4.jpg') !important; }
-.f-sec[data-sec="profile"] { background-image: linear-gradient(135deg, rgba(18,16,24,.85), rgba(26,22,36,.80)), url('../img/gallery-5.jpg') !important; }
-.f-sec[data-sec="music"]   { background-image: linear-gradient(135deg, rgba(18,16,24,.85), rgba(26,22,36,.80)), url('../img/gallery-9.jpg') !important; }
-.f-sec[data-sec="tour"]    { background-image: linear-gradient(135deg, rgba(18,16,24,.85), rgba(26,22,36,.80)), url('../img/gallery-1.jpg') !important; }
-.f-sec[data-sec="gallery"] { background-image: linear-gradient(135deg, rgba(18,16,24,.85), rgba(26,22,36,.80)), url('../img/gallery-8.jpg') !important; }
 
 /* 亮色模式适配 */
-html[data-theme="light"] .f-sec[data-sec] {
+html[data-theme="light"] .full-shell::before {
   background-image: linear-gradient(135deg, rgba(251,250,249,.94), rgba(245,242,237,.92)), var(--bg-2);
 }

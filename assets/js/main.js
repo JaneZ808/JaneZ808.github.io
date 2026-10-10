@@ -403,6 +403,12 @@
     if (tabs) tabs.innerHTML = SECS.map(s =>
       `<a class="full-tab${s.k === meta.k ? ' is-on' : ''}" href="all.html?sec=${s.k}">${s.cn}</a>`).join('');
     $$('.f-sec').forEach(s => { s.hidden = s.getAttribute('data-sec') !== meta.k; });
+    // 设置全屏壁纸背景
+    const bgMap = { news: 'gallery-4.jpg', profile: 'gallery-5.jpg', music: 'gallery-9.jpg', tour: 'gallery-1.jpg', gallery: 'gallery-8.jpg' };
+    const shell = $('.full-shell');
+    if (shell && bgMap[meta.k]) {
+      shell.style.setProperty('--sec-bg', `linear-gradient(135deg, rgba(18,16,24,.85), rgba(26,22,36,.80)), url('../img/${bgMap[meta.k]}')`);
+    }
   }
 
   /* ================= 滚动显现 =================
