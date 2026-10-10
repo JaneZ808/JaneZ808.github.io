@@ -37,7 +37,7 @@
     { k: 'profile', cn: '个人档案',   en: 'Profile', desc: '完整档案信息，含简介、全部条目与音乐标签。' },
     { k: 'music',   cn: '音乐作品',   en: 'Music',   desc: '全部音乐作品：录音室专辑、迷你专辑 EP、现场辑、精选辑、影视金曲 OST、英文单曲与综艺节目。' },
     { k: 'tour',    cn: '巡回演唱会', en: 'Tour',    desc: '从 2008 年首次巡演到「追」世界巡回。' },
-    { k: 'gallery', cn: '光影瞬间',   en: 'Gallery', desc: '全部舞台、红毯与巡演影像。' }
+    { k: 'gallery', cn: '绝世美颜',   en: 'Beauty',   desc: '全部舞台、红毯与巡演影像。' }
   ];
 
   /* ---------- 限时活动主题（自动到期回滚，无需人工干预） ----------
@@ -207,7 +207,6 @@
       </a>`).join('') || '<p style="color:var(--muted)">暂无该分类作品。</p>';
 
     bindCoverFallback();
-    observeReveal();
   }
 
   /* ================= 渲染：音乐作品（聚合全部：专辑 + OST + 英文单曲 + 综艺） ================= */
@@ -278,23 +277,24 @@
   let galleryIndex = 0;
 
   function renderGallery() {
-    const host = $('#galleryFull');
+    const host = $('#galleryGrid');
     if (!host) return;
     const all = src('GALLERY').map((g, gi) => ({ g, gi }));
-    const rows = take(all);
+    // 主页与全量页均展示全部 9 张
+    const rows = all;
 
     host.innerHTML = rows.map(({ g, gi }, i) => `
-      <div class="gg-full-item reveal" data-i="${gi}" style="--d:${dly(i, 80)}ms">
+      <div class="gg-item reveal" data-i="${gi}" style="--d:${dly(i, 70)}ms">
         <div class="gi-art" style="${grad(g.tone)}">
           ${g.img ? `<img class="gi-img" src="${g.img}" alt="${g.title}" loading="lazy" decoding="async">` : ''}
         </div>
       </div>`).join('');
 
-    $$('#galleryFull .gg-full-item').forEach(el =>
+    $$('#galleryGrid .gg-item').forEach(el =>
       el.addEventListener('click', () => openLightbox(Number(el.dataset.i))));
 
     // 图片加载完成后渐显；失败时移除，露出底层渐变兜底
-    $$('#galleryFull .gi-img').forEach(img => {
+    $$('#galleryGrid .gi-img').forEach(img => {
       const done = () => img.classList.add('ready');
       if (img.complete && img.naturalWidth > 0) done();
       else {
@@ -409,14 +409,14 @@
    * .reveal / .sec-enter / [data-rv] 均被观察；靠 .in 触发入场。
    * 各板块自行定义起始 transform / clip-path / filter，
    * .reveal.in 只负责复位 opacity 与 transform。
-   * 安全兜底：观察后 800ms 强制 reveal 当前视口内元素，
-   * 2000ms 强制 reveal 全部元素，避免 IO 未触发时内容不可见。 */
+   * 三重保障：IO 观察 → 首屏 1s 兜底 → scroll 事件兜底。 */
   const REVEAL_SEL = '.reveal, .sec-enter, [data-rv]';
   let io;
+  let scrollT;
   function revealInViewport() {
     $$(REVEAL_SEL + ':not(.in)').forEach(el => {
       const r = el.getBoundingClientRect();
-      if (r.top < window.innerHeight * 0.95 && r.bottom > 0) {
+      if (r.top < window.innerHeight * 0.92 && r.bottom > 0) {
         el.classList.add('in');
       }
     });
@@ -434,13 +434,15 @@
           io.unobserve(e.target);
         }
       });
-    }, { threshold: .05, rootMargin: '0px 0px -40px 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
     $$(REVEAL_SEL + ':not(.in)').forEach(el => io.observe(el));
-    // 800ms 后视口内元素强制入场，2000ms 后全部强制入场
-    setTimeout(revealInViewport, 800);
-    setTimeout(() => {
-      $$(REVEAL_SEL + ':not(.in)').forEach(el => el.classList.add('in'));
-    }, 2000);
+    // 首屏 1s 后兜底：确保视口内元素已入场
+    setTimeout(revealInViewport, 1000);
+    // scroll 兜底：IO 未及时触发时由 scroll 补上
+    window.addEventListener('scroll', () => {
+      clearTimeout(scrollT);
+      scrollT = setTimeout(revealInViewport, 80);
+    }, { passive: true });
   }
 
   /* ================= 专辑筛选 ================= */
