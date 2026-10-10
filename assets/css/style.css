@@ -1942,15 +1942,16 @@ html[data-theme-event] .hero-quote { color: color-mix(in srgb, var(--gold) 78%, 
   position: relative;
   padding: 64px 0;
   border-top: 1px solid var(--border);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-color: var(--bg);
 }
-.f-sec[data-sec="news"]    { background-image: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('../img/gallery-4.jpg'); }
-.f-sec[data-sec="profile"] { background-image: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('../img/gallery-5.jpg'); }
-.f-sec[data-sec="music"]   { background-image: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('../img/gallery-9.jpg'); }
-.f-sec[data-sec="tour"]    { background-image: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('../img/gallery-1.jpg'); }
-.f-sec[data-sec="gallery"] { background-image: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('../img/gallery-8.jpg'); }
+.f-sec[data-sec="news"]    { background: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('../img/gallery-4.jpg') center/cover no-repeat !important; }
+.f-sec[data-sec="profile"] { background: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('../img/gallery-5.jpg') center/cover no-repeat !important; }
+.f-sec[data-sec="music"]   { background: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('../img/gallery-9.jpg') center/cover no-repeat !important; }
+.f-sec[data-sec="tour"]    { background: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('../img/gallery-1.jpg') center/cover no-repeat !important; }
+.f-sec[data-sec="gallery"] { background: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('../img/gallery-8.jpg') center/cover no-repeat !important; }
 
 /* 亮色模式适配 */
 html[data-theme="light"] .f-sec[data-sec] {
