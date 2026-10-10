@@ -1094,3 +1094,106 @@ html[data-theme="light"] .hero-photo-overlay {
   .tl-hint { display: none; }
 }
 
+/* ══════════════════════════════════════════════════════════════
+   ★ 临时资产 · 2026 生日限时主题（birthday-2026）
+   生效窗口 2026-10-10 ~ 2026-10-13，由 main.js applyEventTheme()
+   按 EVENT_THEME.end 判定并写入 html[data-theme-event]；到期自动失效。
+   彻底清除：删除本区块（自上方 ★ 标记到本节末）+ index.html 的
+   #plWish 节点 + data.js 的 EVENT_THEME 常量 + main.js 的
+   applyEventTheme() + assets/img/hero-birthday.jpg。
+   ══════════════════════════════════════════════════════════════ */
+html[data-theme-event] {
+  --gold: #e6c887;
+  --gold-soft: rgba(230, 200, 135, .2);
+  --accent: #c9a24a;
+  --accent-soft: rgba(201, 162, 74, .16);
+}
+html[data-theme="light"][data-theme-event] {
+  --gold: #9a7530;
+  --gold-soft: rgba(154, 117, 48, .13);
+  --accent: #8a6420;
+  --accent-soft: rgba(138, 100, 32, .11);
+}
+
+/* —— 载入动画：生日暖光底 + 生日祝福副行 —— */
+html[data-theme-event] #preloader {
+  background:
+    radial-gradient(76% 58% at 50% 38%, rgba(201, 162, 74, .17), transparent 70%),
+    radial-gradient(100% 74% at 50% 100%, rgba(160, 70, 80, .13), transparent 62%),
+    var(--bg);
+}
+html[data-theme-event] .pl-name { animation: plBreath 3s ease-in-out infinite; }
+html[data-theme-event] .pl-en {
+  margin-bottom: 12px;
+  color: color-mix(in srgb, var(--gold) 80%, transparent);
+}
+html[data-theme-event] .pl-bar {
+  width: 250px;
+  background: var(--border);
+}
+html[data-theme-event] .pl-bar i { animation: plLoad 1.6s var(--ease) forwards; }
+
+.pl-wish {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 0 auto 30px;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: .32em;
+  color: var(--gold);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: plWishIn .8s var(--ease) .35s forwards;
+}
+.pl-wish::before,
+.pl-wish::after {
+  content: '';
+  flex: 0 0 auto;
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold));
+  opacity: .75;
+}
+.pl-wish::after { transform: scaleX(-1); }
+.pl-wish .pl-wish-d {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 27px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  line-height: 1;
+  color: var(--text);
+}
+.pl-wish .pl-wish-t { letter-spacing: .38em; margin-right: -.38em; }
+
+@keyframes plWishIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes plBreath {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .8; }
+}
+
+/* —— 首屏：生日头图配暖色压暗，保留左侧文案可读性 —— */
+html[data-theme-event] .hero-photo-overlay {
+  background: linear-gradient(90deg,
+    rgba(24, 10, 12, .9) 0%,
+    rgba(26, 12, 13, .72) 32%,
+    rgba(30, 14, 14, .32) 64%,
+    rgba(22, 9, 11, .48) 100%);
+}
+html[data-theme="light"][data-theme-event] .hero-photo-overlay {
+  background: linear-gradient(90deg,
+    rgba(251, 250, 249, .94) 0%,
+    rgba(251, 250, 249, .8) 34%,
+    rgba(251, 250, 249, .4) 66%,
+    rgba(251, 250, 249, .56) 100%);
+}
+html[data-theme-event] .hero-eyebrow { color: var(--gold); }
+html[data-theme-event] .hero-quote { color: color-mix(in srgb, var(--gold) 78%, var(--text)); }
+/* ══════════════════════════════════════════════════════════════
+   ★ 临时资产 · 2026 生日限时主题 结束
+   ══════════════════════════════════════════════════════════════ */
+

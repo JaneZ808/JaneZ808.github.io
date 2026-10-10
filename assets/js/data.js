@@ -4,6 +4,24 @@
  *  所有条目均以公开可查证的百科词条为依据，未作虚构。
  * ============================================================ */
 
+/* ---------- 0. 限时活动主题（自动到期回滚，无需人工干预） ----------
+ * 生效窗口：2026-10-10 00:00:00 → 2026-10-13 23:59:59（+08:00），共 3 天。
+ * 到期后前端自动回退到默认加载排版与默认头图（hero.jpg），无需任何后续操作。
+ * 本常量、index.html 的 #plWish 节点、style.css 的 .pl-wish / [data-theme-event]
+ * 规则、main.js 的 applyEventTheme()，以及 assets/img/hero-birthday.jpg 均属临时资产。
+ * 若需彻底清除，到期后按上面四处删除即可；其余内容改动为永久生效。
+ * ---------- */
+const EVENT_THEME = {
+  key: 'birthday-2026',
+  start: '2026-10-10T00:00:00+08:00',
+  end: '2026-10-13T23:59:59+08:00',
+  loaderName: '张靓颖',
+  wishDate: '1011',
+  wishText: '生日快乐',
+  hero: 'assets/img/hero-birthday.jpg',
+  heroAlt: '张靓颖 1011 生日快乐'
+};
+
 /* ---------- 1. 基本档案 ---------- */
 const PROFILE = {
   name: '张靓颖',
@@ -122,8 +140,8 @@ const ALBUMS = [
     date: '2025.10.11',
     type: 'ep',
     label: '靡之音乐',
-    songs: 2,
-    desc: '生日当天推出的英文EP，收录《Do What Makes You Feel Alive》《Down With You》两首流行风格曲目，传递挣脱生活压力、跟随内心感受生活的态度。',
+    songs: 5,
+    desc: '生日当天首发首单的英文EP，陆续收录《Do What Makes You Feel Alive》《Down With You》《Some Days》《Lovesick》《Credits》5首曲目；首单由 Sarah Close 与 Ellis 创作、丁少华制作，以「去城市跳舞」等意象传递挣脱生活压力、跟随内心感受生活的态度。',
     tags: ['英文EP'],
     award: '腾讯音乐浪潮榜2025年10月榜第7位；2026.10 推出 CD / 黑胶实体版'
   },
@@ -294,7 +312,8 @@ const OSTS = [
   { song: '无忘', work: '动画《魔道祖师》', year: '2021', note: '完结篇主题曲 / 片尾曲' },
   { song: '约定', work: '网络剧《约定》', year: '2021', note: '网络剧主题曲' },
   { song: '偏星', work: '电视剧《沉香如屑》', year: '2022', note: '电视剧片尾曲' },
-  { song: '技能照亮前程', work: '第48届世界技能大赛主题歌', year: '2026', note: '与黄子弘凡合唱 · 致敬技能从业者、鼓励青年走技能成才之路' }
+  { song: '技能照亮前程', work: '第48届世界技能大赛主题歌', year: '2026', note: '与黄子弘凡合唱 · 2026.09.30 发行 · 致敬技能从业者、鼓励青年走技能成才之路' },
+  { song: '执棋', work: '电视剧《翘楚》', year: '2026', note: '电视剧主题曲 · 2026.05.29 发行 · 夏梦莹作词、金大洲作曲并担任制作人 · 以棋局喻人生征途' }
 ];
 
 /* ---------- 4. 英文单曲 / 国际化作品 ---------- */
@@ -310,7 +329,8 @@ const GLOBAL_SONGS = [
   { name: 'Battlefield', year: '2016', work: '电影《长城》全球推广曲', note: '电影《长城》全球推广曲 · 登上美国 iTunes 即时下载总榜第50位、电影原声带榜第2位' },
   { name: 'Dust My Shoulders Off (Steve Aoki Remix)', year: '2018', work: '与 Steve Aoki 的混音版', note: '与 DJ Steve Aoki 的混音版 · 收录于《Billboard Presents Electric Asia Vol.1》' },
   { name: 'Make It Big', year: '2016', work: '面向国际市场的英文单曲', note: '面向国际市场的英文单曲' },
-  { name: 'Mmm', year: '2026', work: '英文单曲', note: '2026.09.26 发行的英文单曲，延续走向国际的英文路线' }
+  { name: 'Mmm', year: '2026', work: '英文单曲', note: '2026.09.26 发行的英文单曲，延续走向国际的英文路线' },
+  { name: 'Credits', year: '2025', work: '英文单曲 · 收录于《Do What Makes You Feel Alive》', note: '2025.10.11 生日当天发行的英文单曲，收录于英文EP《Do What Makes You Feel Alive》' }
 ];
 
 /* ---------- 5. 星路历程（时间线） ---------- */
@@ -348,7 +368,7 @@ const TOURS = [
   { name: 'BANG THE WORLD', en: 'Bang The World', year: '2015', note: '世界巡回演唱会，后推出巡演纪录片《光芒背后》' },
   { name: '珍相', en: "Jane's Secret", year: '2018', note: '美国站单场动员人数位居全美第45位' },
   { name: '光', en: 'Light', year: '2023—2024', note: '自北京起步的大型世界巡回演唱会，覆盖国内多座城市' },
-  { name: '追', en: 'Chase', year: '2025—2026', note: '已走过深圳、广州、杭州、成都、郑州、上海、新加坡等十余座城市；海外巡演以 2026.08.29 新加坡站收官，2026.09.26 南京站、2026.10.10 澳门站为内地及收官场次' }
+  { name: '追', en: 'Chase', year: '2025—2026', note: '已走过深圳、广州、杭州、成都、郑州、上海、新加坡、南京等十余座城市；海外巡演以 2026.08.29 新加坡站收官，2026.10.10 中国澳门银河综艺馆收官站为世巡落幕之战，门票全数售罄' }
 ];
 
 /* ---------- 7. 荣誉墙 ---------- */
@@ -415,6 +435,12 @@ const VARIETY = [
 /* ---------- 9. 最新动态 ---------- */
 const NEWS = [
   {
+    date: '2026.10.10',
+    tag: '巡演',
+    title: '「追」世巡中国澳门收官站今晚落幕，门票全数售罄',
+    desc: '「澳门银河」荣誉呈献的「追」张靓颖世界巡回演唱会中国澳门收官站于今晚 20:00 在银河综艺馆举行，门票此前已全部售罄。二十一年步履不停，这是「追」世巡的落幕之战。'
+  },
+  {
     date: '2026.10.06',
     tag: '新碟',
     title: '英文EP《Do What Makes You Feel Alive》实体专辑开启预售',
@@ -433,10 +459,10 @@ const NEWS = [
     desc: '由靡之音乐推出华语EP《过期食品》，收录《我所知道的修辞手法》《加码》《过期食品》三首作品，以戏剧性故事的结局回望一段段情感，传递「坚硬的话，柔软的心」。'
   },
   {
-    date: '2026.09',
+    date: '2026.09.30',
     tag: '合作',
     title: '与黄子弘凡合唱第48届世界技能大赛主题歌',
-    desc: '与黄子弘凡合唱第48届世界技能大赛主题歌《技能照亮前程》，致敬技能从业者、鼓励青年走技能成才之路；本届世赛于 9.22–27 在上海举办。'
+    desc: '与黄子弘凡合唱的第48届世界技能大赛主题歌《技能照亮前程》于 2026.09.30 发行并收录于同名专辑，致敬技能从业者、鼓励青年走技能成才之路；本届世赛于 9.22–27 在上海举办。'
   },
   {
     date: '2026.08.29',
@@ -471,8 +497,8 @@ const NEWS = [
   {
     date: '2025.10.11',
     tag: '新歌',
-    title: '生日当天推出英文EP《Do What Makes You Feel Alive》',
-    desc: '通过靡之音乐推出英文EP，收录《Do What Makes You Feel Alive》与《Down With You》两首流行曲目，传递挣脱生活压力、跟随内心感受生活的态度。'
+    title: '生日当天惊喜上线英文EP《Do What Makes You Feel Alive》',
+    desc: '通过靡之音乐于生日当天推出英文EP，首单《Do What Makes You Feel Alive》由 Sarah Close 与 Ellis 创作、丁少华制作；EP 陆续收录 5 首曲目，登上腾讯音乐浪潮榜2025年10月榜第7位。'
   }
 ];
 
@@ -519,13 +545,13 @@ const COVER_MAP = {
     'assets/img/osts/WritingOnTheWall.jpg', 'assets/img/osts/Battlefield.jpg', 'assets/img/osts/女儿国.jpg',
     'assets/img/osts/红蔷薇.jpg', 'assets/img/osts/双生焰.jpg', 'assets/img/osts/蝴蝶飓风.jpg',
     'assets/img/osts/她.jpg', 'assets/img/osts/无华.jpg', 'assets/img/osts/最可爱的人.jpg',
-    'assets/img/osts/无忘.jpg', 'assets/img/osts/约定.jpg', 'assets/img/osts/偏星.jpg', ''
+    'assets/img/osts/无忘.jpg', 'assets/img/osts/约定.jpg', 'assets/img/osts/偏星.jpg', '', ''
   ],
   global: [
     'assets/img/globals/DustMyShouldersOff.jpg', 'assets/img/globals/808.jpg', 'assets/img/globals/FightingShadows.jpg',
     'assets/img/globals/GreenLight.jpg', 'assets/img/globals/WorkForIt.jpg', 'assets/img/globals/印象西湖雨.jpg',
     'assets/img/globals/ChangeYourWorld.jpg', 'assets/img/globals/DreamItPossible.jpg', 'assets/img/osts/Battlefield.jpg',
-    'assets/img/globals/DustMyShouldersOffSteveAokiRemix.jpg', 'assets/img/globals/MakeItBig.jpg', ''
+    'assets/img/globals/DustMyShouldersOffSteveAokiRemix.jpg', 'assets/img/globals/MakeItBig.jpg', '', ''
   ]
 };
 /* 星路历程每项对应的背景图：

@@ -11,6 +11,44 @@
   const DATA = (window.JANEZ_DATA && JANEZ_DATA.getMerged) ? JANEZ_DATA.getMerged() : null;
   const src = (k) => (DATA && DATA[k] !== undefined ? DATA[k] : globalThis[k]);
 
+  /* ---------- 限时活动主题（自动到期回滚，无需人工干预） ----------
+   * 规则写在 data.js 的 EVENT_THEME（start / end）。
+   * 只要当前时间在窗口内就写入 <html data-theme-event>，CSS 端据此
+   * 切换生日加载排版与生日头图；过期后 JS 什么都不做，页面自动回到
+   * 默认排版与 hero.jpg，无需任何后续操作。
+   * ★ 临时资产：本节 + data.js 的 EVENT_THEME + index.html 的 #plWish
+   *   + style.css 的 .pl-wish / [data-theme-event] 区块 + hero-birthday.jpg
+   * ------------------------------------------------------------- */
+  function applyEventTheme() {
+    const et = src('EVENT_THEME');
+    if (!et || !et.end) return;
+    const now = Date.now();
+    if (now < Date.parse(et.start) || now > Date.parse(et.end)) return;
+
+    const root = document.documentElement;
+    root.setAttribute('data-theme-event', et.key || 'event');
+
+    // 加载动画：临时替换为「1011 生日快乐」
+    const pl = $('#plWish');
+    if (pl) {
+      const d = document.createElement('span');
+      d.className = 'pl-wish-d';
+      d.textContent = et.wishDate || '';
+      const t = document.createElement('span');
+      t.className = 'pl-wish-t';
+      t.textContent = et.wishText || '';
+      pl.replaceChildren(d, t);
+      pl.hidden = false;
+    }
+
+    // 首屏头图：临时替换为生日海报（preloader 期间被遮挡，无闪图）
+    const hero = $('.hero-photo');
+    if (hero && et.hero) {
+      hero.src = et.hero;
+      hero.alt = et.heroAlt || '';
+    }
+  }
+
 
   /* ---------- 渐变色板（用于生成封面视觉） ---------- */
   const PALETTE = [
@@ -402,6 +440,7 @@
 
   /* ================= 初始化 ================= */
   function init() {
+    applyEventTheme(); // 限时活动主题须最先执行，且在 applyUi() 之前
     renderHeroStats();
     renderNews();
     renderProfile();

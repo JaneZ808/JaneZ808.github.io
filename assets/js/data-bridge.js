@@ -10,7 +10,7 @@
   /* ---------- 内置数据（全部来自 data.js 全局常量） ---------- */
   function getMerged() {
     return {
-      PROFILE, NEWS, TIMELINE, ALBUMS, OSTS, GLOBAL_SONGS,
+      EVENT_THEME, PROFILE, NEWS, TIMELINE, ALBUMS, OSTS, GLOBAL_SONGS,
       TOURS, AWARDS, SCREENS, VARIETY, GALLERY, PLATFORMS
     };
   }
