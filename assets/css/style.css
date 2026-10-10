@@ -1942,7 +1942,10 @@ html[data-theme-event] .hero-quote { color: color-mix(in srgb, var(--gold) 78%, 
 .full-shell::before {
   content: '';
   position: fixed;
-  inset: 0;
+  top: 280px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: -1;
   background: var(--bg);
   background-image: var(--sec-bg, none);
@@ -1953,7 +1956,7 @@ html[data-theme-event] .hero-quote { color: color-mix(in srgb, var(--gold) 78%, 
 }
 .f-sec[data-sec] {
   position: relative;
-  padding: 120px 0 80px;
+  padding: 60px 0 80px;
   border-top: 1px solid var(--border);
   background-color: transparent;
 }
