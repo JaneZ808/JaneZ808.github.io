@@ -35,8 +35,7 @@
   const SECS = [
     { k: 'news',    cn: '最新动态',   en: 'News',    desc: '全部动态按发布时间倒序排列，可上下翻阅历年消息。' },
     { k: 'profile', cn: '个人档案',   en: 'Profile', desc: '完整档案信息，含简介、全部条目与音乐标签。' },
-    { k: 'album',   cn: '专辑',       en: 'Albums',  desc: '录音室专辑、迷你专辑 EP、现场辑与精选辑全集。' },
-    { k: 'singles', cn: '单曲',       en: 'Singles', desc: '全部影视金曲 OST 与英文单曲，按年份倒序排列。' },
+    { k: 'music',   cn: '音乐作品',   en: 'Music',   desc: '全部音乐作品：录音室专辑、迷你专辑 EP、现场辑、精选辑、影视金曲 OST、英文单曲与综艺节目。' },
     { k: 'tour',    cn: '巡回演唱会', en: 'Tour',    desc: '从 2008 年首次巡演到「追」世界巡回。' },
     { k: 'gallery', cn: '光影瞬间',   en: 'Gallery', desc: '全部舞台、红毯与巡演影像。' }
   ];
@@ -211,11 +210,15 @@
     observeReveal();
   }
 
-  /* ================= 渲染：单曲 · 影视金曲 OST + 英文作品 汇总 ================= */
+  /* ================= 渲染：音乐作品（聚合全部：专辑 + OST + 英文单曲 + 综艺） ================= */
   function renderSingles() {
     const host = $('#singlesList');
     if (!host) return;
     const all = [
+      ...src('ALBUMS').map((a, gi) => ({
+        name: a.name, work: a.type ? `${TYPE_LABEL[a.type] || ''}${a.songs ? ' · ' + a.songs + '首' : ''}` : '',
+        year: a.year || '', note: a.note || '', kind: 'ALBUM', href: `albums/album-${gi}.html`
+      })),
       ...src('OSTS').map((o, gi) => ({
         name: o.song, work: o.work || '', year: o.year || '',
         note: o.note || '', kind: 'OST', href: `osts/ost-${gi}.html`
@@ -223,33 +226,39 @@
       ...src('GLOBAL_SONGS').map((g) => ({
         name: g.name, work: g.work || '', year: g.year || '',
         note: '', kind: 'EN', href: ''
+      })),
+      ...src('VARIETY').map((v) => ({
+        name: v.name, work: v.role || '', year: v.year || '',
+        note: '', kind: 'VAR', href: ''
       }))
     ].sort((a, b) =>
       String(b.year || '').localeCompare(String(a.year || ''), undefined, { numeric: true }));
     const rows = take(all);
 
+    const KIND_LABEL = { ALBUM: '专辑', OST: '影视金曲', EN: '英文单曲', VAR: '综艺' };
     host.innerHTML = rows.map((s, i) => `
-      <div class="sg-row reveal" style="--d:${dly(i, 70)}ms">
+      <div class="sg-row reveal" style="--d:${dly(i, 60)}ms">
         <span class="sg-no">${pad2(i + 1)}</span>
         <div class="sg-bd">
           <span class="sg-name">${s.name}</span>
           ${s.work ? `<span class="sg-work">${s.work}</span>` : ''}
         </div>
+        <span class="sg-kind">${KIND_LABEL[s.kind] || ''}</span>
         ${s.year ? `<span class="sg-year">${s.year}</span>` : ''}
         ${s.href ? '<span class="sg-go">→</span>' : ''}
       </div>`).join('') || '<p class="empty-note">暂无数据。</p>';
   }
 
   /* ================= 渲染：巡演 · 纪年带 =================
-   * 升序排列取最近 6 轮，保持时间轴自然阅读；最新一轮高亮 */
+   * 倒序排列，最新一轮在最上方并高亮；全部展示 */
   function renderTours() {
     const host = $('#tourList');
     if (!host) return;
-    const all = oldest(src('TOURS'), 'year');
-    const rows = FULL ? all : all.slice(-LIMIT);
+    const all = newest(src('TOURS'), 'year');
+    const rows = all;
 
     host.innerHTML = rows.map((t, i) => {
-      const last = i === rows.length - 1;
+      const last = i === 0;
       return `
       <div class="tr-row reveal ${last ? 'is-latest' : ''}" style="--d:${dly(i, 90)}ms">
         <div class="tr-era">${t.year}</div>
@@ -269,29 +278,23 @@
   let galleryIndex = 0;
 
   function renderGallery() {
-    const host = $('#galleryGrid');
+    const host = $('#galleryFull');
     if (!host) return;
     const all = src('GALLERY').map((g, gi) => ({ g, gi }));
     const rows = take(all);
 
     host.innerHTML = rows.map(({ g, gi }, i) => `
-      <div class="gg-item reveal" data-i="${gi}" style="--d:${dly(i, 70)}ms">
-        <div class="gallery-item">
-          <div class="gi-art" style="${grad(g.tone)}">
-            ${g.img ? `<img class="gi-img" src="${g.img}" alt="${g.title}" loading="lazy" decoding="async">` : ''}
-          </div>
-          <div class="gi-mask">
-            <div class="gi-title">${g.title}</div>
-            ${g.sub ? `<div class="gi-sub">${g.sub}</div>` : ''}
-          </div>
+      <div class="gg-full-item reveal" data-i="${gi}" style="--d:${dly(i, 80)}ms">
+        <div class="gi-art" style="${grad(g.tone)}">
+          ${g.img ? `<img class="gi-img" src="${g.img}" alt="${g.title}" loading="lazy" decoding="async">` : ''}
         </div>
       </div>`).join('');
 
-    $$('#galleryGrid .gg-item').forEach(el =>
+    $$('#galleryFull .gg-full-item').forEach(el =>
       el.addEventListener('click', () => openLightbox(Number(el.dataset.i))));
 
     // 图片加载完成后渐显；失败时移除，露出底层渐变兜底
-    $$('#galleryGrid .gi-img').forEach(img => {
+    $$('#galleryFull .gi-img').forEach(img => {
       const done = () => img.classList.add('ready');
       if (img.complete && img.naturalWidth > 0) done();
       else {
@@ -371,7 +374,9 @@
       album: src('ALBUMS').length,
       ost: src('OSTS').length,
       global: src('GLOBAL_SONGS').length,
+      variety: src('VARIETY').length,
       singles: src('OSTS').length + src('GLOBAL_SONGS').length,
+      music: src('ALBUMS').length + src('OSTS').length + src('GLOBAL_SONGS').length + src('VARIETY').length,
       tour: src('TOURS').length,
       gallery: src('GALLERY').length
     };
@@ -383,9 +388,9 @@
 
   /* ================= 全量页：标题 + tabs + 区块显隐 ================= */
   function buildFull(sec) {
-    // 兼容旧 URL：ost / global 已合并为 singles
-    if (sec === 'ost' || sec === 'global') {
-      window.location.replace('all.html?sec=singles');
+    // 兼容旧 URL：album / singles / ost / global 已合并为 music
+    if (sec === 'album' || sec === 'singles' || sec === 'ost' || sec === 'global') {
+      window.location.replace('all.html?sec=music');
       return;
     }
     const meta = SECS.find(s => s.k === sec) || SECS[0];
@@ -401,14 +406,15 @@
   }
 
   /* ================= 滚动显现 =================
-   * .reveal 与 [data-rv] 均被观察；两者都靠 .in 触发入场。
+   * .reveal / .sec-enter / [data-rv] 均被观察；靠 .in 触发入场。
    * 各板块自行定义起始 transform / clip-path / filter，
    * .reveal.in 只负责复位 opacity 与 transform。
    * 安全兜底：观察后 800ms 强制 reveal 当前视口内元素，
    * 2000ms 强制 reveal 全部元素，避免 IO 未触发时内容不可见。 */
+  const REVEAL_SEL = '.reveal, .sec-enter, [data-rv]';
   let io;
   function revealInViewport() {
-    $$('.reveal:not(.in), [data-rv]:not(.in)').forEach(el => {
+    $$(REVEAL_SEL + ':not(.in)').forEach(el => {
       const r = el.getBoundingClientRect();
       if (r.top < window.innerHeight * 0.95 && r.bottom > 0) {
         el.classList.add('in');
@@ -417,7 +423,7 @@
   }
   function observeReveal() {
     if (!('IntersectionObserver' in window)) {
-      $$('.reveal, [data-rv]').forEach(el => el.classList.add('in'));
+      $$(REVEAL_SEL).forEach(el => el.classList.add('in'));
       return;
     }
     if (io) io.disconnect();
@@ -429,11 +435,11 @@
         }
       });
     }, { threshold: .05, rootMargin: '0px 0px -40px 0px' });
-    $$('.reveal:not(.in), [data-rv]:not(.in)').forEach(el => io.observe(el));
+    $$(REVEAL_SEL + ':not(.in)').forEach(el => io.observe(el));
     // 800ms 后视口内元素强制入场，2000ms 后全部强制入场
     setTimeout(revealInViewport, 800);
     setTimeout(() => {
-      $$('.reveal:not(.in), [data-rv]:not(.in)').forEach(el => el.classList.add('in'));
+      $$(REVEAL_SEL + ':not(.in)').forEach(el => el.classList.add('in'));
     }, 2000);
   }
 

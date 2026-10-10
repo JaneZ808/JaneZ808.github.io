@@ -1437,10 +1437,10 @@ html[data-theme="light"] .hero-photo-overlay {
 }
 .sg-row {
   display: grid;
-  grid-template-columns: 64px 1fr auto 32px;
+  grid-template-columns: 64px 1fr auto auto 32px;
   align-items: center;
-  column-gap: 22px;
-  padding: 20px 8px;
+  column-gap: 18px;
+  padding: 18px 8px;
   border-bottom: 1px solid var(--border);
   opacity: 0;
   transform: translateX(60px);
@@ -1486,6 +1486,15 @@ html[data-theme="light"] .hero-photo-overlay {
   transition: transform .3s var(--ease);
 }
 .sg-row:hover .sg-go { transform: translateX(4px); }
+.sg-kind {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  color: var(--gold);
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
 
 /* ── 6｜巡回演唱会 · 纪年带 ──────────────────────────────────
    版式：纵向纪年带，年份横贯为骨、巡演名为主视觉
@@ -1551,34 +1560,53 @@ html[data-theme="light"] .hero-photo-overlay {
   50%      { box-shadow: 0 0 0 6px rgba(216, 180, 108, 0); }
 }
 
-/* ── 7｜光影瞬间 · 错切马赛克 ────────────────────────────────
-   版式：不规则网格（首图与第 4 图跨列）
-   动画：由模糊放大收拢到清晰（blur + scale） */
-/* ── 7｜光影瞬间 · 大图模式 ──────────────────────────────────
-   版式：2 列大图，每格 4:3 高宽比，末项跨双列
-   动画：淡入 + 上浮 */
-.gg-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
+/* ── 板块间过渡 · 入场动画 ──────────────────────────────────
+   当板块滑入视口时整体上浮 + 淡入，子元素各自错峰展开 */
+.sec-enter {
+  opacity: 0;
+  transform: translateY(48px);
+  transition: opacity 1s var(--ease), transform 1s var(--ease);
 }
-.gg-item {
+.sec-enter.in { opacity: 1; transform: none; }
+
+/* ── 7｜光影瞬间 · 全屏大图模式 ──────────────────────────────
+   版式：单列全屏，每张图占满视口宽度，高度约 80vh
+   无文字遮罩，点击打开灯箱放大
+   动画：淡入 + 上浮 */
+.gg-full {
+  margin-top: -40px;
+}
+.gg-full-item {
   position: relative;
-  aspect-ratio: 4 / 3;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  aspect-ratio: 16 / 9;
+  max-height: 80vh;
   overflow: hidden;
-  border-radius: var(--radius);
   cursor: pointer;
   opacity: 0;
-  transform: translateY(28px);
-  transition: opacity .8s var(--ease) var(--d, 0ms), transform .8s var(--ease) var(--d, 0ms);
+  transform: translateY(40px);
+  transition: opacity 1s var(--ease) var(--d, 0ms), transform 1s var(--ease) var(--d, 0ms);
 }
-.gg-item.in { opacity: 1; transform: none; }
-.gg-item:hover .gi-art { transform: scale(1.05); }
-.gg-item:hover .gi-mask { background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,.85) 100%); }
-.gg-grid .gallery-item { height: 100%; aspect-ratio: auto; }
-.gg-grid .gi-mask { display: flex; }
-/* 单数收尾：末项跨双列避免右侧空洞 */
-.gg-grid .gg-item:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.gg-full-item.in { opacity: 1; transform: none; }
+.gg-full-item + .gg-full-item { margin-top: 6px; }
+.gg-full-item:hover .gi-img { transform: scale(1.05); }
+.gg-full-item .gi-art {
+  position: absolute;
+  inset: 0;
+  transition: transform 1.2s var(--ease);
+}
+.gg-full-item .gi-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 1.2s var(--ease), transform 1.5s var(--ease);
+}
+.gg-full-item .gi-img.ready { opacity: 1; transform: scale(1); }
 
 /* ── 8｜聆听与关注 · 平台徽章 + 邮箱 ─────────────────────────
    版式：居中平台徽章一排
@@ -1751,9 +1779,10 @@ html[data-theme="light"] .hero-photo-overlay {
   .nx-item--hero { grid-column: auto; }
   .alb-grid { grid-template-columns: repeat(2, 1fr); }
   .ct-grid { grid-template-columns: repeat(2, 1fr); }
-  .gg-grid { gap: 14px; }
-  .sg-row { grid-template-columns: 48px 1fr auto 24px; column-gap: 14px; padding: 16px 4px; }
+  .gg-full-item { max-height: 60vh; }
+  .sg-row { grid-template-columns: 48px 1fr auto auto 24px; column-gap: 12px; padding: 14px 4px; }
   .sg-no { font-size: 24px; }
+  .sg-kind { display: none; }
   .tr-row { grid-template-columns: 130px 1fr; column-gap: 20px; }
   .tr-era { font-size: 19px; }
   .tr-note { grid-column: 1 / -1; }
@@ -1770,9 +1799,8 @@ html[data-theme="light"] .hero-photo-overlay {
   .gl-row { grid-template-columns: auto 1fr; row-gap: 4px; }
   .gl-year { grid-column: 2; }
   .alb-grid { grid-template-columns: 1fr; }
-  .gg-grid { grid-template-columns: 1fr; }
-  .gg-grid .gg-item:last-child:nth-child(odd) { grid-column: auto; }
-  .sg-row { grid-template-columns: 40px 1fr auto; padding: 14px 2px; }
+  .gg-full-item { aspect-ratio: auto; height: 50vh; }
+  .sg-row { grid-template-columns: 40px 1fr auto; padding: 12px 2px; }
   .sg-go { display: none; }
   .ct-grid { grid-template-columns: 1fr; }
   .rf-grid { grid-template-columns: 1fr; }

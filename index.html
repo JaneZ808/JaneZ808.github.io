@@ -31,7 +31,7 @@
 <meta name="twitter:image" content="https://janez808.github.io/assets/img/hero.jpg">
 <!-- 结构化数据（外链，避开 CSP 对内联 script 的限制；Google 支持 link rel=ld+json） -->
 <link rel="ld+json" href="assets/json/ld.json">
-<link rel="stylesheet" href="assets/css/style.css?v=23">
+<link rel="stylesheet" href="assets/css/style.css?v=24">
 </head>
 <body>
 
@@ -115,7 +115,7 @@
 </div>
 
 <!-- ============ 最新动态（主页只取最新 6 条，完整内容见 all.html） ============ -->
-<section id="news" class="sec">
+<section id="news" class="sec sec-enter">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sh-left">
@@ -123,14 +123,13 @@
         <h2 class="sh-cn">最新动态</h2>
       </div>
       <a class="sec-more" href="all.html?sec=news">查看全部 <b data-count="news"></b> 则 →</a>
-      <p class="sh-desc">聚焦张靓颖近期舞台、作品与消息</p>
     </div>
     <div class="nx-list" id="nxList" data-rv></div>
   </div>
 </section>
 
 <!-- ============ 个人档案（参考官网 Resume 版式：左侧信息面板 + 右侧大图） ============ -->
-<section id="profile" class="sec sec-profile">
+<section id="profile" class="sec sec-profile sec-enter">
   <div class="resume-stage">
     <div class="rs-panel">
       <h2 class="rs-title reveal rl-left">
@@ -147,33 +146,22 @@
   </div>
 </section>
 
-
-<!-- ============ 音乐作品（主页只取最新 6 条，完整内容见 all.html） ============ -->
-<section id="music" class="sec sec-alt">
+<!-- ============ 音乐作品（聚合全部：专辑 + OST + 英文单曲 + 综艺） ============ -->
+<section id="music" class="sec sec-alt sec-enter">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sh-left">
         <span class="sh-en">Music</span>
         <h2 class="sh-cn">音乐作品</h2>
       </div>
-      <a class="sec-more" href="all.html?sec=album">查看全部 <b data-count="album"></b> 张 →</a>
-      <p class="sh-desc">7 张录音室专辑 · 5 张迷你专辑 EP · 6 张现场辑 · 2 张精选辑</p>
-    </div>
-    <div class="alb-grid" id="albumGrid"></div>
-
-    <div class="sub-head reveal">
-      <div class="sh-bd">
-        <h3>单曲 · 影视金曲与英文作品</h3>
-        <p>被称作"OST 女王"，同时首位亮相格莱美的华人歌手</p>
-      </div>
-      <a class="sub-more" href="all.html?sec=singles">查看全部 <b data-count="singles"></b> 首 →</a>
+      <a class="sec-more" href="all.html?sec=music">查看全部 <b data-count="music"></b> 首 →</a>
     </div>
     <div class="sg-list" id="singlesList" data-rv></div>
   </div>
 </section>
 
 <!-- ============ 巡回演唱会 ============ -->
-<section id="tour" class="sec">
+<section id="tour" class="sec sec-enter">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sh-left">
@@ -181,14 +169,13 @@
         <h2 class="sh-cn">巡回演唱会</h2>
       </div>
       <a class="sec-more" href="all.html?sec=tour">查看全部 <b data-count="tour"></b> 轮 →</a>
-      <p class="sh-desc">从 2008 年首次巡演到「追」世界巡回</p>
     </div>
     <div class="tr-list" id="tourList" data-rv></div>
   </div>
 </section>
 
-<!-- ============ 光影瞬间 ============ -->
-<section id="gallery" class="sec sec-alt">
+<!-- ============ 光影瞬间（全屏大图） ============ -->
+<section id="gallery" class="sec sec-alt sec-enter">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sh-left">
@@ -196,22 +183,19 @@
         <h2 class="sh-cn">光影瞬间</h2>
       </div>
       <a class="sec-more" href="all.html?sec=gallery">查看全部 <b data-count="gallery"></b> 张 →</a>
-      <p class="sh-desc">点击卡片查看舞台记忆</p>
     </div>
-    <div class="gg-grid" id="galleryGrid"></div>
-    <p class="gallery-note">※ 图片仅作粉丝展示用途，版权归原权利人所有；点击卡片可查看大图。</p>
   </div>
+  <div class="gg-full" id="galleryFull"></div>
 </section>
 
 <!-- ============ 联系 / 直达 ============ -->
-<section id="contact" class="sec">
+<section id="contact" class="sec sec-enter">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sh-left">
         <span class="sh-en">Contact</span>
         <h2 class="sh-cn">聆听与关注</h2>
       </div>
-      <p class="sh-desc">在以下平台收听她的音乐与最新消息</p>
     </div>
     <div class="ct-grid" id="platformGrid"></div>
     <div class="ct-info reveal">
@@ -272,8 +256,8 @@
   </div>
 </div>
 
-<script src="assets/js/data.js?v=23"></script>
-<script src="assets/js/data-bridge.js?v=11"></script>
-<script src="assets/js/main.js?v=21"></script>
+<script src="assets/js/data.js?v=24"></script>
+<script src="assets/js/data-bridge.js?v=12"></script>
+<script src="assets/js/main.js?v=22"></script>
 </body>
 </html>
