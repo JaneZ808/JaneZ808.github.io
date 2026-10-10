@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- 安全加固：内容安全策略，仅允许同源脚本/样式/图片，禁止内联脚本与危险对象 -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>完整资料 · 张靓颖 Jane Zhang 资料站</title>
+<meta name="description" content="张靓颖（Jane Zhang）粉丝资料站完整资料页：全部最新动态、个人档案、录音室专辑、影视金曲 OST、英文作品、巡回演唱会与光影瞬间影像。">
+<meta name="keywords" content="张靓颖, Jane Zhang, 张靓颖 完整资料, 张靓颖 专辑, 张靓颖 演唱会, 张靓颖 巡演, 张靓颖 OST, 张靓颖 影视金曲, 张靓颖 英文单曲, 画心, 如果这就是爱情, 终于等到你, 野心家, 技能照亮前程, 执棋, 张靓颖 追 巡演, 张靓颖 光 巡演, 张靓颖 最新动态">
+<meta name="author" content="JaneZ 资料站">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://janez808.github.io/all.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%239c8bf5'/%3E%3Cpath d='M12 22.5a3 3 0 11-1.5-2.6V9l11-2.4v11.9a3 3 0 11-1.5-2.6' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="张靓颖 Jane Zhang 资料站">
+<meta property="og:title" content="张靓颖 Jane Zhang · 完整资料">
+<meta property="og:description" content="张靓颖粉丝资料站完整资料页：动态、档案、专辑、影视金曲、英文作品、巡演与光影瞬间。">
+<meta property="og:url" content="https://janez808.github.io/all.html">
+<meta property="og:image" content="https://janez808.github.io/assets/img/hero.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="张靓颖 Jane Zhang · 完整资料">
+<meta name="twitter:description" content="张靓颖粉丝资料站完整资料页：动态、档案、专辑、影视金曲、英文作品、巡演与光影瞬间。">
+<meta name="twitter:image" content="https://janez808.github.io/assets/img/hero.jpg">
+<link rel="stylesheet" href="assets/css/style.css?v=22">
+</head>
+<body data-full>
+
+<!-- ============ 载入动画 ============ -->
+<div id="preloader">
+  <div class="pl-inner">
+    <div class="pl-name">张靓颖</div>
+    <div class="pl-en">JANE&nbsp;ZHANG</div>
+    <div class="pl-bar"><i></i></div>
+  </div>
+</div>
+
+<!-- ============ 顶部导航（全量页以 tabs 作板块切换，故仅保留品牌与主题） ============ -->
+<header id="header">
+  <div class="wrap nav-wrap">
+    <a href="index.html" class="brand">
+      <span class="brand-cn">张靓颖</span>
+      <span class="brand-en">Jane Zhang</span>
+    </a>
+    <div class="nav-tools">
+      <a href="index.html" class="nl"><em>Home</em>主页</a>
+      <button id="themeBtn" class="icon-btn" title="切换深浅色" aria-label="切换主题">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6l1.4 1.4m10 10 1.4 1.4m0-12.8-1.4 1.4m-10 10L5.6 18.4M12 8a4 4 0 100 8 4 4 0 000-8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="scroll-progress"><i id="progressBar"></i></div>
+</header>
+
+<!-- ============ 全量内容 ============ -->
+<div class="full-shell">
+  <div class="wrap">
+    <a class="full-back" href="index.html">← 返回主页</a>
+
+    <div class="full-head reveal" id="fullHead"></div>
+    <div class="full-tabs" id="fullTabs"></div>
+
+    <div id="fullHost">
+      <!-- 最新动态 · 编辑索引式 -->
+      <div class="f-sec" data-sec="news">
+        <div class="nx-list" id="nxList" data-rv></div>
+      </div>
+
+      <!-- 个人档案 · 引言 + 两列定义网格 -->
+      <div class="f-sec" data-sec="profile">
+        <div id="rfBody"></div>
+      </div>
+
+      <!-- 专辑 · 封面方阵 -->
+      <div class="f-sec" data-sec="album">
+        <div class="filter-bar reveal" id="albumFilter">
+          <button class="fb active" data-t="all">全部</button>
+          <button class="fb" data-t="studio">录音室专辑</button>
+          <button class="fb" data-t="ep">迷你专辑 EP</button>
+          <button class="fb" data-t="live">现场专辑</button>
+          <button class="fb" data-t="best">精选辑</button>
+        </div>
+        <div class="alb-grid" id="albumGrid"></div>
+      </div>
+
+      <!-- 影视金曲 · 年份轴 -->
+      <div class="f-sec" data-sec="ost">
+        <div class="ot-list" id="ostList" data-rv></div>
+      </div>
+
+      <!-- 英文作品 · 榜单式 -->
+      <div class="f-sec" data-sec="global">
+        <div class="gl-list" id="globalGrid"></div>
+      </div>
+
+      <!-- 巡回演唱会 · 纪年带 -->
+      <div class="f-sec" data-sec="tour">
+        <div class="tr-list" id="tourList" data-rv></div>
+      </div>
+
+      <!-- 光影瞬间 · 错切马赛克 -->
+      <div class="f-sec" data-sec="gallery">
+        <div class="gg-grid" id="galleryGrid"></div>
+        <p class="gallery-note">※ 图片仅作粉丝展示用途，版权归原权利人所有；点击卡片可查看大图。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer id="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-grid">
+      <div class="f-col f-brand-col">
+        <div class="f-brand">
+          <span class="brand-cn">张靓颖</span>
+          <span class="brand-en">JANE ZHANG · OFFICIAL FAN SITE</span>
+        </div>
+        <p class="f-slogan">“终于等到你，还好我没放弃。”</p>
+      </div>
+      <div class="f-col">
+        <div class="f-col-title">快速导航</div>
+        <div class="f-links">
+          <a href="index.html#news">最新动态</a>
+          <a href="index.html#profile">个人档案</a>
+          <a href="index.html#music">音乐作品</a>
+          <a href="index.html#tour">巡回演唱会</a>
+          <a href="index.html#gallery">光影瞬间</a>
+        </div>
+      </div>
+      <div class="f-col">
+        <div class="f-col-title">聆听与关注</div>
+        <div class="f-links" id="footerPlatLinks"></div>
+      </div>
+    </div>
+    <div class="f-feedback reveal">
+      <span class="f-feedback-k">FEEDBACK</span>
+      <a class="f-feedback-mail" href="mailto:253324704@qq.com">253324704@qq.com</a>
+      <span class="f-feedback-note">建议、意见与勘误请发邮件至此邮箱，来信会逐封阅读</span>
+    </div>
+    <div class="f-bottom">
+      <p class="f-note">本站为粉丝向资料整理站点，内容整理自公开百科资料，版权归原权利人所有。</p>
+    </div>
+  </div>
+</footer>
+
+<button id="toTop" class="to-top" aria-label="回到顶部">
+  <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 19V5m0 0-6 6m6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<!-- ============ 灯箱 ============ -->
+<div id="lightbox" class="lightbox">
+  <button class="lb-close" aria-label="关闭">&times;</button>
+  <button class="lb-nav lb-prev" aria-label="上一张">&#10094;</button>
+  <button class="lb-nav lb-next" aria-label="下一张">&#10095;</button>
+  <div class="lb-content">
+    <div class="lb-art" id="lbArt"></div>
+  </div>
+</div>
+
+<script src="assets/js/data.js?v=22"></script>
+<script src="assets/js/data-bridge.js?v=10"></script>
+<script src="assets/js/main.js?v=20"></script>
+</body>
+</html>

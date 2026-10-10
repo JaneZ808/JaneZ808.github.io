@@ -268,7 +268,33 @@ img { max-width: 100%; display: block; }
 /* ============ 区块通用 ============ */
 .sec { padding: 118px 0; position: relative; }
 .sec-alt { background: var(--bg-2); }
-.sec-head { margin-bottom: 58px; }
+.sec-head {
+  margin-bottom: 58px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px 28px;
+}
+.sec-head .sh-desc { flex: 1 1 100%; margin-top: 0; }
+/* 「查看全部」入口：主页每板块只留 6 条，完整内容跳转 all.html */
+.sec-more {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: .08em;
+  padding: 8px 18px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  text-decoration: none;
+  transition: color .3s var(--ease), border-color .3s var(--ease), transform .3s var(--ease), background .3s var(--ease);
+}
+.sec-more b { color: var(--gold); font-weight: 500; font-variant-numeric: tabular-nums; }
+.sec-more:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  transform: translateY(-2px);
+}
 
 /* ---- 每个内容模块统一以张靓颖真实照片为主背景（替代纯色底，暗化遮罩保证可读） ---- */
 .sec::before {
@@ -291,8 +317,6 @@ img { max-width: 100%; display: block; }
 #news::before    { background-image: url('../../assets/img/gallery-9.jpg'); }  /* 影视金曲之夜 */
 #music::before   { background-image: url('../../assets/img/gallery-6.jpg'); }  /* Past Progressive */
 #tour::before    { background-image: url('../../assets/img/gallery-1.jpg'); }  /* 追 世界巡演 */
-#awards::before  { background-image: url('../../assets/img/gallery-4.jpg'); }  /* TMEA 年度女歌手 */
-#screen::before  { background-image: url('../../assets/img/gallery-8.jpg'); }  /* 格莱美红毯 */
 #gallery::before { background-image: url('../../assets/img/gallery-2.jpg'); }  /* 光 世界巡演 */
 #contact::before { background-image: url('../../assets/img/gallery-3.jpg'); }  /* 珍相 巡演 */
 .sh-left { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
@@ -303,7 +327,32 @@ img { max-width: 100%; display: block; }
 }
 .sh-cn { font-size: 30px; font-weight: 400; letter-spacing: .12em; }
 .sh-desc { margin-top: 14px; color: var(--muted); font-size: 14px; }
-.sub-head { margin: 76px 0 30px; }
+.sub-head {
+  margin: 76px 0 30px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 28px;
+}
+.sub-more {
+  flex-shrink: 0;
+  font-size: 12.5px;
+  color: var(--muted);
+  letter-spacing: .08em;
+  padding: 7px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  text-decoration: none;
+  transition: color .3s var(--ease), border-color .3s var(--ease), transform .3s var(--ease), background .3s var(--ease);
+}
+.sub-more b { color: var(--gold); font-weight: 500; font-variant-numeric: tabular-nums; }
+.sub-more:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  transform: translateY(-2px);
+}
 .sub-head h3 {
   font-size: 20px; font-weight: 400; letter-spacing: .1em;
   display: flex; align-items: center; gap: 14px;
@@ -1092,6 +1141,601 @@ html[data-theme="light"] .hero-photo-overlay {
   .timeline { height: calc(100vh - 205px); min-height: 430px; }
   .tl-card { margin: 0 14px; padding: 20px 20px 22px; max-width: none; }
   .tl-hint { display: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   精简主页（2026-10-10 改版）
+   每个板块只取最新 6 条，各自独立版式 + 独立入场动画；
+   完整内容见 all.html?sec=<key>。
+   入场动画统一由 IntersectionObserver 加 .in 触发（observeReveal）；
+   每个板块自定义 transform / clip-path / filter 的起始态，
+   .reveal.in 只负责复位 opacity 与 transform。
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── 1｜最新动态 · 编辑索引式 ────────────────────────────────
+   版式：首条通栏大排版 + 其余两列紧凑列表
+   动画：clip-path 自左向右擦除揭示（wipe），序号与左缘金线延迟补入 */
+.nx-list {
+  display: grid;
+  grid-template-columns: 1.18fr 1fr;
+  gap: 22px 26px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nx-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 22px;
+  padding: 26px 28px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--surface) 80%, transparent),
+    color-mix(in srgb, var(--surface) 44%, transparent));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: inherit;
+  /* 初始态：整块从左侧被"擦除"藏起 */
+  opacity: 0;
+  transform: none;
+  clip-path: inset(0 100% 0 0 round 16px);
+  transition:
+    opacity .7s var(--ease) var(--d, 0ms),
+    clip-path .95s var(--ease) var(--d, 0ms),
+    border-color .35s var(--ease),
+    box-shadow .35s var(--ease);
+}
+.nx-item.in {
+  opacity: 1;
+  clip-path: inset(0 0 0 0 round 16px);
+}
+.nx-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--gold), transparent 82%);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform .6s var(--ease) calc(var(--d, 0ms) + 420ms);
+}
+.nx-item.in::before { transform: scaleY(1); }
+.nx-item:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+.nx-no {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--border-strong);
+  font-variant-numeric: tabular-nums;
+  padding-top: 2px;
+}
+.nx-main { min-width: 0; }
+.nx-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.nx-tag {
+  font-size: 11px;
+  padding: 3px 11px;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  color: var(--gold);
+  letter-spacing: .08em;
+}
+.nx-date {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  letter-spacing: .1em;
+}
+.nx-title {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+.nx-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.85;
+}
+/* 首条通栏：更大的序号与标题，视觉锚点 */
+.nx-item--hero {
+  grid-column: 1 / -1;
+  padding: 34px 36px;
+}
+.nx-item--hero .nx-no { font-size: 60px; }
+.nx-item--hero .nx-title { font-size: 22px; font-weight: 400; letter-spacing: .02em; }
+.nx-item--hero .nx-desc { font-size: 13.5px; }
+.nx-item--hero .nx-tag { font-size: 11.5px; padding: 4px 13px; }
+/* 其余条目描述只留两行，保持列表呼吸感 */
+.nx-desc--clip {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 档案面板内的「查看完整档案」入口（沿用 .sec-more 胶囊样式，改为行内块） */
+.rs-panel .sec-more { display: inline-flex; align-items: center; gap: 6px; margin-top: 26px; }
+
+/* ── 2｜个人档案 · 照片面板 ──────────────────────────────────
+   版式：左照片 + 右信息面板（沿用 resume-stage）
+   动画：照片自顶部 clip-path 揭幕 + 面板各行自左侧逐行滑入 */
+#profile .rs-photo {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1.15s var(--ease) .12s;
+}
+#profile .rs-photo.in { clip-path: inset(0 0 0 0); }
+.rs-fact-wrap { display: contents; }
+#profile .fact-row {
+  transform: translateX(-46px);
+  opacity: 0;
+  transition: opacity .6s var(--ease) var(--d, 0ms), transform .6s var(--ease) var(--d, 0ms);
+}
+#profile .fact-row.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── 3｜音乐·专辑 · 封面方阵 ─────────────────────────────────
+   版式：3 列大封面卡
+   动画：透视翻转浮起（rotateX + 上移），逐张错峰 */
+.alb-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+.alb-grid .album-card {
+  opacity: 0;
+  transform: perspective(1200px) rotateX(20deg) translateY(46px);
+  transition:
+    opacity .8s var(--ease) var(--d, 0ms),
+    transform .8s var(--ease) var(--d, 0ms),
+    border-color .45s var(--ease),
+    box-shadow .45s var(--ease);
+}
+.alb-grid .album-card.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── 4｜音乐·影视金曲 OST · 年份轴 ───────────────────────────
+   版式：左侧年份轴 + 节点圆点 + 右侧条目
+   动画：轴线自上而下生长，条目自左侧滑入 */
+.ot-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+.ot-list::before {
+  content: '';
+  position: absolute;
+  left: 139px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--border-strong) 10%, var(--border-strong) 90%, transparent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 1s var(--ease) .1s;
+}
+.ot-list.in::before { transform: scaleY(1); }
+.ot-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 108px 24px 1fr;
+  align-items: center;
+  column-gap: 20px;
+  padding: 15px 0;
+  opacity: 0;
+  transform: translateX(-52px);
+  transition: opacity .7s var(--ease) var(--d, 0ms), transform .7s var(--ease) var(--d, 0ms);
+}
+.ot-row.in { opacity: 1; transform: none; }
+.ot-year {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--gold);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ot-node {
+  justify-self: center;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--gold);
+  box-shadow: 0 0 0 4px var(--bg);
+}
+.ot-card {
+  display: block;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface) 62%, transparent);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .35s var(--ease), transform .35s var(--ease), background .35s var(--ease);
+}
+.ot-card:hover {
+  border-color: var(--gold);
+  background: var(--surface);
+  transform: translateX(6px);
+}
+.ot-song {
+  font-size: 15.5px;
+  font-weight: 500;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ot-work { font-size: 12.5px; color: var(--accent); }
+.ot-note { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.8; }
+
+/* ── 5｜音乐·英文作品 · 榜单式 ───────────────────────────────
+   版式：大号序号 + 歌名/出处 + 右侧年份（横向榜单行）
+   动画：自右侧滑入，序号先落地 */
+.gl-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.gl-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: 26px;
+  padding: 20px 4px;
+  border-bottom: 1px solid var(--border);
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity .7s var(--ease) var(--d, 0ms), transform .7s var(--ease) var(--d, 0ms);
+}
+.gl-row:first-child { border-top: 1px solid var(--border); }
+.gl-row.in { opacity: 1; transform: none; }
+.gl-row:hover { background: color-mix(in srgb, var(--gold-soft) 60%, transparent); }
+.gl-no {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--gold);
+  font-variant-numeric: tabular-nums;
+  min-width: 54px;
+}
+.gl-name { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+.gl-work { font-size: 12.5px; color: var(--muted); line-height: 1.7; }
+.gl-year {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  letter-spacing: .1em;
+}
+
+/* ── 6｜巡回演唱会 · 纪年带 ──────────────────────────────────
+   版式：纵向纪年带，年份横贯为骨、巡演名为主视觉
+   动画：整行缩放浮现（scale .94 → 1），进行中条目带金色呼吸描边 */
+.tr-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+.tr-list::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-strong) 14%, var(--border-strong) 86%, transparent);
+}
+.tr-row {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  column-gap: 30px;
+  align-items: baseline;
+  padding: 26px 12px 26px 4px;
+  border-bottom: 1px solid var(--border);
+  opacity: 0;
+  transform: scale(.94);
+  transition: opacity .7s var(--ease) var(--d, 0ms), transform .7s var(--ease) var(--d, 0ms);
+}
+.tr-row.in { opacity: 1; transform: none; }
+.tr-era {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 22px;
+  color: var(--gold);
+  letter-spacing: .04em;
+  font-variant-numeric: tabular-nums;
+}
+.tr-main { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+.tr-cn { font-size: 26px; font-weight: 400; letter-spacing: .08em; }
+.tr-en {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 14px;
+  color: var(--muted);
+  letter-spacing: .14em;
+}
+.tr-note { grid-column: 2; font-size: 13.5px; color: var(--muted); line-height: 1.9; margin-top: 8px; }
+.tr-badge {
+  font-size: 11px;
+  padding: 3px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  letter-spacing: .1em;
+}
+.tr-row.is-latest {
+  background: var(--gold-soft);
+  border-color: var(--gold);
+  border-radius: 12px;
+  animation: trGlow 3.4s ease-in-out infinite;
+}
+@keyframes trGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(216, 180, 108, .22); }
+  50%      { box-shadow: 0 0 0 6px rgba(216, 180, 108, 0); }
+}
+
+/* ── 7｜光影瞬间 · 错切马赛克 ────────────────────────────────
+   版式：不规则网格（首图与第 4 图跨列）
+   动画：由模糊放大收拢到清晰（blur + scale） */
+.gg-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: 132px;
+  gap: 16px;
+}
+.gg-item {
+  grid-column: span 2;
+  opacity: 0;
+  filter: blur(14px);
+  transform: scale(1.16);
+  transition: opacity .9s var(--ease) var(--d, 0ms), filter .9s var(--ease) var(--d, 0ms), transform .9s var(--ease) var(--d, 0ms);
+}
+.gg-item.in { opacity: 1; filter: blur(0); transform: scale(1); }
+.gg-item--wide { grid-column: span 4; }
+.gg-item--tall { grid-row: span 2; }
+/* 马赛克内卡片沿用 gallery-item 的图片与遮罩样式 */
+.gg-grid .gallery-item { height: 100%; aspect-ratio: auto; }
+.gg-grid .gi-mask { display: flex; }
+
+/* ── 8｜聆听与关注 · 平台徽章 + 邮箱 ─────────────────────────
+   版式：居中平台徽章一排
+   动画：依次上浮落地后进入轻微呼吸浮动（各自错相位） */
+.ct-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.ct-grid .contact-card {
+  opacity: 0;
+  transform: translateY(38px);
+  transition:
+    opacity .7s var(--ease) var(--d, 0ms),
+    transform .7s var(--ease) var(--d, 0ms),
+    border-color .45s var(--ease),
+    box-shadow .45s var(--ease);
+}
+.ct-grid .contact-card.in { opacity: 1; transform: none; }
+/* 落地后叠加轻浮动：用正向延迟避开入场过渡，四张卡片依次起伏成波浪 */
+.ct-float.in { animation: ctFloat 6s ease-in-out infinite; }
+.ct-float.in:nth-child(1) { animation-delay: 1.05s; }
+.ct-float.in:nth-child(2) { animation-delay: 1.5s; }
+.ct-float.in:nth-child(3) { animation-delay: 1.95s; }
+.ct-float.in:nth-child(4) { animation-delay: 2.4s; }
+@keyframes ctFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* 联系信息行：资料出处 + 意见邮箱 */
+.ct-info {
+  display: flex;
+  gap: 44px;
+  flex-wrap: wrap;
+  margin-top: 46px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+.ci-item { display: flex; flex-direction: column; gap: 7px; }
+.ci-label {
+  font-size: 11.5px;
+  letter-spacing: .16em;
+  color: var(--gold);
+}
+.ci-value { font-size: 14px; color: var(--text-2); }
+.ci-value a {
+  color: var(--text);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 17px;
+  letter-spacing: .04em;
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 1px;
+  transition: color .3s var(--ease), border-color .3s var(--ease);
+}
+.ci-value a:hover { color: var(--gold); border-color: var(--gold); }
+
+/* ── 页脚：意见与建议邮箱 ──────────────────────────────────── */
+.f-feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 26px auto 0;
+  padding: 18px 34px;
+  max-width: 620px;
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--gold-soft) 70%, transparent),
+    color-mix(in srgb, var(--surface) 55%, transparent));
+}
+.f-feedback-k {
+  font-size: 11px;
+  letter-spacing: .3em;
+  color: var(--gold);
+}
+.f-feedback-mail {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 25px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: .04em;
+  text-decoration: none;
+  transition: color .3s var(--ease), transform .3s var(--ease);
+}
+.f-feedback-mail:hover { color: var(--gold); transform: translateY(-1px); }
+.f-feedback-note { font-size: 12px; color: var(--muted); }
+
+/* ══════════════════════════════════════════════════════════════
+   完整资料页 all.html?sec=<key>
+   ══════════════════════════════════════════════════════════════ */
+.full-shell { min-height: 100vh; padding: 128px 0 72px; }
+.full-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 34px;
+  font-size: 13px;
+  letter-spacing: .06em;
+  color: var(--gold);
+  transition: transform .3s var(--ease);
+}
+.full-back:hover { transform: translateX(-4px); }
+.full-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px 28px;
+  margin-bottom: 54px;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, .55);
+}
+.full-head .sh-cn { font-size: 32px; font-weight: 400; letter-spacing: .12em; }
+.full-head .sh-en { font-size: 46px; }
+.full-desc { flex: 1 1 100%; margin: 0; color: var(--muted); font-size: 14px; }
+.full-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 44px;
+}
+.full-tab {
+  padding: 9px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: all .3s var(--ease);
+}
+.full-tab:hover { border-color: var(--border-strong); color: var(--text); }
+.full-tab.is-on { background: var(--gold); border-color: var(--gold); color: #14110a; font-weight: 500; }
+/* 档案全量页：引言 + 两列定义网格 */
+.rf-intro {
+  font-size: 14px;
+  line-height: 2;
+  color: var(--text-2);
+  text-align: justify;
+  margin-bottom: 28px;
+  max-width: 900px;
+}
+.rf-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+.rf-cell {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  padding: 18px 22px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface) 66%, transparent);
+}
+.rf-k {
+  flex-shrink: 0;
+  width: 5.2em;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  color: var(--gold);
+}
+.rf-v { font-size: 14px; line-height: 1.8; color: var(--text-2); }
+
+/* ── 响应式 ────────────────────────────────────────────────── */
+@media (max-width: 1000px) {
+  #news .nx-list { grid-template-columns: 1fr; }
+  .nx-item--hero { grid-column: auto; }
+  .alb-grid { grid-template-columns: repeat(2, 1fr); }
+  .ct-grid { grid-template-columns: repeat(2, 1fr); }
+  .gg-grid { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; }
+  .gg-item { grid-column: span 2; }
+  .gg-item--wide { grid-column: span 4; }
+  .tr-row { grid-template-columns: 130px 1fr; column-gap: 20px; }
+  .tr-era { font-size: 19px; }
+  .tr-note { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .sec { padding: 84px 0; }
+  .sec-more, .sub-more { width: 100%; text-align: center; }
+  .nx-item { padding: 22px 18px; }
+  .nx-item--hero .nx-no { font-size: 44px; }
+  .nx-item--hero .nx-title { font-size: 18px; }
+  .ot-list::before { left: 97px; }
+  .ot-row { grid-template-columns: 76px 20px 1fr; column-gap: 12px; }
+  .ot-year { font-size: 21px; }
+  .gl-row { grid-template-columns: auto 1fr; row-gap: 4px; }
+  .gl-year { grid-column: 2; }
+  .alb-grid { grid-template-columns: 1fr; }
+  .gg-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 116px; }
+  .gg-item, .gg-item--wide { grid-column: span 2; }
+  .ct-grid { grid-template-columns: 1fr; }
+  .rf-grid { grid-template-columns: 1fr; }
+  .tr-row { grid-template-columns: 1fr; row-gap: 6px; padding-left: 0; }
+  .tr-era, .tr-note { grid-column: 1 / -1; }
+  .ct-info { gap: 26px; }
+  .f-feedback { width: 100%; padding: 16px 18px; }
+  .f-feedback-mail { font-size: 20px; }
+}
+
+/* ── 无障碍：系统偏好「减少动态效果」时跳过全部入场动画 ──────────────────
+   既保证动画偏好被尊重，也避免任何环境下内容因等待 IntersectionObserver
+   回调而停留在 opacity:0 的不可见初始态。 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal,
+  [data-rv],
+  .reveal::before,
+  [data-rv]::before {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    filter: none !important;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════

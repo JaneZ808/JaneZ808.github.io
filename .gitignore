@@ -15,3 +15,7 @@ resp.json
 
 # 本地预览产物
 node_modules/
+
+# Edge 无头验证产物（DOM dump / 截图）
+_dom-*.html
+_shot-*.png

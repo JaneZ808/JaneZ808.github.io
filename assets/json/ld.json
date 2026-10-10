@@ -34,7 +34,7 @@
       "url": "https://janez808.github.io/",
       "name": "张靓颖 Jane Zhang · 资料站",
       "inLanguage": "zh-CN",
-      "description": "张靓颖（Jane Zhang）粉丝资料站：个人档案、音乐专辑、影视金曲 OST、世界巡回演唱会、荣誉记录与 2025–2026 最新动态。",
+      "description": "张靓颖（Jane Zhang）粉丝资料站：个人档案、音乐专辑、影视金曲 OST、世界巡回演唱会与 2025–2026 最新动态。",
       "publisher": { "@type": "Organization", "name": "JaneZ 资料站" }
     },
     {
@@ -45,7 +45,7 @@
         { "@type": "ListItem", "position": 2, "name": "个人档案", "item": "https://janez808.github.io/#profile" },
         { "@type": "ListItem", "position": 3, "name": "音乐作品", "item": "https://janez808.github.io/#music" },
         { "@type": "ListItem", "position": 4, "name": "巡回演唱会", "item": "https://janez808.github.io/#tour" },
-        { "@type": "ListItem", "position": 5, "name": "荣誉记录", "item": "https://janez808.github.io/#awards" }
+        { "@type": "ListItem", "position": 5, "name": "光影瞬间", "item": "https://janez808.github.io/#gallery" }
       ]
     }
   ]
