@@ -31,13 +31,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://janez808.github.io/all.html?sec=ost</loc>
-    <lastmod>2026-10-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://janez808.github.io/all.html?sec=global</loc>
+    <loc>https://janez808.github.io/all.html?sec=singles</loc>
     <lastmod>2026-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
