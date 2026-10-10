@@ -362,7 +362,7 @@
     if (!track) return;
     const words = tags(src('PROFILE'));
     const seq = words.map(w => `<span class="mq-item">${w}</span><i class="mq-dot">✦</i>`).join('');
-    track.innerHTML = seq + seq; // 复制一份实现无缝循环
+    track.innerHTML = seq + seq + seq + seq; // 4 份复制，-25% 动画，彻底消除空白中断
   }
 
   /* ================= 计数回填：data-count → 各数据源实际条数 ================= */
@@ -575,7 +575,6 @@
 
     renderNews();
     renderProfile();
-    renderAlbums('all');
     renderSingles();
     renderTours();
     renderGallery();

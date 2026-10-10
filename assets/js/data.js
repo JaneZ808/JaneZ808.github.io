@@ -475,30 +475,6 @@ const NEWS = [
     tag: '荣誉',
     title: '第七届TMEA年度女歌手，《野心家》入选年度十大金曲',
     desc: '第七届TMEA腾讯音乐娱乐盛典在澳门落幕，张靓颖斩获"年度女歌手"，歌曲《野心家》同时入选年度十大金曲。当晚她接连献唱《野心家》《办不到》及英文单曲《Green Light》。'
-  },
-  {
-    date: '2026.02.16',
-    tag: '春晚',
-    title: '参加2026年央视春晚，表演节目《立上游》',
-    desc: '登上《2026年中央广播电视总台春节联欢晚会》舞台，表演节目《立上游》。'
-  },
-  {
-    date: '2025',
-    tag: '荣誉',
-    title: '第六届TMEA双奖加冕，《Green Light》入选年度十大金曲',
-    desc: '在第六届TMEA腾讯音乐娱乐盛典中一人包揽"年度最受欢迎歌手"与"年度最具影响力内地女歌手"双项荣誉，英文单曲《Green Light》入选年度十大金曲。'
-  },
-  {
-    date: '2025.07.25',
-    tag: 'OST',
-    title: '《野心家》发行，成年度"女性战歌"',
-    desc: '为电视剧《灼灼韶华》献唱的主题曲《野心家》上线，由唐恬作词、周以力作曲，被视为其近年最出圈的突破之作，引发广泛翻唱与社会共鸣。'
-  },
-  {
-    date: '2025.10.11',
-    tag: '新歌',
-    title: '生日当天惊喜上线英文EP《Do What Makes You Feel Alive》',
-    desc: '通过靡之音乐于生日当天推出英文EP，首单《Do What Makes You Feel Alive》由 Sarah Close 与 Ellis 创作、丁少华制作；EP 陆续收录 5 首曲目，登上腾讯音乐浪潮榜2025年10月榜第7位。'
   }
 ];
 
@@ -525,15 +501,7 @@ const GALLERY = [
 
 /* ---------- 封面 / 背景映射（本地图片，由抓取脚本生成；缺失时前端回退渐变占位） ---------- */
 const COVER_MAP = {
-  album: [
-    'assets/img/covers/album-0.jpg', 'assets/img/covers/album-1.jpg', 'assets/img/covers/album-2.jpg',
-    'assets/img/covers/album-3.jpg', 'assets/img/covers/album-4.jpg', 'assets/img/covers/album-5.jpg',
-    'assets/img/covers/album-6.jpg', 'assets/img/covers/album-7.jpg', 'assets/img/covers/album-8.jpg',
-    'assets/img/covers/album-9.jpg', 'assets/img/covers/album-10.jpg', 'assets/img/covers/album-11.jpg',
-    'assets/img/covers/album-12.jpg', 'assets/img/covers/album-13.jpg', 'assets/img/covers/album-14.jpg',
-    'assets/img/covers/album-15.jpg', 'assets/img/covers/album-16.jpg', 'assets/img/covers/album-17.jpg',
-    'assets/img/covers/album-18.jpg', ''
-  ],
+  album: [],
   ost: [
     'assets/img/osts/ost-0.jpg', 'assets/img/osts/ost-1.jpg', 'assets/img/osts/ost-2.jpg',
     'assets/img/osts/ost-3.jpg', 'assets/img/osts/ost-4.jpg', 'assets/img/osts/ost-5.jpg',

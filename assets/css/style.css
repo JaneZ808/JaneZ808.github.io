@@ -989,7 +989,7 @@ html[data-theme="light"] .hero-photo-overlay {
   font-size: 20px; letter-spacing: .14em; color: var(--text-2); padding: 0 26px;
 }
 .mq-dot { color: var(--gold); font-size: 12px; font-style: normal; }
-@keyframes mq-slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes mq-slide { from { transform: translateX(0); } to { transform: translateX(-25%); } }
 
 /* ============ 页脚（三栏） ============ */
 .footer-grid {
@@ -1935,3 +1935,22 @@ html[data-theme-event] .hero-quote { color: color-mix(in srgb, var(--gold) 78%, 
    ★ 临时资产 · 2026 生日限时主题 结束
    ══════════════════════════════════════════════════════════════ */
 
+/* ============ all.html 板块背景图 ============ */
+.f-sec[data-sec] {
+  position: relative;
+  padding: 64px 0;
+  border-top: 1px solid var(--border);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.f-sec[data-sec="news"]    { background-image: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('assets/img/gallery-4.jpg'); }
+.f-sec[data-sec="profile"] { background-image: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('assets/img/gallery-5.jpg'); }
+.f-sec[data-sec="music"]   { background-image: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('assets/img/gallery-9.jpg'); }
+.f-sec[data-sec="tour"]    { background-image: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('assets/img/gallery-1.jpg'); }
+.f-sec[data-sec="gallery"] { background-image: linear-gradient(135deg, rgba(18,16,24,.92), rgba(26,22,36,.88)), url('assets/img/gallery-8.jpg'); }
+
+/* 亮色模式适配 */
+html[data-theme="light"] .f-sec[data-sec] {
+  background-image: linear-gradient(135deg, rgba(251,250,249,.94), rgba(245,242,237,.92)), var(--bg-2);
+}
