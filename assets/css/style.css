@@ -527,6 +527,16 @@ img { max-width: 100%; display: block; }
   padding: 4px 10px; border-radius: 999px; background: rgba(0, 0, 0, .42);
   color: #fff; backdrop-filter: blur(6px);
 }
+.ac-studio-no {
+  position: absolute; top: 12px; right: 12px; font-size: 10.5px; letter-spacing: .08em;
+  padding: 4px 10px; border-radius: 999px; background: rgba(216, 180, 108, .88);
+  color: #14110a; font-weight: 600; backdrop-filter: blur(6px);
+}
+.ac-english {
+  position: absolute; bottom: 12px; right: 12px; font-size: 10px; letter-spacing: .12em;
+  padding: 3px 8px; border-radius: 999px; background: rgba(156, 139, 245, .88);
+  color: #fff; font-weight: 600; backdrop-filter: blur(6px);
+}
 .ac-body { padding: 20px 22px 24px; flex: 1; display: flex; flex-direction: column; }
 .ac-meta { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
 .ac-date { font-family: "Cormorant Garamond", Georgia, serif; letter-spacing: .1em; color: var(--gold); }
@@ -1965,3 +1975,86 @@ html[data-theme-event] .hero-quote { color: color-mix(in srgb, var(--gold) 78%, 
 html[data-theme="light"] .full-shell::before {
   background-image: linear-gradient(135deg, rgba(251,250,249,.94), rgba(245,242,237,.92)), var(--bg-2);
 }
+
+/* ══════════════════════════════════════════════════════════════
+   ★ 亮色主题（light theme）对比度修复
+   深色模式默认大量使用 rgba(255,255,255,...) 文字/边框
+   与 rgba(7,7,11,...) 深色遮罩，浅色模式下均不可读。
+   以下按视觉层次覆盖：首屏标题、区块照片遮罩、个人档案面板、
+   区块标题投影。已使用 var(--*) 变量的规则无需覆盖。
+   ══════════════════════════════════════════════════════════════ */
+
+/* 1｜首屏大标题（ht-cn）：白→金渐变在浅色底不可见，改用暖金深色 */
+html[data-theme="light"] .ht-cn {
+  background: linear-gradient(120deg, #4a3d1a 15%, #a8813a 55%, #6b4a1e 85%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* 2｜区块照片背景（.sec::before 的照片 + .sec::after 深色遮罩）
+      深色遮罩 → 浅色柔化遮罩，保留照片氛围但确保白底可读 */
+html[data-theme="light"] .sec::after {
+  background:
+    linear-gradient(180deg,
+      rgba(251,250,249,.86) 0%,
+      rgba(251,250,249,.72) 42%,
+      rgba(251,250,249,.92) 100%),
+    radial-gradient(85% 62% at 50% 45%,
+      transparent 0%,
+      rgba(251,250,249,.5) 100%);
+}
+
+/* 3｜区块标题（.sec-head）与全量页标题（.full-head）
+      深色投影 → 浅色柔化投影，避免深色底感 */
+html[data-theme="light"] .sec-head,
+html[data-theme="light"] .full-head {
+  text-shadow: 0 1px 10px rgba(255,255,255,.7);
+}
+
+/* 4｜个人档案 Resume 面板：整个区域原本为深色底 + 白色文字，
+      浅色模式统一改为浅灰底 + 深色文字 */
+html[data-theme="light"] .resume-stage {
+  background: linear-gradient(180deg, #f3f1f6, #e6e1ec);
+}
+html[data-theme="light"] .rs-photo::after {
+  background:
+    linear-gradient(90deg, #e9e6ef 0%, transparent 22%),
+    linear-gradient(180deg,
+      rgba(247,244,240,.55) 0%,
+      transparent 18%,
+      transparent 80%,
+      rgba(247,244,240,.62) 100%);
+}
+html[data-theme="light"] .rs-panel {
+  color: #17151f;
+  text-shadow: none;
+}
+html[data-theme="light"] .rs-intro { color: #4a4658; }
+html[data-theme="light"] .fact-row {
+  border-bottom-color: rgba(24,20,40,.12);
+}
+html[data-theme="light"] .fact-k { color: #17151f; }
+html[data-theme="light"] .fact-v { color: #2a2638; }
+html[data-theme="light"] .rs-tags span {
+  border-color: rgba(24,20,40,.24);
+  color: #4a4658;
+}
+
+/* 5｜顶部导航在浅色底略加深，避免与页面背景混同 */
+html[data-theme="light"] #header.solid {
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+}
+
+/* 6｜区块标题左侧竖线（v-line）已用 --border-strong 变量，浅色下自动为深描边，无需覆盖 */
+
+/* 7｜相册/专辑封面艺术层（.ac-art / .gi-art）使用固定深色渐变作作品视觉，
+      其上的 #fff 文字/边框均位于彩色渐变之上，两种主题下都清晰，无需覆盖 */
+
+/* 8｜灯箱（.lightbox）背景 rgba(4,4,8,.94) 为固定深色遮罩（模态层），
+      其内部按钮 rgba(255,255,255,...) 保持白色，无需覆盖 */
+
+/* 9｜sec-more / sub-more / full-tab.is-on 等按钮使用 --gold / --gold-soft 变量，
+      已在 :root 变量层完成浅色模式覆盖 */
+
+/* 10｜.nx-item / .sg-row / .tr-row / .album-card 等卡片背景
+      使用 var(--surface) 或 color-mix(var(--surface), transparent)，
+      浅色模式下自动为白色 / 浅白，无需覆盖 */
