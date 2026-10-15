@@ -35,7 +35,7 @@
   const SECS = [
     { k: 'news',    cn: '最新动态',   en: 'News',    desc: '全部动态按发布时间倒序排列，可上下翻阅历年消息。' },
     { k: 'profile', cn: '个人档案',   en: 'Profile', desc: '完整档案信息，含简介、全部条目与音乐标签。' },
-    { k: 'music',   cn: '音乐作品',   en: 'Music',   desc: '全部音乐作品：录音室专辑、迷你专辑 EP、现场辑、精选辑、影视金曲 OST、英文单曲与综艺节目。' },
+    { k: 'music',   cn: '音乐专辑',   en: 'Music',   desc: '全部专辑：7 张录音室专辑（含 1 张全英文）、迷你专辑 EP、现场辑与精选辑，点击封面查看该专辑信息。' },
     { k: 'tour',    cn: '巡回演唱会', en: 'Tour',    desc: '从 2008 年首次巡演到「追」世界巡回。' },
     { k: 'gallery', cn: '绝世美颜',   en: 'Beauty',   desc: '全部舞台、红毯与巡演影像。' }
   ];
@@ -209,21 +209,22 @@
     bindCoverFallback();
   }
 
-  /* ================= 渲染：音乐作品 · 专辑卡片网格 + 其他作品列表 ================= */
+  /* ================= 渲染：音乐专辑 · 专辑卡片网格
+   * 本板块仅展示专辑（ALBUMS）；影视金曲 / 英文单曲 / 综艺已从本板块移除，
+   * 数据层 OSTS / GLOBAL_SONGS / VARIETY 及 osts/*.html 详情页保留但不再渲染。 */
   const ALBUM_LIMIT_HOME = 8;  // 首页展示 8 张专辑卡片
-  const OTHER_LIMIT_HOME = 6;  // 首页展示 6 条其他作品
 
   function renderSingles() {
     const host = $('#singlesList');
     if (!host) return;
 
-    /* ---- 1. 专辑卡片网格（按日期倒序，最新在前） ---- */
+    /* 专辑卡片网格（按日期倒序，最新在前） */
     const cmap = (window.COVER_MAP && window.COVER_MAP.album) || [];
     const albums = src('ALBUMS').map((a, gi) => ({ a, gi })).sort((x, y) =>
       String(y.a.date || '').localeCompare(String(x.a.date || ''), undefined, { numeric: true }));
     const albumRows = FULL ? albums : albums.slice(0, ALBUM_LIMIT_HOME);
 
-    const albumHTML = albumRows.map(({ a, gi }, i) => `
+    host.innerHTML = albumRows.map(({ a, gi }, i) => `
       <a class="album-card reveal" style="--d:${dly(i, 90)}ms" href="albums/album-${gi}.html">
         <div class="ac-cover">
           <div class="ac-art" style="${grad(gi)}" aria-hidden="true">
@@ -248,47 +249,7 @@
             <p class="ac-label">发行：${a.label}</p>
           </div>` : ''}
         </div>
-      </a>`).join('');
-
-    /* ---- 2. 其他作品列表（影视金曲 + 英文单曲 + 综艺） ---- */
-    const KIND_LABEL = { OST: '影视金曲', EN: '英文单曲', VAR: '综艺' };
-    const otherWorks = [
-      ...src('OSTS').map((o, gi) => ({
-        name: o.song, work: o.work || '', year: o.year || '',
-        kind: 'OST', href: `osts/ost-${gi}.html`
-      })),
-      ...src('GLOBAL_SONGS').map(g => ({
-        name: g.name, work: g.work || '', year: g.year || '',
-        kind: 'EN', href: ''
-      })),
-      ...src('VARIETY').map(v => ({
-        name: v.name, work: v.role || '', year: v.year || '',
-        kind: 'VAR', href: ''
-      }))
-    ].sort((a, b) =>
-      String(b.year || '').localeCompare(String(a.year || ''), undefined, { numeric: true }));
-    const otherRows = FULL ? otherWorks : otherWorks.slice(0, OTHER_LIMIT_HOME);
-
-    const otherHTML = otherRows.map((s, i) => `
-      <div class="sg-row reveal" style="--d:${dly(i, 60)}ms">
-        <span class="sg-no">${pad2(i + 1)}</span>
-        <div class="sg-bd">
-          <span class="sg-name">${s.name}</span>
-          ${s.work ? `<span class="sg-work">${s.work}</span>` : ''}
-        </div>
-        <span class="sg-kind">${KIND_LABEL[s.kind] || ''}</span>
-        ${s.year ? `<span class="sg-year">${s.year}</span>` : ''}
-        ${s.href ? '<span class="sg-go">→</span>' : ''}
-      </div>`).join('');
-
-    host.innerHTML = `
-      <div class="alb-grid" id="albumGrid">${albumHTML}</div>
-      <div class="sub-head sub-head-sm reveal">
-        <h3>影视金曲 · 英文单曲 · 综艺</h3>
-        ${FULL ? '' : `<a class="sub-more" href="all.html?sec=music">查看全部 →</a>`}
-      </div>
-      <div class="sg-list">${otherHTML}</div>
-    `;
+      </a>`).join('') || '<p style="color:var(--muted)">暂无该分类作品。</p>';
 
     bindCoverFallback();
   }
@@ -421,7 +382,7 @@
       global: src('GLOBAL_SONGS').length,
       variety: src('VARIETY').length,
       singles: src('OSTS').length + src('GLOBAL_SONGS').length,
-      music: src('ALBUMS').length + src('OSTS').length + src('GLOBAL_SONGS').length + src('VARIETY').length,
+      music: src('ALBUMS').length,
       tour: src('TOURS').length,
       gallery: src('GALLERY').length
     };
