@@ -59,7 +59,7 @@ const PROFILE = {
 const ALBUMS = [
   {
     name: 'Past Progressive',
-    cn: '首张全英文专辑',
+    cn: '全英文专辑 · 国际制作',
     date: '2019.04.27',
     type: 'studio',
     english: true,
@@ -71,7 +71,7 @@ const ALBUMS = [
   },
   {
     name: '第七感',
-    cn: '第六张录音室专辑',
+    cn: '时尚概念专辑',
     date: '2014.07.21',
     type: 'studio',
     studioNo: 6,
@@ -83,7 +83,7 @@ const ALBUMS = [
   },
   {
     name: '改变',
-    cn: '第五张录音室专辑',
+    cn: '双白金销量专辑',
     date: '2011.06.01',
     type: 'studio',
     studioNo: 5,
@@ -95,7 +95,7 @@ const ALBUMS = [
   },
   {
     name: '我相信',
-    cn: '第四张录音室专辑',
+    cn: '销量冠军专辑',
     date: '2010.02.02',
     type: 'studio',
     studioNo: 4,
@@ -107,7 +107,7 @@ const ALBUMS = [
   },
   {
     name: '张靓颖@音乐',
-    cn: '第三张录音室专辑',
+    cn: '华谊经典专辑',
     date: '2009.01.16',
     type: 'studio',
     studioNo: 3,
@@ -119,7 +119,7 @@ const ALBUMS = [
   },
   {
     name: 'UPDATE*JANE',
-    cn: '第二张录音室专辑',
+    cn: '原创作曲专辑',
     date: '2007.08',
     type: 'studio',
     studioNo: 2,
@@ -131,7 +131,7 @@ const ALBUMS = [
   },
   {
     name: 'The One',
-    cn: '首张录音室专辑',
+    cn: '出道首专 · 十倍白金',
     date: '2006.10.11',
     type: 'studio',
     studioNo: 1,
@@ -165,7 +165,7 @@ const ALBUMS = [
   },
   {
     name: 'Dear Jane',
-    cn: '第二张迷你专辑',
+    cn: '同名迷你专辑',
     date: '2007.12.08',
     type: 'ep',
     label: '华谊兄弟',
@@ -176,7 +176,7 @@ const ALBUMS = [
   },
   {
     name: 'Jane·爱',
-    cn: '首张迷你专辑',
+    cn: '出道迷你专辑',
     date: '2006.01.12',
     type: 'ep',
     label: '华谊兄弟',
