@@ -35,7 +35,7 @@
   const SECS = [
     { k: 'news',    cn: '最新动态',   en: 'News',    desc: '全部动态按发布时间倒序排列，可上下翻阅历年消息。' },
     { k: 'profile', cn: '个人档案',   en: 'Profile', desc: '完整档案信息，含简介、全部条目与音乐标签。' },
-    { k: 'music',   cn: '音乐专辑',   en: 'Music',   desc: '全部专辑：7 张录音室专辑（含 1 张全英文）、迷你专辑 EP、现场辑与精选辑，点击封面查看该专辑信息。' },
+    { k: 'music',   cn: '正式专辑',   en: 'Music',   desc: '出道至今 6 张正式录音室专辑（The One / UPDATE*JANE / 张靓颖@音乐 / 我相信 / 改变 / 第七感），不含英文专辑 Past Progressive、迷你 EP、现场辑与精选辑。点击封面查看该专辑信息。' },
     { k: 'tour',    cn: '巡回演唱会', en: 'Tour',    desc: '从 2008 年首次巡演到「追」世界巡回。' },
     { k: 'gallery', cn: '绝世美颜',   en: 'Beauty',   desc: '全部舞台、红毯与巡演影像。' }
   ];
@@ -209,10 +209,22 @@
     bindCoverFallback();
   }
 
-  /* ================= 渲染：音乐专辑 · 专辑卡片网格
-   * 本板块仅展示专辑（ALBUMS）；影视金曲 / 英文单曲 / 综艺已从本板块移除，
-   * 数据层 OSTS / GLOBAL_SONGS / VARIETY 及 osts/*.html 详情页保留但不再渲染。 */
-  const ALBUM_LIMIT_HOME = 8;  // 首页展示 8 张专辑卡片
+  /* ================= 渲染：正式专辑 · 专辑卡片网格
+   * 本板块仅展示 6 张正式录音室专辑（排除英文专辑 Past Progressive、迷你 EP、
+   * 现场辑、精选辑）；被过滤掉的专辑及其详情页 albums/album-N.html 保留但不再
+   * 从本板块渲染。数据层 OSTS / GLOBAL_SONGS / VARIETY 亦保留不渲染。
+   *
+   * gi = 在原始 ALBUMS 数组中的下标，决定详情页文件名与 COVER_MAP 取值；
+   * 过滤发生在 map 之后、排序之前，不影响 gi 与详情页/封面的对齐。 */
+  const ALBUM_LIMIT_HOME = 6;  // 首页展示 6 张（实际就 6 张，全量）
+
+  /* 正式专辑视图：仅保留 type === 'studio' 且非英文的录音室专辑。
+   * 返回 [{ a, gi }]，gi 为原始下标，用于详情页 URL 与封面映射。 */
+  function studioAlbums() {
+    return src('ALBUMS')
+      .map((a, gi) => ({ a, gi }))
+      .filter(x => x.a.type === 'studio' && !x.a.english);
+  }
 
   function renderSingles() {
     const host = $('#singlesList');
@@ -220,7 +232,7 @@
 
     /* 专辑卡片网格（按日期倒序，最新在前） */
     const cmap = (window.COVER_MAP && window.COVER_MAP.album) || [];
-    const albums = src('ALBUMS').map((a, gi) => ({ a, gi })).sort((x, y) =>
+    const albums = studioAlbums().sort((x, y) =>
       String(y.a.date || '').localeCompare(String(x.a.date || ''), undefined, { numeric: true }));
     const albumRows = FULL ? albums : albums.slice(0, ALBUM_LIMIT_HOME);
 
@@ -382,7 +394,7 @@
       global: src('GLOBAL_SONGS').length,
       variety: src('VARIETY').length,
       singles: src('OSTS').length + src('GLOBAL_SONGS').length,
-      music: src('ALBUMS').length,
+      music: studioAlbums().length,
       tour: src('TOURS').length,
       gallery: src('GALLERY').length
     };
