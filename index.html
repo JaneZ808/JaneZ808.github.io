@@ -82,7 +82,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="assets/css/style.css?v=39">
+<link rel="stylesheet" href="assets/css/style.css?v=40">
 </head>
 <body>
 
@@ -123,6 +123,17 @@
   <div class="scroll-progress"><i id="progressBar"></i></div>
 </header>
 
+<!-- ============ 顶部歌词条（固定在导航下方） ============ -->
+<section id="lyricsPanel" class="lyrics-panel lyrics-bar">
+  <div class="lp-inner">
+    <div class="lp-head">
+      <span class="lp-title">♪ 正在播放</span>
+      <span class="lp-track">不知道说什么 - 张靓颖</span>
+    </div>
+    <div class="lp-body" id="lpBody"></div>
+  </div>
+</section>
+
 <!-- ============ 首屏 ============ -->
 <section id="hero">
   <div class="hero-bg">
@@ -158,11 +169,6 @@
   </a>
 </section>
 
-<!-- ============ 关键词跑马灯 ============ -->
-<div class="marquee-strip" aria-hidden="true">
-  <div class="marquee-track" id="marqueeTrack"></div>
-</div>
-
 <!-- ============ 个人档案（参考官网 Resume 版式：左侧信息面板 + 右侧大图） ============ -->
 <section id="profile" class="sec sec-profile sec-enter">
   <div class="resume-stage">
@@ -171,9 +177,7 @@
         <b>Profile</b>
         <span>个人档案</span>
       </h2>
-      <p class="rs-intro reveal rl-left" id="pcIntro"></p>
       <ul class="rs-facts" id="factsTable"></ul>
-      <div class="rs-tags reveal rl-left" id="pcTags"></div>
     </div>
     <div class="rs-photo reveal rl-right">
       <img src="assets/img/gallery-5.jpg" alt="张靓颖写真" decoding="async">
@@ -287,17 +291,6 @@
   <span class="bgm-cap-dot" aria-hidden="true">♪</span>
   <span class="bgm-cap-text"></span>
 </button>
-
-<!-- 完整歌词面板 -->
-<section id="lyricsPanel" class="lyrics-panel">
-  <div class="lp-inner">
-    <div class="lp-head">
-      <span class="lp-title">♪ 正在播放</span>
-      <span class="lp-track">不知道说什么 - 张靓颖</span>
-    </div>
-    <div class="lp-body" id="lpBody"></div>
-  </div>
-</section>
 
 <!-- noscript：JS 渲染兜底（百度蜘蛛等不执行 JS 的爬虫可见的静态内链清单） -->
 <noscript>

@@ -430,10 +430,6 @@ img { max-width: 100%; display: block; }
   content: ""; display: block; width: 34px; height: 4px;
   background: var(--gold); margin: 18px 0 0 4px;
 }
-.rs-intro {
-  margin: 28px 0 4px; font-size: 13px; line-height: 1.95;
-  color: rgba(255,255,255,.72); text-align: justify;
-}
 .rs-facts { margin-top: 16px; }
 .fact-row {
   display: flex; align-items: baseline; padding: 11px 0;
@@ -446,11 +442,6 @@ img { max-width: 100%; display: block; }
   font-weight: 600; color: #fff; letter-spacing: .12em;
 }
 .fact-v { color: rgba(255,255,255,.9); }
-.rs-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-.rs-tags span {
-  font-size: 11.5px; padding: 5px 13px; border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.24); color: rgba(255,255,255,.78);
-}
 
 /* ============ 时间线 ============ */
 .timeline { position: relative; padding: 10px 0; }
@@ -984,24 +975,6 @@ html[data-theme="light"] .hero-photo-overlay {
   border-radius: 12px; padding: 14px 16px; font-size: 13px; color: #ffb3b3; line-height: 1.5;
 }
 .auth-diag .btn { margin-left: auto; }
-
-/* ============ 关键词跑马灯 ============ */
-.marquee-strip {
-  overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-  background: var(--bg-2); padding: 20px 0; position: relative;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-}
-.marquee-track {
-  display: inline-flex; align-items: center; gap: 0; white-space: nowrap;
-  animation: mq-slide 28s linear infinite; will-change: transform;
-}
-.mq-item {
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 20px; letter-spacing: .14em; color: var(--text-2); padding: 0 26px;
-}
-.mq-dot { color: var(--gold); font-size: 12px; font-style: normal; }
-@keyframes mq-slide { from { transform: translateX(0); } to { transform: translateX(-25%); } }
 
 /* ============ 页脚（三栏） ============ */
 .footer-grid {
@@ -2316,125 +2289,174 @@ html[data-theme="light"] .bgm-caption {
   .bgm-caption { max-width: 86vw; bottom: 20px; font-size: 13px; padding: 8px 18px; }
 }
 
-/* ── 9｜首页完整歌词面板 ========================================
-   版式：居中玻璃卡片，内部歌词列表面板高度约 50-60vh
-   动画：当前行金色高亮 + 自动滚动平滑过渡 */
-.lyrics-panel {
-  padding: 64px 0 40px;
+/* ── 9｜顶部歌词条（导航下方固定） ========================================
+   版式：header 下方 sticky 窄条，玻璃拟态，始终可见
+   交互：当前句金色高亮，点击可 seek（由 main.js initLyricsPanel 驱动） */
+.lyrics-bar {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  padding: 0;
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 .lp-inner {
-  max-width: 860px;
+  max-width: 1240px;
   margin: 0 auto;
-  background: color-mix(in srgb, var(--surface) 72%, transparent);
-  border: 1px solid var(--border-strong);
-  border-radius: 20px;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-.lp-head {
+  padding: 10px 24px;
   display: flex;
-  align-items: baseline;
-  gap: 14px;
-  padding: 20px 26px 14px;
-  border-bottom: 1px solid var(--border);
+  align-items: center;
+  gap: 18px;
+  overflow: hidden;
 }
 .lp-title {
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: .22em;
   color: var(--gold);
   text-transform: uppercase;
+  flex-shrink: 0;
 }
 .lp-track {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--muted);
   letter-spacing: .04em;
+  flex-shrink: 0;
 }
 .lp-body {
-  max-height: 58vh;
-  overflow-y: auto;
-  padding: 10px 8px;
-  scroll-behavior: smooth;
+  flex: 1 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 88%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 88%, transparent);
 }
 .lp-line {
-  padding: 11px 26px;
-  font-size: 15px;
-  line-height: 1.7;
+  display: inline-block;
+  padding: 4px 18px 4px 0;
+  font-size: 13.5px;
+  line-height: 1.6;
   color: var(--text-2);
-  cursor: pointer;
-  transition: color .35s var(--ease), opacity .35s var(--ease), transform .35s var(--ease);
+  transition: color .35s var(--ease), opacity .35s var(--ease);
   border-left: 2px solid transparent;
 }
-.lp-line:hover {
-  color: var(--text);
-  background: color-mix(in srgb, var(--gold-soft) 40%, transparent);
-}
-.lp-line.past {
-  opacity: .45;
-}
+.lp-line.past { opacity: .4; }
 .lp-line.on {
   color: var(--gold);
-  font-size: 17px;
   font-weight: 500;
-  border-left-color: var(--gold);
-  transform: translateX(6px);
 }
 .lp-empty {
-  padding: 32px;
-  text-align: center;
+  padding: 8px 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 12px;
 }
 @media (max-width: 640px) {
-  .lyrics-panel { padding: 48px 0 28px; }
-  .lp-inner { border-radius: 16px; }
-  .lp-body { max-height: 42vh; }
-  .lp-line { padding: 10px 16px; font-size: 14px; }
-  .lp-line.on { font-size: 15px; }
+  .lyrics-bar { top: 0; }
+  .lp-inner { padding: 8px 14px; gap: 10px; }
+  .lp-title { font-size: 10px; }
+  .lp-track { display: none; }
+  .lp-line { font-size: 12px; padding: 3px 10px 3px 0; }
 }
 
 /* ── 10｜绝世美颜增强 ==========================================
-   网格项常驻底部遮罩 + 标题，hover 加深 + 图片微放大；灯箱进出动画；区块头装饰线 */
-.gg-item { isolation: isolate; }
+   大气水晶玻璃卡片 + 光效扫过 + 灯箱模糊放大；区块头装饰线 */
+.gg-item {
+  isolation: isolate;
+  border-radius: 18px;
+  border: 1px solid var(--border-strong);
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,0,0,.25);
+  transition: transform .55s var(--ease), box-shadow .55s var(--ease), border-color .55s var(--ease);
+}
+.gg-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 50px rgba(0,0,0,.45);
+  border-color: rgba(255,255,255,.28);
+}
+/* 光效扫过 */
+.gg-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.12) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform .8s var(--ease);
+  pointer-events: none;
+  z-index: 3;
+}
+.gg-item:hover::after { transform: translateX(100%); }
+
+.gi-art {
+  position: absolute;
+  inset: 0;
+  transition: transform .8s var(--ease);
+}
+.gg-item:hover .gi-art { transform: scale(1.08); }
+.gg-grid .gi-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.04);
+  transition: opacity 1s var(--ease), transform 1.3s var(--ease);
+}
+.gg-grid .gi-img.ready { opacity: 1; transform: scale(1); }
+
 .gi-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.22) 50%, transparent 78%);
-  opacity: .55;
+  background: linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.18) 55%, transparent 78%);
+  opacity: .5;
   transition: opacity .5s var(--ease);
   display: flex;
   align-items: flex-end;
-  padding: 18px;
+  padding: 20px;
   pointer-events: none;
+  z-index: 2;
 }
 .gg-item:hover .gi-overlay { opacity: 1; }
 .gi-title {
   color: #fff;
   font-size: 13.5px;
   letter-spacing: .1em;
-  transform: translateY(6px);
-  transition: transform .5s var(--ease), font-size .5s var(--ease);
-  text-shadow: 0 2px 10px rgba(0,0,0,.7);
+  transform: translateY(8px);
+  transition: transform .5s var(--ease), font-size .5s var(--ease), opacity .5s var(--ease);
+  text-shadow: 0 2px 12px rgba(0,0,0,.8);
+  opacity: .9;
 }
-.gg-item:hover .gi-title { transform: none; font-size: 14.5px; }
+.gg-item:hover .gi-title { transform: none; font-size: 14.5px; opacity: 1; }
 
-/* 灯箱增强：背景模糊 + 内容缩放入场 */
+/* 灯箱增强：背景模糊 + 内容缩放入场 + 更宽展示 */
 .lightbox {
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  background: rgba(4,4,8,.88);
 }
 .lb-art {
-  transform: scale(.96);
+  transform: scale(.92);
   opacity: 0;
-  transition: transform .4s var(--ease), opacity .35s var(--ease);
+  transition: transform .5s var(--ease), opacity .4s var(--ease);
+  max-width: 92vw;
+  max-height: 88vh;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,.6);
 }
 .lightbox.show .lb-art {
   transform: scale(1);
   opacity: 1;
 }
 .lb-img {
-  transition: transform .45s var(--ease), opacity .4s var(--ease);
+  transition: transform .6s var(--ease), opacity .5s var(--ease);
+  max-width: 100%;
+  max-height: 88vh;
+  object-fit: contain;
 }
 
 /* 区块头部装饰线 */
@@ -2454,11 +2476,14 @@ html[data-theme="light"] .bgm-caption {
 
 /* 响应式微调 */
 @media (max-width: 1000px) {
+  .gg-grid { gap: 12px; }
   .gi-title { font-size: 12px; }
   .gg-item:hover .gi-title { font-size: 13px; }
 }
 @media (max-width: 640px) {
-  .gi-overlay { padding: 12px; }
-  .gi-title { font-size: 11px; transform: translateY(4px); }
+  .gg-item { border-radius: 14px; }
+  .gi-overlay { padding: 14px; }
+  .gi-title { font-size: 11px; transform: translateY(5px); }
   .gg-item:hover .gi-title { font-size: 12px; }
+  .gg-grid { gap: 10px; }
 }

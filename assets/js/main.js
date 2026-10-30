@@ -95,10 +95,6 @@
     return `--c1:${p[0]};--c2:${p[1]}`;
   };
 
-  /* ---------- 音乐风格标签（数据缺失时的兜底） ---------- */
-  const DEFAULT_TAGS = ['流行 Pop', 'R&B', '爵士 Jazz', '灵魂乐 Soul', '海豚音', 'OST 女王'];
-  const tags = (P) => (P && P.tags && P.tags.length ? P.tags : DEFAULT_TAGS);
-
   /* ================= 渲染：首屏数据 ================= */
   function renderHeroStats() {
     const host = $('#heroStats');
@@ -111,8 +107,8 @@
   }
 
   /* ================= 渲染：个人档案 · 照片面板 =================
-   * 主页：左面板（简介 + 前 6 项档案 + 标签）右照片；
-   * 全量：引言 + 两列定义网格（全部条目）+ 标签 */
+   * 主页：左面板（前 6 项档案）右照片；
+   * 全量：两列定义网格（全部条目）。已移除长传记与标签。 */
   function renderProfile() {
     const P = src('PROFILE');
 
@@ -120,22 +116,16 @@
       const host = $('#rfBody');
       if (!host) return;
       host.innerHTML = `
-        <p class="rf-intro reveal">${P.intro}</p>
         <div class="rf-grid">
           ${P.facts.map((f, i) => `
             <div class="rf-cell reveal" style="--d:${dly(i, 70)}ms">
               <span class="rf-k">${f.k}</span>
               <span class="rf-v">${f.v}</span>
             </div>`).join('')}
-        </div>
-        <div class="rs-tags reveal">${tags(P).map(t => `<span>${t}</span>`).join('')}</div>`;
+        </div>`;
       return;
     }
 
-    const intro = $('#pcIntro');
-    if (intro) intro.textContent = P.intro;
-    const tHost = $('#pcTags');
-    if (tHost) tHost.innerHTML = tags(P).map(t => `<span>${t}</span>`).join('');
     const fHost = $('#factsTable');
     if (fHost) fHost.innerHTML = take(P.facts).map((f, i) => `
       <li class="fact-row reveal" style="--d:${i * 55}ms">
@@ -345,15 +335,6 @@
     const fl = $('#footerPlatLinks');
     if (fl) fl.innerHTML = src('PLATFORMS').map(p =>
       `<a href="${p.url}" target="_blank" rel="noopener noreferrer nofollow">${p.name} →</a>`).join('');
-  }
-
-  /* ================= 渲染：关键词跑马灯 ================= */
-  function renderMarquee() {
-    const track = $('#marqueeTrack');
-    if (!track) return;
-    const words = tags(src('PROFILE'));
-    const seq = words.map(w => `<span class="mq-item">${w}</span><i class="mq-dot">✦</i>`).join('');
-    track.innerHTML = seq + seq + seq + seq; // 4 份复制，-25% 动画，彻底消除空白中断
   }
 
   /* ================= 计数回填：data-count → 各数据源实际条数 ================= */
@@ -674,7 +655,6 @@
       buildFull(new URLSearchParams(location.search).get('sec') || 'profile');
     } else {
       renderHeroStats();
-      renderMarquee();
     }
 
     renderProfile();
