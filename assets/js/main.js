@@ -585,33 +585,34 @@
 
     audio.addEventListener('play', sync);
     audio.addEventListener('pause', sync);
-    /* 点击字幕条滚动到首页歌词面板 */
+    /* 点击字幕条聚焦到导航歌词条 */
     if (cap) cap.addEventListener('click', () => {
-      const panel = $('#lyricsPanel');
-      if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      else location.href = 'lyrics.html';
+      const track = $('#nlTrack');
+      if (track) track.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 
-    initLyricsPanel();
+    renderNavLyrics();
+    initNavLyrics();
   }
 
-  /* ================= 首页完整歌词面板 =================
-   * 在 #lyricsPanel 内渲染完整歌词，随曲高亮并自动滚动；点击行可 seek。 */
-  function renderLyricsPanel() {
-    const host = $('#lpBody');
-    if (!host) return;
+  /* ================= 导航栏歌词条（一句一句横向滚动） =================
+   * 在 #navLyrics / #nlTrack 内渲染全部歌词句，随曲高亮并横向滚动；点击可 seek。 */
+  function renderNavLyrics() {
+    const track = $('#nlTrack');
+    if (!track) return;
     const LRC = (window.JANEZ_LRC || []).filter(x => !x[2]); // 跳过制作信息
-    if (!LRC.length) { host.innerHTML = '<p class="lp-empty">暂无歌词</p>'; return; }
+    if (!LRC.length) return;
 
-    host.innerHTML = LRC.map((item, i) =>
-      `<div class="lp-line" data-t="${item[0]}">${item[1]}</div>`).join('');
+    track.innerHTML = LRC.map((item, i) =>
+      `<span class="nl-line" data-t="${item[0]}" data-i="${i}">${item[1]}</span>`
+    ).join('');
   }
 
-  function initLyricsPanel() {
+  function initNavLyrics() {
     const audio = bgmAudio || $('#bgm');
-    const body = $('#lpBody');
-    if (!audio || !body) return;
-    const lines = $$('.lp-line', body);
+    const track = $('#nlTrack');
+    if (!audio || !track) return;
+    const lines = $$('.nl-line', track);
     if (!lines.length) return;
 
     let cur = -1;
@@ -624,14 +625,11 @@
       }
       if (idx === cur) return;
       cur = idx;
-      lines.forEach((el, i) => {
-        el.classList.toggle('on', i === idx);
-        el.classList.toggle('past', i < idx);
-      });
+      lines.forEach((el, i) => el.classList.toggle('on', i === idx));
       if (idx >= 0) {
-        const target = lines[idx];
-        const top = target.offsetTop - body.offsetTop - body.clientHeight * 0.38;
-        body.scrollTo({ top, behavior: 'smooth' });
+        const el = lines[idx];
+        const left = el.offsetLeft - track.clientWidth / 2 + el.clientWidth / 2;
+        track.scrollTo({ left, behavior: 'smooth' });
       }
     };
 
@@ -661,7 +659,6 @@
     renderSingles();
     renderGallery();
     renderPlatforms();
-    renderLyricsPanel();
 
     bindFilters();
     initNav();
@@ -670,6 +667,8 @@
     initLightbox();
     applyUi();
     observeReveal();
+    renderNavLyrics();
+    initNavLyrics();
 
     const toTop = $('#toTop');
     if (toTop) toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));

@@ -105,8 +105,10 @@ img { max-width: 100%; display: block; }
   #header.solid { background: var(--bg); }
 }
 .nav-wrap {
-  height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  height: 78px; display: flex; align-items: center; gap: 24px;
 }
+.nav-wrap > #nav,
+.nav-wrap > .nav-tools { margin-left: auto; }
 .brand { display: flex; flex-direction: column; line-height: 1.2; }
 .brand-cn { font-size: 19px; letter-spacing: .18em; font-weight: 500; }
 .brand-en {
@@ -2289,74 +2291,53 @@ html[data-theme="light"] .bgm-caption {
   .bgm-caption { max-width: 86vw; bottom: 20px; font-size: 13px; padding: 8px 18px; }
 }
 
-/* ── 9｜顶部歌词条（导航下方固定） ========================================
-   版式：header 下方 sticky 窄条，玻璃拟态，始终可见
-   交互：当前句金色高亮，点击可 seek（由 main.js initLyricsPanel 驱动） */
-.lyrics-bar {
-  position: sticky;
-  top: 0;
-  z-index: 60;
-  padding: 0;
-  background: color-mix(in srgb, var(--bg) 78%, transparent);
-  border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-.lp-inner {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 10px 24px;
+/* ── 9｜导航栏歌词条 ========================================
+   版式：嵌入 nav-wrap 内，横向一句一句滚动，始终可见
+   交互：当前句金色高亮，点击可 seek（由 main.js initNavLyrics 驱动） */
+.nav-lyrics {
+  flex: 1 1 280px;
+  max-width: 420px;
+  height: 38px;
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 8px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 52%, transparent);
+  border: 1px solid var(--border);
   overflow: hidden;
 }
-.lp-title {
-  font-size: 11px;
-  letter-spacing: .22em;
+.nl-dot {
   color: var(--gold);
-  text-transform: uppercase;
-  flex-shrink: 0;
-}
-.lp-track {
   font-size: 12px;
-  color: var(--muted);
-  letter-spacing: .04em;
   flex-shrink: 0;
 }
-.lp-body {
-  flex: 1 1 auto;
-  overflow: hidden;
+.nl-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
   white-space: nowrap;
-  position: relative;
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 88%, transparent);
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 88%, transparent);
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 86%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 86%, transparent);
 }
-.lp-line {
+.nl-line {
   display: inline-block;
-  padding: 4px 18px 4px 0;
-  font-size: 13.5px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.5;
   color: var(--text-2);
-  transition: color .35s var(--ease), opacity .35s var(--ease);
-  border-left: 2px solid transparent;
+  transition: color .4s var(--ease), opacity .4s var(--ease), transform .4s var(--ease);
 }
-.lp-line.past { opacity: .4; }
-.lp-line.on {
+.nl-line.past { opacity: .4; }
+.nl-line.on {
   color: var(--gold);
   font-weight: 500;
-}
-.lp-empty {
-  padding: 8px 0;
-  color: var(--muted);
-  font-size: 12px;
+  transform: translateY(-1px);
 }
 @media (max-width: 640px) {
-  .lyrics-bar { top: 0; }
-  .lp-inner { padding: 8px 14px; gap: 10px; }
-  .lp-title { font-size: 10px; }
-  .lp-track { display: none; }
-  .lp-line { font-size: 12px; padding: 3px 10px 3px 0; }
+  .nav-lyrics { max-width: 180px; height: 32px; padding: 0 8px; gap: 6px; }
+  .nl-track { gap: 14px; }
+  .nl-line { font-size: 11.5px; }
 }
 
 /* ── 10｜绝世美颜增强 ==========================================
