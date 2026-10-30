@@ -2202,3 +2202,56 @@ html[data-theme="light"] #header.solid {
 }
 
 /* 浅色主题：遮罩/箭头保持深色玻璃（图片上永远可读），无需 light 覆盖 */
+
+/* ============================================================
+ * 背景音乐按钮（全站常驻右下角，唱片造型）
+ * ============================================================ */
+.bgm-btn {
+  position: fixed;
+  right: 24px;
+  bottom: 88px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .18);
+  background: rgba(14, 12, 22, .55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, .88);
+  cursor: pointer;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.bgm-btn:hover { transform: scale(1.08); border-color: var(--gold, #d8b46c); }
+/* 唱片纹理：同心圆 */
+.bgm-disc {
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255,255,255,.28) 0 12%, transparent 13% 30%, rgba(255,255,255,.14) 31% 33%, transparent 34% 52%, rgba(255,255,255,.1) 53% 55%, transparent 56%);
+  opacity: .8;
+}
+/* 播放中：唱片旋转 + 金圈呼吸 */
+.bgm-btn.is-playing .bgm-disc { animation: bgm-spin 3.2s linear infinite; }
+.bgm-btn.is-playing {
+  border-color: var(--gold, #d8b46c);
+  box-shadow: 0 0 0 1px rgba(216, 180, 108, .35), 0 6px 24px rgba(216, 180, 108, .3);
+}
+@keyframes bgm-spin { to { transform: rotate(360deg); } }
+/* 图标切换 */
+.bgm-btn .bgm-icon-pause { display: none; }
+.bgm-btn.is-playing .bgm-icon-pause { display: block; }
+.bgm-btn.is-playing .bgm-icon-play { display: none; }
+/* 浅色主题 */
+html[data-theme="light"] .bgm-btn {
+  background: rgba(255, 255, 255, .6);
+  border-color: rgba(30, 24, 45, .16);
+  color: #372f4a;
+}
+html[data-theme="light"] .bgm-disc { opacity: .5; }
+@media (max-width: 640px) {
+  .bgm-btn { right: 16px; bottom: 78px; width: 42px; height: 42px; }
+}

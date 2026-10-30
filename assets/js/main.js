@@ -506,6 +506,39 @@
     }
   }
 
+  /* ================= 背景音乐《不知道说什么》 =================
+   * 默认尝试自动播放；被浏览器策略拦截时，监听任意首次交互（点击/按键/滚动/触摸）
+   * 立即启动。右侧常驻唱片按钮可播放/暂停，状态与图标同步。 */
+  function initBgm() {
+    const audio = $('#bgm');
+    const btn = $('#bgmBtn');
+    if (!audio || !btn) return;
+
+    const sync = () => btn.classList.toggle('is-playing', !audio.paused);
+    audio.addEventListener('play', sync);
+    audio.addEventListener('pause', sync);
+
+    btn.addEventListener('click', () => {
+      if (audio.paused) audio.play().catch(() => {});
+      else audio.pause();
+    });
+
+    // 先尝试直接自动播放
+    const pr = audio.play();
+    if (pr && pr.catch) {
+      pr.catch(() => {
+        // 被拦截：任意首次交互兜底启动（一次性）
+        const kick = () => {
+          audio.play().then(() => {}).catch(() => {});
+          ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(ev =>
+            document.removeEventListener(ev, kick, true));
+        };
+        ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(ev =>
+          document.addEventListener(ev, kick, { once: false, capture: true, passive: true }));
+      });
+    }
+  }
+
   /* ================= 初始化 ================= */
   function init() {
     applyEventTheme(); // 限时活动主题须最先执行，且在 applyUi() 之前
@@ -526,6 +559,7 @@
     bindFilters();
     initNav();
     initTheme();
+    initBgm();
     applyUi();
     observeReveal();
 

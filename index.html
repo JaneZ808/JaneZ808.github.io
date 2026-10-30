@@ -20,15 +20,15 @@
 <meta property="og:title" content="张靓颖 Jane Zhang · 个人档案 | 正式专辑 / 绝世美颜">
 <meta property="og:description" content="张靓颖粉丝资料站：个人档案、6 张正式录音室专辑与绝世美颜舞台影像。">
 <meta property="og:url" content="https://janez808.github.io/">
-<meta property="og:image" content="https://janez808.github.io/assets/img/hero.jpg">
-<meta property="og:image:width" content="1600">
-<meta property="og:image:height" content="1067">
+<meta property="og:image" content="https://janez808.github.io/assets/img/hero-song.jpg">
+<meta property="og:image:width" content="1500">
+<meta property="og:image:height" content="1500">
 <meta property="og:locale" content="zh_CN">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="张靓颖 Jane Zhang · 个人档案 | 正式专辑 / 绝世美颜">
 <meta name="twitter:description" content="张靓颖粉丝资料站：个人档案、6 张正式录音室专辑与绝世美颜舞台影像。">
-<meta name="twitter:image" content="https://janez808.github.io/assets/img/hero.jpg">
+<meta name="twitter:image" content="https://janez808.github.io/assets/img/hero-song.jpg">
 <!-- 结构化数据（JSON-LD。CSP 的 script-src 只限制可执行脚本；type="application/ld+json" 为纯数据块，浏览器不执行，与 GitHub 官方实践一致） -->
 <script type="application/ld+json">
 {
@@ -82,7 +82,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="assets/css/style.css?v=36">
+<link rel="stylesheet" href="assets/css/style.css?v=37">
 </head>
 <body>
 
@@ -126,7 +126,7 @@
 <!-- ============ 首屏 ============ -->
 <section id="hero">
   <div class="hero-bg">
-    <img class="hero-photo" src="assets/img/hero.jpg" alt="张靓颖舞台现场" fetchpriority="high" decoding="async">
+    <img class="hero-photo" src="assets/img/hero-song.jpg" alt="张靓颖《不知道说什么》专辑视觉" fetchpriority="high" decoding="async">
     <div class="hero-photo-overlay"></div>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
@@ -147,7 +147,7 @@
       <p class="hero-quote">“终于等到你，还好我没放弃。”</p>
       <div class="hero-actions">
         <a href="#profile" class="btn btn-primary">了解详情</a>
-        <a href="#music" class="btn btn-ghost">正式专辑</a>
+        <a href="lyrics.html" class="btn btn-ghost">♫ 不知道说什么</a>
       </div>
       <div class="hero-stats" id="heroStats"></div>
     </div>
@@ -270,6 +270,14 @@
   <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 19V5m0 0-6 6m6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </button>
 
+<!-- ============ 背景音乐（不知道说什么 · 全站常驻） ============ -->
+<audio id="bgm" src="assets/audio/buzhidao-shuoshenme.mp3" loop preload="auto"></audio>
+<button id="bgmBtn" class="bgm-btn" aria-label="播放/暂停背景音乐" title="不知道说什么 · 张靓颖">
+  <span class="bgm-disc" aria-hidden="true"></span>
+  <svg class="bgm-icon bgm-icon-play" viewBox="0 0 24 24" width="15" height="15"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
+  <svg class="bgm-icon bgm-icon-pause" viewBox="0 0 24 24" width="15" height="15"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.6z" fill="currentColor"/></svg>
+</button>
+
 <!-- noscript：JS 渲染兜底（百度蜘蛛等不执行 JS 的爬虫可见的静态内链清单） -->
 <noscript>
   <div style="padding:20px;max-width:900px;margin:0 auto">
@@ -284,6 +292,6 @@
 
 <script src="assets/js/data.js?v=29"></script>
 <script src="assets/js/data-bridge.js?v=14"></script>
-<script src="assets/js/main.js?v=30"></script>
+<script src="assets/js/main.js?v=31"></script>
 </body>
 </html>
