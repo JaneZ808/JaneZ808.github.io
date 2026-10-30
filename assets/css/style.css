@@ -2255,3 +2255,63 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
 @media (max-width: 640px) {
   .bgm-btn { right: 16px; bottom: 78px; width: 42px; height: 42px; }
 }
+
+/* ============================================================
+ * 桌面歌词字幕条（底部居中，随 BGM 逐句刷新，点击进歌词页）
+ * ============================================================ */
+.bgm-caption {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%) translateY(16px);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(72vw, 560px);
+  padding: 10px 22px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 999px;
+  background: rgba(12, 10, 20, .55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: rgba(255, 255, 255, .92);
+  font-size: 14.5px;
+  letter-spacing: .05em;
+  cursor: pointer;
+  z-index: 89;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .6s ease, transform .6s ease, border-color .3s ease;
+  white-space: nowrap;
+}
+.bgm-caption.is-on {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+.bgm-caption:hover { border-color: var(--gold, #d8b46c); }
+.bgm-cap-dot {
+  color: var(--gold, #d8b46c);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.bgm-cap-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* 换句动画 */
+.bgm-caption.cap-flip .bgm-cap-text {
+  animation: cap-slide .55s ease both;
+}
+@keyframes cap-slide {
+  0% { opacity: 0; transform: translateY(9px); }
+  100% { opacity: 1; transform: none; }
+}
+html[data-theme="light"] .bgm-caption {
+  background: rgba(255, 255, 255, .62);
+  border-color: rgba(30, 24, 45, .14);
+  color: #322a45;
+}
+@media (max-width: 640px) {
+  .bgm-caption { max-width: 86vw; bottom: 20px; font-size: 13px; padding: 8px 18px; }
+}

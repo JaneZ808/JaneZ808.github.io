@@ -243,66 +243,86 @@
     bindCoverFallback();
   }
 
-  /* ================= 渲染：绝世美颜 · 单大图简约轮播 =================
-   * 全部图片预铺到 DOM（渐隐渐显靠 opacity 过渡），自动 5s 切换；
-   * 指示点 / 左右箭头 / 键盘可手动切换，交互后重置计时。 */
-  let beautyIdx = 0;
-  let beautyTimer = null;
+  /* ================= 渲染：绝世美颜 · 3 列网格 + 灯箱（回滚恢复版） =================
+   * 大图模式：3 列等宽，每格 1 张，点击放大查看。
+   * data-i 携带数组原始下标，灯箱据此索引。 */
+  let galleryIndex = 0;
 
-  function renderBeauty() {
-    const stage = $('#beautyStage');
-    if (!stage) return;
-    const all = src('GALLERY');
-    if (!all.length) return;
+  function renderGallery() {
+    const host = $('#galleryGrid');
+    if (!host) return;
+    const all = src('GALLERY').map((g, gi) => ({ g, gi }));
 
-    $('#beautyFrames').innerHTML = all.map((g, i) => `
-      <figure class="bg-frame${i === 0 ? ' is-on' : ''}" data-i="${i}">
-        <img src="${g.img}" alt="${g.title}" ${i === 0 ? '' : 'loading="lazy"'} decoding="async">
-      </figure>`).join('');
+    host.innerHTML = all.map(({ g, gi }, i) => `
+      <div class="gg-item reveal" data-i="${gi}" style="--d:${dly(i, 70)}ms">
+        <div class="gi-art" style="${grad(g.tone)}">
+          ${g.img ? `<img class="gi-img" src="${g.img}" alt="${g.title}" loading="lazy" decoding="async">` : ''}
+        </div>
+      </div>`).join('');
 
-    $('#beautyCaption').innerHTML = all.map((g, i) => `
-      <span class="bg-cap${i === 0 ? ' is-on' : ''}" data-i="${i}">
-        <b>${g.title}</b><i>${g.sub || ''}</i>
-      </span>`).join('');
+    $$('#galleryGrid .gg-item').forEach(el =>
+      el.addEventListener('click', () => openLightbox(Number(el.dataset.i))));
 
-    $('#beautyDots').innerHTML = all.map((_, i) =>
-      `<button class="bg-dot${i === 0 ? ' is-on' : ''}" data-i="${i}" aria-label="第 ${i + 1} 张"></button>`).join('');
-
-    $$('#beautyDots .bg-dot').forEach(d =>
-      d.addEventListener('click', () => beautyGo(Number(d.dataset.i))));
-    $('#beautyPrev').addEventListener('click', () => beautyGo(beautyIdx - 1));
-    $('#beautyNext').addEventListener('click', () => beautyGo(beautyIdx + 1));
-    stage.addEventListener('mouseenter', () => beautyStop());
-    stage.addEventListener('mouseleave', () => beautyStart());
-    document.addEventListener('keydown', e => {
-      if (!stage.getBoundingClientRect().top < 0) return;
-      if (e.key === 'ArrowLeft') beautyGo(beautyIdx - 1);
-      if (e.key === 'ArrowRight') beautyGo(beautyIdx + 1);
+    $$('#galleryGrid .gi-img').forEach(img => {
+      const done = () => img.classList.add('ready');
+      if (img.complete && img.naturalWidth > 0) done();
+      else {
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', () => img.remove(), { once: true });
+      }
     });
-
-    beautyStart();
   }
 
-  function beautyGo(i) {
-    const all = src('GALLERY');
-    const n = all.length;
-    if (!n) return;
-    beautyIdx = (i + n) % n;
-    $$('#beautyFrames .bg-frame').forEach(f =>
-      f.classList.toggle('is-on', Number(f.dataset.i) === beautyIdx));
-    $$('#beautyCaption .bg-cap').forEach(c =>
-      c.classList.toggle('is-on', Number(c.dataset.i) === beautyIdx));
-    $$('#beautyDots .bg-dot').forEach(d =>
-      d.classList.toggle('is-on', Number(d.dataset.i) === beautyIdx));
-    beautyStart(); // 重置计时
+  function openLightbox(i) {
+    galleryIndex = i;
+    const lb = $('#lightbox');
+    if (!lb) return;
+    const g = src('GALLERY')[i];
+    if (g.img) {
+      $('#lbArt').classList.add('has-img');
+      const im = document.createElement('img');
+      im.className = 'lb-img';
+      im.src = g.img;
+      im.alt = g.title;
+      im.addEventListener('error', () => im.remove(), { once: true });
+      $('#lbArt').replaceChildren(im);
+    } else {
+      $('#lbArt').classList.remove('has-img');
+      $('#lbArt').setAttribute('style', grad(g.tone));
+      $('#lbArt').replaceChildren();
+    }
+    lb.classList.add('show');
+    document.body.classList.add('locked');
   }
 
-  function beautyStart() {
-    beautyStop();
-    beautyTimer = setInterval(() => beautyGo(beautyIdx + 1), 5000);
+  function closeLightbox() {
+    const lb = $('#lightbox');
+    if (!lb) return;
+    lb.classList.remove('show');
+    document.body.classList.remove('locked');
   }
-  function beautyStop() {
-    if (beautyTimer) { clearInterval(beautyTimer); beautyTimer = null; }
+
+  function stepLightbox(d) {
+    const n = src('GALLERY').length;
+    galleryIndex = (galleryIndex + d + n) % n;
+    openLightbox(galleryIndex);
+  }
+
+  function initLightbox() {
+    const lb = $('#lightbox');
+    if (!lb) return;
+    $('.lb-close', lb).addEventListener('click', closeLightbox);
+    $('.lb-prev', lb).addEventListener('click', () => stepLightbox(-1));
+    $('.lb-next', lb).addEventListener('click', () => stepLightbox(1));
+    lb.addEventListener('click', e => {
+      if (e.target.id === 'lightbox') closeLightbox();
+    });
+    document.addEventListener('keydown', e => {
+      if (!lb.classList.contains('show')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') stepLightbox(-1);
+      if (e.key === 'ArrowRight') stepLightbox(1);
+    });
   }
 
   /* ================= 渲染：平台直达 ================= */
@@ -507,36 +527,79 @@
   }
 
   /* ================= 背景音乐《不知道说什么》 =================
-   * 默认尝试自动播放；被浏览器策略拦截时，监听任意首次交互（点击/按键/滚动/触摸）
-   * 立即启动。右侧常驻唱片按钮可播放/暂停，状态与图标同步。 */
+   * 三层自动播放策略（Chrome autoplay policy 内的最大化）：
+   * ① 直接有声播放（老浏览器/已授权站点设置）
+   * ② 失败 → muted 起播（政策必允许）+ 首次任意交互瞬间取消静音
+   * ③ 配套：右下角唱片按钮 + 底部桌面歌词字幕条（随曲逐句高亮） */
   function initBgm() {
     const audio = $('#bgm');
     const btn = $('#bgmBtn');
+    const cap = $('#bgmCaption');
     if (!audio || !btn) return;
+    const LRC = (window.JANEZ_LRC || []).filter(x => !x[2]); // 仅歌词行，跳过 credits
 
-    const sync = () => btn.classList.toggle('is-playing', !audio.paused);
-    audio.addEventListener('play', sync);
-    audio.addEventListener('pause', sync);
+    const sync = () => {
+      btn.classList.toggle('is-playing', !audio.paused);
+      if (cap) cap.classList.toggle('is-on', !audio.paused);
+    };
 
+    /* ---- 桌面歌词字幕条 ---- */
+    let curLine = -1;
+    function updateCaption() {
+      if (!cap || audio.paused) return;
+      let cur = -1;
+      for (let i = 0; i < LRC.length; i++) {
+        if (LRC[i][0] <= audio.currentTime + 0.05) cur = i; else break;
+      }
+      if (cur !== curLine) {
+        curLine = cur;
+        const txt = cur >= 0 ? LRC[cur][1] : '';
+        const span = cap.querySelector('.bgm-cap-text');
+        if (span) span.textContent = txt;
+        /* 换句动画：重触发 fade-slide */
+        cap.classList.remove('cap-flip');
+        void cap.offsetWidth;
+        cap.classList.add('cap-flip');
+      }
+    }
+    audio.addEventListener('timeupdate', updateCaption);
+
+    /* ---- 按钮控制 ---- */
     btn.addEventListener('click', () => {
-      if (audio.paused) audio.play().catch(() => {});
+      if (audio.paused) { audio.muted = false; audio.play().catch(() => {}); }
       else audio.pause();
     });
 
-    // 先尝试直接自动播放
-    const pr = audio.play();
+    /* ---- 三层自动播放 ---- */
+    let unlocked = false;
+    const unlock = () => {
+      if (unlocked) return;
+      unlocked = true;
+      audio.muted = false;
+      audio.play().then(() => {}).catch(() => {});
+    };
+
+    const pr = audio.play(); // ① 有声直播
     if (pr && pr.catch) {
-      pr.catch(() => {
-        // 被拦截：任意首次交互兜底启动（一次性）
-        const kick = () => {
-          audio.play().then(() => {}).catch(() => {});
-          ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(ev =>
-            document.removeEventListener(ev, kick, true));
-        };
-        ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(ev =>
-          document.addEventListener(ev, kick, { once: false, capture: true, passive: true }));
-      });
+      pr.then(() => { /* 直接成功 */ })
+        .catch(() => {
+          // ② muted 起播（政策允许），等首次交互出声
+          audio.muted = true;
+          const pr2 = audio.play();
+          if (pr2 && pr2.catch) pr2.catch(() => {});
+          if (cap) {
+            const span = cap.querySelector('.bgm-cap-text');
+            if (span) span.textContent = '♪ 轻触任意处开启声音';
+          }
+          ['pointerdown', 'keydown', 'touchstart', 'scroll', 'wheel'].forEach(ev =>
+            document.addEventListener(ev, unlock, { capture: true, passive: true }));
+        });
     }
+
+    audio.addEventListener('play', sync);
+    audio.addEventListener('pause', sync);
+    /* 点击字幕条也可进入歌词页 */
+    if (cap) cap.addEventListener('click', () => { location.href = 'lyrics.html'; });
   }
 
   /* ================= 初始化 ================= */
@@ -553,13 +616,14 @@
 
     renderProfile();
     renderSingles();
-    renderBeauty();
+    renderGallery();
     renderPlatforms();
 
     bindFilters();
     initNav();
     initTheme();
     initBgm();
+    initLightbox();
     applyUi();
     observeReveal();
 

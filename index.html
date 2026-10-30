@@ -82,7 +82,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="assets/css/style.css?v=37">
+<link rel="stylesheet" href="assets/css/style.css?v=38">
 </head>
 <body>
 
@@ -195,7 +195,7 @@
   </div>
 </section>
 
-<!-- ============ 绝世美颜（单张大图简约轮播，渐隐渐显自动切换） ============ -->
+<!-- ============ 绝世美颜（3 列中图，展示全部 9 张，点击灯箱放大） ============ -->
 <section id="gallery" class="sec sec-alt sec-enter">
   <div class="wrap">
     <div class="sec-head reveal">
@@ -203,14 +203,9 @@
         <span class="sh-en">Beauty</span>
         <h2 class="sh-cn">绝世美颜</h2>
       </div>
+      <a class="sec-more" href="all.html?sec=gallery">查看全部 <b data-count="gallery"></b> 张 →</a>
     </div>
-    <div class="bg-stage" id="beautyStage" data-rv>
-      <div class="bg-frames" id="beautyFrames"></div>
-      <div class="bg-caption" id="beautyCaption"></div>
-      <div class="bg-dots" id="beautyDots"></div>
-      <button class="bg-arrow bg-prev" id="beautyPrev" aria-label="上一张">&#10094;</button>
-      <button class="bg-arrow bg-next" id="beautyNext" aria-label="下一张">&#10095;</button>
-    </div>
+    <div class="gg-grid" id="galleryGrid"></div>
   </div>
 </section>
 
@@ -270,12 +265,27 @@
   <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 19V5m0 0-6 6m6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </button>
 
+<!-- ============ 灯箱 ============ -->
+<div id="lightbox" class="lightbox">
+  <button class="lb-close" aria-label="关闭">&times;</button>
+  <button class="lb-nav lb-prev" aria-label="上一张">&#10094;</button>
+  <button class="lb-nav lb-next" aria-label="下一张">&#10095;</button>
+  <div class="lb-content">
+    <div class="lb-art" id="lbArt"></div>
+  </div>
+</div>
+
 <!-- ============ 背景音乐（不知道说什么 · 全站常驻） ============ -->
 <audio id="bgm" src="assets/audio/buzhidao-shuoshenme.mp3" loop preload="auto"></audio>
 <button id="bgmBtn" class="bgm-btn" aria-label="播放/暂停背景音乐" title="不知道说什么 · 张靓颖">
   <span class="bgm-disc" aria-hidden="true"></span>
   <svg class="bgm-icon bgm-icon-play" viewBox="0 0 24 24" width="15" height="15"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
   <svg class="bgm-icon bgm-icon-pause" viewBox="0 0 24 24" width="15" height="15"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.6z" fill="currentColor"/></svg>
+</button>
+<!-- 桌面歌词字幕条（点击进歌词页） -->
+<button id="bgmCaption" class="bgm-caption" title="查看完整歌词">
+  <span class="bgm-cap-dot" aria-hidden="true">♪</span>
+  <span class="bgm-cap-text"></span>
 </button>
 
 <!-- noscript：JS 渲染兜底（百度蜘蛛等不执行 JS 的爬虫可见的静态内链清单） -->
@@ -292,6 +302,7 @@
 
 <script src="assets/js/data.js?v=29"></script>
 <script src="assets/js/data-bridge.js?v=14"></script>
-<script src="assets/js/main.js?v=31"></script>
+<script src="assets/js/lrc-data.js?v=1"></script>
+<script src="assets/js/main.js?v=32"></script>
 </body>
 </html>
