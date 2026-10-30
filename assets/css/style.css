@@ -319,7 +319,7 @@ img { max-width: 100%; display: block; }
 #news::before    { background-image: url('../../assets/img/gallery-9.jpg'); }  /* 影视金曲之夜 */
 #music::before   { background-image: url('../../assets/img/gallery-6.jpg'); }  /* Past Progressive */
 #tour::before    { background-image: url('../../assets/img/gallery-1.jpg'); }  /* 追 世界巡演 */
-#gallery::before { background-image: url('../../assets/img/gallery-2.jpg'); }  /* 光 世界巡演 */
+#gallery::before { background-image: url('../../assets/img/gallery-2.jpg'); opacity: .22; }  /* 光 世界巡演：减弱以免抢网格视觉 */
 #contact::before { background-image: url('../../assets/img/gallery-3.jpg'); }  /* 珍相 巡演 */
 .sh-left { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
 .sh-en {
@@ -2314,4 +2314,151 @@ html[data-theme="light"] .bgm-caption {
 }
 @media (max-width: 640px) {
   .bgm-caption { max-width: 86vw; bottom: 20px; font-size: 13px; padding: 8px 18px; }
+}
+
+/* ── 9｜首页完整歌词面板 ========================================
+   版式：居中玻璃卡片，内部歌词列表面板高度约 50-60vh
+   动画：当前行金色高亮 + 自动滚动平滑过渡 */
+.lyrics-panel {
+  padding: 64px 0 40px;
+}
+.lp-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.lp-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 20px 26px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.lp-title {
+  font-size: 12px;
+  letter-spacing: .22em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+.lp-track {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: .04em;
+}
+.lp-body {
+  max-height: 58vh;
+  overflow-y: auto;
+  padding: 10px 8px;
+  scroll-behavior: smooth;
+}
+.lp-line {
+  padding: 11px 26px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: color .35s var(--ease), opacity .35s var(--ease), transform .35s var(--ease);
+  border-left: 2px solid transparent;
+}
+.lp-line:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--gold-soft) 40%, transparent);
+}
+.lp-line.past {
+  opacity: .45;
+}
+.lp-line.on {
+  color: var(--gold);
+  font-size: 17px;
+  font-weight: 500;
+  border-left-color: var(--gold);
+  transform: translateX(6px);
+}
+.lp-empty {
+  padding: 32px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+@media (max-width: 640px) {
+  .lyrics-panel { padding: 48px 0 28px; }
+  .lp-inner { border-radius: 16px; }
+  .lp-body { max-height: 42vh; }
+  .lp-line { padding: 10px 16px; font-size: 14px; }
+  .lp-line.on { font-size: 15px; }
+}
+
+/* ── 10｜绝世美颜增强 ==========================================
+   网格项常驻底部遮罩 + 标题，hover 加深 + 图片微放大；灯箱进出动画；区块头装饰线 */
+.gg-item { isolation: isolate; }
+.gi-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.22) 50%, transparent 78%);
+  opacity: .55;
+  transition: opacity .5s var(--ease);
+  display: flex;
+  align-items: flex-end;
+  padding: 18px;
+  pointer-events: none;
+}
+.gg-item:hover .gi-overlay { opacity: 1; }
+.gi-title {
+  color: #fff;
+  font-size: 13.5px;
+  letter-spacing: .1em;
+  transform: translateY(6px);
+  transition: transform .5s var(--ease), font-size .5s var(--ease);
+  text-shadow: 0 2px 10px rgba(0,0,0,.7);
+}
+.gg-item:hover .gi-title { transform: none; font-size: 14.5px; }
+
+/* 灯箱增强：背景模糊 + 内容缩放入场 */
+.lightbox {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.lb-art {
+  transform: scale(.96);
+  opacity: 0;
+  transition: transform .4s var(--ease), opacity .35s var(--ease);
+}
+.lightbox.show .lb-art {
+  transform: scale(1);
+  opacity: 1;
+}
+.lb-img {
+  transition: transform .45s var(--ease), opacity .4s var(--ease);
+}
+
+/* 区块头部装饰线 */
+.sec-head { position: relative; }
+.sec-head::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 44px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: width .6s var(--ease);
+}
+.sec-head:hover::after { width: 80px; }
+
+/* 响应式微调 */
+@media (max-width: 1000px) {
+  .gi-title { font-size: 12px; }
+  .gg-item:hover .gi-title { font-size: 13px; }
+}
+@media (max-width: 640px) {
+  .gi-overlay { padding: 12px; }
+  .gi-title { font-size: 11px; transform: translateY(4px); }
+  .gg-item:hover .gi-title { font-size: 12px; }
 }

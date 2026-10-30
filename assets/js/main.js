@@ -10,6 +10,8 @@
 (function () {
   'use strict';
 
+  let bgmAudio = null; // 共享给歌词面板
+
   const $ = (s, c) => (c || document).querySelector(s);
   const $$ = (s, c) => Array.from((c || document).querySelectorAll(s));
 
@@ -257,6 +259,9 @@
       <div class="gg-item reveal" data-i="${gi}" style="--d:${dly(i, 70)}ms">
         <div class="gi-art" style="${grad(g.tone)}">
           ${g.img ? `<img class="gi-img" src="${g.img}" alt="${g.title}" loading="lazy" decoding="async">` : ''}
+        </div>
+        <div class="gi-overlay">
+          <span class="gi-title">${g.title}${g.sub ? ' · ' + g.sub : ''}</span>
         </div>
       </div>`).join('');
 
@@ -536,6 +541,7 @@
     const btn = $('#bgmBtn');
     const cap = $('#bgmCaption');
     if (!audio || !btn) return;
+    bgmAudio = audio; // 共享给歌词面板
     const LRC = (window.JANEZ_LRC || []).filter(x => !x[2]); // 仅歌词行，跳过 credits
 
     const sync = () => {
@@ -598,8 +604,65 @@
 
     audio.addEventListener('play', sync);
     audio.addEventListener('pause', sync);
-    /* 点击字幕条也可进入歌词页 */
-    if (cap) cap.addEventListener('click', () => { location.href = 'lyrics.html'; });
+    /* 点击字幕条滚动到首页歌词面板 */
+    if (cap) cap.addEventListener('click', () => {
+      const panel = $('#lyricsPanel');
+      if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      else location.href = 'lyrics.html';
+    });
+
+    initLyricsPanel();
+  }
+
+  /* ================= 首页完整歌词面板 =================
+   * 在 #lyricsPanel 内渲染完整歌词，随曲高亮并自动滚动；点击行可 seek。 */
+  function renderLyricsPanel() {
+    const host = $('#lpBody');
+    if (!host) return;
+    const LRC = (window.JANEZ_LRC || []).filter(x => !x[2]); // 跳过制作信息
+    if (!LRC.length) { host.innerHTML = '<p class="lp-empty">暂无歌词</p>'; return; }
+
+    host.innerHTML = LRC.map((item, i) =>
+      `<div class="lp-line" data-t="${item[0]}">${item[1]}</div>`).join('');
+  }
+
+  function initLyricsPanel() {
+    const audio = bgmAudio || $('#bgm');
+    const body = $('#lpBody');
+    if (!audio || !body) return;
+    const lines = $$('.lp-line', body);
+    if (!lines.length) return;
+
+    let cur = -1;
+    const update = () => {
+      if (audio.paused) return;
+      let idx = -1;
+      for (let i = 0; i < lines.length; i++) {
+        const t = Number(lines[i].dataset.t || 0);
+        if (t <= audio.currentTime + 0.05) idx = i; else break;
+      }
+      if (idx === cur) return;
+      cur = idx;
+      lines.forEach((el, i) => {
+        el.classList.toggle('on', i === idx);
+        el.classList.toggle('past', i < idx);
+      });
+      if (idx >= 0) {
+        const target = lines[idx];
+        const top = target.offsetTop - body.offsetTop - body.clientHeight * 0.38;
+        body.scrollTo({ top, behavior: 'smooth' });
+      }
+    };
+
+    audio.addEventListener('timeupdate', update);
+    lines.forEach(el => {
+      el.addEventListener('click', () => {
+        const t = Number(el.dataset.t || 0);
+        audio.currentTime = t;
+        if (audio.paused) { audio.muted = false; audio.play().catch(() => {}); }
+        update();
+      });
+    });
   }
 
   /* ================= 初始化 ================= */
@@ -618,6 +681,7 @@
     renderSingles();
     renderGallery();
     renderPlatforms();
+    renderLyricsPanel();
 
     bindFilters();
     initNav();
