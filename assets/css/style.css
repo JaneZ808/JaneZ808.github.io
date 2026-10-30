@@ -2326,10 +2326,11 @@ html[data-theme="light"] .bgm-caption {
   font-size: 13px;
   line-height: 1.5;
   color: var(--text-2);
-  transition: color .4s var(--ease), opacity .4s var(--ease), transform .4s var(--ease);
+  opacity: 0;
+  transition: opacity .45s var(--ease), color .4s var(--ease), transform .4s var(--ease);
 }
-.nl-line.past { opacity: .4; }
 .nl-line.on {
+  opacity: 1;
   color: var(--gold);
   font-weight: 500;
   transform: translateY(-1px);

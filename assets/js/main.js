@@ -617,7 +617,6 @@
 
     let cur = -1;
     const update = () => {
-      if (audio.paused) return;
       let idx = -1;
       for (let i = 0; i < lines.length; i++) {
         const t = Number(lines[i].dataset.t || 0);
