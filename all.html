@@ -7,8 +7,8 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>完整资料 · 张靓颖 Jane Zhang 资料站</title>
-<meta name="description" content="张靓颖（Jane Zhang）粉丝资料站完整资料页：全部最新动态、个人档案、6 张正式录音室专辑、巡回演唱会与绝世美颜影像。">
-<meta name="keywords" content="张靓颖, Jane Zhang, 张靓颖 完整资料, 张靓颖 专辑, 张靓颖 正式专辑, 张靓颖 录音室专辑, 张靓颖 演唱会, 张靓颖 巡演, 张靓颖 追 巡演, 张靓颖 光 巡演, 张靓颖 最新动态">
+<meta name="description" content="张靓颖（Jane Zhang）粉丝资料站完整资料页：个人档案、6 张正式录音室专辑与绝世美颜舞台影像。">
+<meta name="keywords" content="张靓颖, Jane Zhang, 张靓颖 完整资料, 张靓颖 专辑, 张靓颖 正式专辑, 张靓颖 录音室专辑, 张靓颖 影视金曲">
 <meta name="author" content="JaneZ 资料站">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://janez808.github.io/all.html">
@@ -17,7 +17,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="张靓颖 Jane Zhang 资料站">
 <meta property="og:title" content="张靓颖 Jane Zhang · 完整资料">
-<meta property="og:description" content="张靓颖粉丝资料站完整资料页：动态、档案、6 张正式专辑、巡演与绝世美颜。">
+<meta property="og:description" content="张靓颖粉丝资料站完整资料页：档案、6 张正式专辑与绝世美颜。">
 <meta property="og:url" content="https://janez808.github.io/all.html">
 <meta property="og:image" content="https://janez808.github.io/assets/img/hero.jpg">
 <meta property="og:image:width" content="1600">
@@ -25,9 +25,9 @@
 <meta property="og:locale" content="zh_CN">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="张靓颖 Jane Zhang · 完整资料">
-<meta name="twitter:description" content="张靓颖粉丝资料站完整资料页：动态、档案、6 张正式专辑、巡演与绝世美颜。">
+<meta name="twitter:description" content="张靓颖粉丝资料站完整资料页：档案、6 张正式专辑与绝世美颜。">
 <meta name="twitter:image" content="https://janez808.github.io/assets/img/hero.jpg">
-<link rel="stylesheet" href="assets/css/style.css?v=35">
+<link rel="stylesheet" href="assets/css/style.css?v=36">
 </head>
 <body data-full>
 
@@ -66,11 +66,6 @@
     <div class="full-tabs" id="fullTabs"></div>
 
     <div id="fullHost">
-      <!-- 最新动态 · 编辑索引式 -->
-      <div class="f-sec" data-sec="news">
-        <div class="nx-list" id="nxList" data-rv></div>
-      </div>
-
       <!-- 个人档案 · 引言 + 两列定义网格 -->
       <div class="f-sec" data-sec="profile">
         <div id="rfBody"></div>
@@ -81,14 +76,15 @@
         <div class="alb-grid" id="singlesList" data-rv></div>
       </div>
 
-      <!-- 巡回演唱会 · 纪年带 -->
-      <div class="f-sec" data-sec="tour">
-        <div class="tr-list" id="tourList" data-rv></div>
-      </div>
-
-      <!-- 绝世美颜 · 3 列中图 -->
+      <!-- 绝世美颜 · 单张大图简约轮播 -->
       <div class="f-sec" data-sec="gallery">
-        <div class="gg-grid" id="galleryGrid"></div>
+        <div class="bg-stage" id="beautyStage" data-rv>
+          <div class="bg-frames" id="beautyFrames"></div>
+          <div class="bg-caption" id="beautyCaption"></div>
+          <div class="bg-dots" id="beautyDots"></div>
+          <button class="bg-arrow bg-prev" id="beautyPrev" aria-label="上一张">&#10094;</button>
+          <button class="bg-arrow bg-next" id="beautyNext" aria-label="下一张">&#10095;</button>
+        </div>
       </div>
     </div>
   </div>
@@ -139,8 +135,8 @@
   </div>
 </div>
 
-<script src="assets/js/data.js?v=28"></script>
-<script src="assets/js/data-bridge.js?v=13"></script>
-<script src="assets/js/main.js?v=29"></script>
+<script src="assets/js/data.js?v=29"></script>
+<script src="assets/js/data-bridge.js?v=14"></script>
+<script src="assets/js/main.js?v=30"></script>
 </body>
 </html>

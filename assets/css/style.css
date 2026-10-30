@@ -2058,3 +2058,147 @@ html[data-theme="light"] #header.solid {
 /* 10｜.nx-item / .sg-row / .tr-row / .album-card 等卡片背景
       使用 var(--surface) 或 color-mix(var(--surface), transparent)，
       浅色模式下自动为白色 / 浅白，无需覆盖 */
+
+/* ============================================================
+ * 绝世美颜 · 单大图简约轮播（2026-10-30 重构）
+ * 全部帧预铺叠放，is-on 控制 opacity/transform 渐隐渐显；
+ * 底部渐变遮罩上的 caption 随帧切换；hover 暂停自动播放。
+ * ============================================================ */
+.bg-stage {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: var(--surface, #16131f);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .35);
+}
+.bg-frames,
+.bg-frame {
+  position: absolute;
+  inset: 0;
+}
+.bg-frame {
+  opacity: 0;
+  transform: scale(1.045);
+  transition: opacity 1.15s ease, transform 1.35s ease;
+  pointer-events: none;
+}
+.bg-frame.is-on {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+.bg-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 底部渐变遮罩 + 标题 */
+.bg-stage::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 46%;
+  background: linear-gradient(to top, rgba(5, 4, 10, .78), rgba(5, 4, 10, 0));
+  pointer-events: none;
+  z-index: 1;
+}
+.bg-caption {
+  position: absolute;
+  left: 34px;
+  bottom: 58px;
+  z-index: 2;
+  pointer-events: none;
+}
+.bg-cap {
+  position: absolute;
+  left: 0; bottom: 0;
+  display: grid;
+  gap: 6px;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .8s ease .12s, transform .8s ease .12s;
+  white-space: nowrap;
+}
+.bg-cap.is-on {
+  opacity: 1;
+  transform: none;
+}
+.bg-cap b {
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 500;
+  letter-spacing: .06em;
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .55);
+}
+.bg-cap i {
+  font-style: normal;
+  font-size: 13.5px;
+  letter-spacing: .14em;
+  color: rgba(255, 255, 255, .82);
+}
+
+/* 指示点 */
+.bg-dots {
+  position: absolute;
+  left: 34px;
+  bottom: 26px;
+  display: flex;
+  gap: 10px;
+  z-index: 2;
+}
+.bg-dot {
+  width: 26px;
+  height: 3px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .32);
+  cursor: pointer;
+  padding: 0;
+  transition: background .4s ease;
+}
+.bg-dot:hover { background: rgba(255, 255, 255, .6); }
+.bg-dot.is-on { background: var(--gold, #d8b46c); }
+
+/* 左右箭头 */
+.bg-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 50%;
+  background: rgba(10, 8, 16, .32);
+  color: rgba(255, 255, 255, .85);
+  font-size: 15px;
+  cursor: pointer;
+  z-index: 2;
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity .4s ease, background .3s ease, border-color .3s ease;
+}
+.bg-stage:hover .bg-arrow { opacity: 1; }
+.bg-arrow:hover {
+  background: rgba(10, 8, 16, .55);
+  border-color: rgba(255, 255, 255, .45);
+}
+.bg-prev { left: 22px; }
+.bg-next { right: 22px; }
+
+/* 响应式 */
+@media (max-width: 760px) {
+  .bg-stage { border-radius: 14px; }
+  .bg-caption { left: 18px; bottom: 48px; }
+  .bg-dots { left: 18px; bottom: 20px; }
+  .bg-arrow {
+    width: 38px; height: 38px;
+    opacity: .9; /* 触屏无 hover，常显 */
+  }
+  .bg-prev { left: 12px; }
+  .bg-next { right: 12px; }
+}
+
+/* 浅色主题：遮罩/箭头保持深色玻璃（图片上永远可读），无需 light 覆盖 */

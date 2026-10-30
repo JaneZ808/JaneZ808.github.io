@@ -33,11 +33,9 @@
 
   /* 板块登记表：主页「查看全部」与 all.html 顶部 tabs 共用 */
   const SECS = [
-    { k: 'news',    cn: '最新动态',   en: 'News',    desc: '全部动态按发布时间倒序排列，可上下翻阅历年消息。' },
     { k: 'profile', cn: '个人档案',   en: 'Profile', desc: '完整档案信息，含简介、全部条目与音乐标签。' },
-    { k: 'music',   cn: '正式专辑',   en: 'Music',   desc: '出道至今 6 张正式录音室专辑（The One / UPDATE*JANE / 张靓颖@音乐 / 我相信 / 改变 / 第七感），不含英文专辑 Past Progressive、迷你 EP、现场辑与精选辑。点击封面查看该专辑信息。' },
-    { k: 'tour',    cn: '巡回演唱会', en: 'Tour',    desc: '从 2008 年首次巡演到「追」世界巡回。' },
-    { k: 'gallery', cn: '绝世美颜',   en: 'Beauty',   desc: '全部舞台、红毯与巡演影像。' }
+    { k: 'music',   cn: '正式专辑',   en: 'Music',   desc: '出道至今 6 张正式录音室专辑（The One / UPDATE*JANE / 张靓颖@音乐 / 我相信 / 改变 / 第七感），点击封面查看该专辑信息。' },
+    { k: 'gallery', cn: '绝世美颜',   en: 'Beauty',  desc: '单张大图简约呈现，渐隐渐显自动切换：舞台、红毯与高光时刻。' }
   ];
 
   /* ---------- 限时活动主题（自动到期回滚，无需人工干预） ----------
@@ -108,27 +106,6 @@
         <div class="hs-n">${s.n}<small>${s.u}</small></div>
         <div class="hs-l">${s.l}</div>
       </div>`).join('');
-  }
-
-  /* ================= 渲染：最新动态 · 编辑索引式 =================
-   * 首条通栏大排版，其余紧凑；按日期降序取最新 6 条
-   * （数据层未按日期严格排序，故在此统一重排） */
-  function renderNews() {
-    const host = $('#nxList');
-    if (!host) return;
-    const rows = take(newest(src('NEWS'), 'date'));
-    host.innerHTML = rows.map((n, i) => `
-      <article class="nx-item reveal ${i === 0 ? 'nx-item--hero' : ''}" style="--d:${dly(i, 110)}ms">
-        <div class="nx-no">${pad2(i + 1)}</div>
-        <div class="nx-main">
-          <div class="nx-meta">
-            <span class="nx-tag">${n.tag}</span>
-            <span class="nx-date">${n.date}</span>
-          </div>
-          <h3 class="nx-title">${n.title}</h3>
-          <p class="nx-desc ${i === 0 ? '' : 'nx-desc--clip'}">${n.desc}</p>
-        </div>
-      </article>`).join('');
   }
 
   /* ================= 渲染：个人档案 · 照片面板 =================
@@ -266,95 +243,66 @@
     bindCoverFallback();
   }
 
-  /* ================= 渲染：巡演 · 纪年带 =================
-   * 倒序排列，最新一轮在最上方并高亮；全部展示 */
-  function renderTours() {
-    const host = $('#tourList');
-    if (!host) return;
-    const all = newest(src('TOURS'), 'year');
-    const rows = all;
+  /* ================= 渲染：绝世美颜 · 单大图简约轮播 =================
+   * 全部图片预铺到 DOM（渐隐渐显靠 opacity 过渡），自动 5s 切换；
+   * 指示点 / 左右箭头 / 键盘可手动切换，交互后重置计时。 */
+  let beautyIdx = 0;
+  let beautyTimer = null;
 
-    host.innerHTML = rows.map((t, i) => {
-      const last = i === 0;
-      return `
-      <div class="tr-row reveal ${last ? 'is-latest' : ''}" style="--d:${dly(i, 90)}ms">
-        <div class="tr-era">${t.year}</div>
-        <div class="tr-main">
-          <span class="tr-cn">${t.name}</span>
-          <span class="tr-en">${t.en}</span>
-          ${last ? '<span class="tr-badge">最新巡演</span>' : ''}
-        </div>
-        <div class="tr-note">${t.note}</div>
-      </div>`;
-    }).join('');
-  }
+  function renderBeauty() {
+    const stage = $('#beautyStage');
+    if (!stage) return;
+    const all = src('GALLERY');
+    if (!all.length) return;
 
-  /* ================= 渲染：图集 & 灯箱 =================
-   * 大图模式：3 列等宽，每格 1 张，点击放大查看。
-   * data-i 携带数组原始下标，灯箱据此索引。 */
-  let galleryIndex = 0;
+    $('#beautyFrames').innerHTML = all.map((g, i) => `
+      <figure class="bg-frame${i === 0 ? ' is-on' : ''}" data-i="${i}">
+        <img src="${g.img}" alt="${g.title}" ${i === 0 ? '' : 'loading="lazy"'} decoding="async">
+      </figure>`).join('');
 
-  function renderGallery() {
-    const host = $('#galleryGrid');
-    if (!host) return;
-    const all = src('GALLERY').map((g, gi) => ({ g, gi }));
-    // 主页与全量页均展示全部 9 张
-    const rows = all;
+    $('#beautyCaption').innerHTML = all.map((g, i) => `
+      <span class="bg-cap${i === 0 ? ' is-on' : ''}" data-i="${i}">
+        <b>${g.title}</b><i>${g.sub || ''}</i>
+      </span>`).join('');
 
-    host.innerHTML = rows.map(({ g, gi }, i) => `
-      <div class="gg-item reveal" data-i="${gi}" style="--d:${dly(i, 70)}ms">
-        <div class="gi-art" style="${grad(g.tone)}">
-          ${g.img ? `<img class="gi-img" src="${g.img}" alt="${g.title}" loading="lazy" decoding="async">` : ''}
-        </div>
-      </div>`).join('');
+    $('#beautyDots').innerHTML = all.map((_, i) =>
+      `<button class="bg-dot${i === 0 ? ' is-on' : ''}" data-i="${i}" aria-label="第 ${i + 1} 张"></button>`).join('');
 
-    $$('#galleryGrid .gg-item').forEach(el =>
-      el.addEventListener('click', () => openLightbox(Number(el.dataset.i))));
-
-    // 图片加载完成后渐显；失败时移除，露出底层渐变兜底
-    $$('#galleryGrid .gi-img').forEach(img => {
-      const done = () => img.classList.add('ready');
-      if (img.complete && img.naturalWidth > 0) done();
-      else {
-        img.addEventListener('load', done, { once: true });
-        img.addEventListener('error', () => img.remove(), { once: true });
-      }
+    $$('#beautyDots .bg-dot').forEach(d =>
+      d.addEventListener('click', () => beautyGo(Number(d.dataset.i))));
+    $('#beautyPrev').addEventListener('click', () => beautyGo(beautyIdx - 1));
+    $('#beautyNext').addEventListener('click', () => beautyGo(beautyIdx + 1));
+    stage.addEventListener('mouseenter', () => beautyStop());
+    stage.addEventListener('mouseleave', () => beautyStart());
+    document.addEventListener('keydown', e => {
+      if (!stage.getBoundingClientRect().top < 0) return;
+      if (e.key === 'ArrowLeft') beautyGo(beautyIdx - 1);
+      if (e.key === 'ArrowRight') beautyGo(beautyIdx + 1);
     });
+
+    beautyStart();
   }
 
-  function openLightbox(i) {
-    galleryIndex = i;
-    const lb = $('#lightbox');
-    if (!lb) return;
-    const g = src('GALLERY')[i];
-    if (g.img) {
-      $('#lbArt').classList.add('has-img');
-      const im = document.createElement('img');
-      im.className = 'lb-img';
-      im.src = g.img;
-      im.alt = g.title;
-      im.addEventListener('error', () => im.remove(), { once: true });
-      $('#lbArt').replaceChildren(im);
-    } else {
-      $('#lbArt').classList.remove('has-img');
-      $('#lbArt').setAttribute('style', grad(g.tone));
-      $('#lbArt').replaceChildren();
-    }
-    lb.classList.add('show');
-    document.body.classList.add('locked');
+  function beautyGo(i) {
+    const all = src('GALLERY');
+    const n = all.length;
+    if (!n) return;
+    beautyIdx = (i + n) % n;
+    $$('#beautyFrames .bg-frame').forEach(f =>
+      f.classList.toggle('is-on', Number(f.dataset.i) === beautyIdx));
+    $$('#beautyCaption .bg-cap').forEach(c =>
+      c.classList.toggle('is-on', Number(c.dataset.i) === beautyIdx));
+    $$('#beautyDots .bg-dot').forEach(d =>
+      d.classList.toggle('is-on', Number(d.dataset.i) === beautyIdx));
+    beautyStart(); // 重置计时
   }
 
-  function closeLightbox() {
-    const lb = $('#lightbox');
-    if (!lb) return;
-    lb.classList.remove('show');
-    document.body.classList.remove('locked');
+  function beautyStart() {
+    beautyStop();
+    beautyTimer = setInterval(() => beautyGo(beautyIdx + 1), 5000);
   }
-
-  function stepLightbox(d) {
-    const n = src('GALLERY').length;
-    galleryIndex = (galleryIndex + d + n) % n;
-    openLightbox(galleryIndex);
+  function beautyStop() {
+    if (beautyTimer) { clearInterval(beautyTimer); beautyTimer = null; }
   }
 
   /* ================= 渲染：平台直达 ================= */
@@ -385,17 +333,8 @@
 
   /* ================= 计数回填：data-count → 各数据源实际条数 ================= */
   function fillCounts() {
-    const P = src('PROFILE');
     const N = {
-      news: src('NEWS').length,
-      facts: P && P.facts ? P.facts.length : 0,
-      album: src('ALBUMS').length,
-      ost: src('OSTS').length,
-      global: src('GLOBAL_SONGS').length,
-      variety: src('VARIETY').length,
-      singles: src('OSTS').length + src('GLOBAL_SONGS').length,
       music: studioAlbums().length,
-      tour: src('TOURS').length,
       gallery: src('GALLERY').length
     };
     $$('[data-count]').forEach(el => {
@@ -406,9 +345,9 @@
 
   /* ================= 全量页：标题 + tabs + 区块显隐 ================= */
   function buildFull(sec) {
-    // 兼容旧 URL：album / singles / ost / global 已合并为 music
-    if (sec === 'album' || sec === 'singles' || sec === 'ost' || sec === 'global') {
-      window.location.replace('all.html?sec=music');
+    // 兼容旧 URL：已删除的板块统一落到档案页
+    if (sec === 'news' || sec === 'tour' || sec === 'album' || sec === 'singles' || sec === 'ost' || sec === 'global') {
+      window.location.replace('all.html?sec=profile');
       return;
     }
     const meta = SECS.find(s => s.k === sec) || SECS[0];
@@ -422,7 +361,7 @@
       `<a class="full-tab${s.k === meta.k ? ' is-on' : ''}" href="all.html?sec=${s.k}">${s.cn}</a>`).join('');
     $$('.f-sec').forEach(s => { s.hidden = s.getAttribute('data-sec') !== meta.k; });
     // 设置全屏壁纸背景
-    const bgMap = { news: 'gallery-4.jpg', profile: 'gallery-5.jpg', music: 'gallery-9.jpg', tour: 'gallery-1.jpg', gallery: 'gallery-8.jpg' };
+    const bgMap = { profile: 'gallery-5.jpg', music: 'gallery-9.jpg', gallery: 'gallery-8.jpg' };
     const shell = $('.full-shell');
     if (shell && bgMap[meta.k]) {
       shell.style.setProperty('--sec-bg', `linear-gradient(135deg, rgba(18,16,24,.85), rgba(26,22,36,.80)), url('../img/${bgMap[meta.k]}')`);
@@ -538,7 +477,7 @@
   }
 
   /* ================= 界面（静态默认值，改样式直接编辑 CSS） ================= */
-  const SECTION_IDS = ['news', 'profile', 'music', 'tour', 'gallery', 'contact'];
+  const SECTION_IDS = ['profile', 'music', 'gallery', 'contact'];
   function applyUi() {
     let ui = (window.JANEZ_DATA && JANEZ_DATA.getUiMerged) ? JANEZ_DATA.getUiMerged() : {};
     const root = document.documentElement;
@@ -560,29 +499,11 @@
     // 文案覆盖
     if (ui.texts && typeof ui.texts === 'object') {
       if (ui.texts.heroQuote) { const el = $('.hero-quote'); if (el) el.textContent = '“' + ui.texts.heroQuote + '”'; }
-      const secDesc = { news: '#news .sh-desc', profile: '#profile .sh-desc', music: '#music .sh-desc' };
+      const secDesc = { profile: '#profile .sh-desc', music: '#music .sh-desc' };
       Object.keys(secDesc).forEach(k => {
         if (ui.texts[k + 'Desc']) { const el = $(secDesc[k]); if (el) el.textContent = ui.texts[k + 'Desc']; }
       });
     }
-  }
-
-  /* ================= 灯箱事件 ================= */
-  function initLightbox() {
-    const lb = $('#lightbox');
-    if (!lb) return;
-    $('.lb-close', lb).addEventListener('click', closeLightbox);
-    $('.lb-prev', lb).addEventListener('click', () => stepLightbox(-1));
-    $('.lb-next', lb).addEventListener('click', () => stepLightbox(1));
-    lb.addEventListener('click', e => {
-      if (e.target.id === 'lightbox') closeLightbox();
-    });
-    document.addEventListener('keydown', e => {
-      if (!lb.classList.contains('show')) return;
-      if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowLeft') stepLightbox(-1);
-      if (e.key === 'ArrowRight') stepLightbox(1);
-    });
   }
 
   /* ================= 初始化 ================= */
@@ -591,23 +512,20 @@
     fillCounts();
 
     if (FULL) {
-      buildFull(new URLSearchParams(location.search).get('sec') || 'news');
+      buildFull(new URLSearchParams(location.search).get('sec') || 'profile');
     } else {
       renderHeroStats();
       renderMarquee();
     }
 
-    renderNews();
     renderProfile();
     renderSingles();
-    renderTours();
-    renderGallery();
+    renderBeauty();
     renderPlatforms();
 
     bindFilters();
     initNav();
     initTheme();
-    initLightbox();
     applyUi();
     observeReveal();
 
