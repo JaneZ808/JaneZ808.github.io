@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>张靓颖 Jane Zhang 资料站 · 正式专辑 / 演唱会 / 最新动态</title>
-<meta name="description" content="张靓颖（Jane Zhang）粉丝资料站：个人档案、7 张录音室专辑与 20 张专辑全集、追·光世界巡回演唱会，以及 2025–2026 最新动态。QQ 音乐 / 网易云 / 酷狗直达收听。">
+<meta name="description" content="张靓颖（Jane Zhang）粉丝资料站：个人档案、6 张正式录音室专辑、追·光世界巡回演唱会与影视金曲 OST，以及 2025–2026 最新动态。QQ 音乐 / 网易云 / 酷狗直达收听。">
 <meta name="keywords" content="张靓颖, Jane Zhang, 张靓颖 专辑, 张靓颖 正式专辑, 张靓颖 录音室专辑, 张靓颖 演唱会, 张靓颖 巡演, 张靓颖 追 巡演, 张靓颖 光 巡演, 张靓颖 最新动态, 第七感, 改变, 我相信, 张靓颖@音乐, UPDATE JANE, The One, 海豚音, 超级女声">
 <meta name="author" content="JaneZ 资料站">
 <meta name="robots" content="index,follow">
@@ -21,16 +21,69 @@
 <meta property="og:description" content="张靓颖粉丝资料站：6 张正式录音室专辑、巡回演唱会与最新动态。">
 <meta property="og:url" content="https://janez808.github.io/">
 <meta property="og:image" content="https://janez808.github.io/assets/img/hero.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="1067">
 <meta property="og:locale" content="zh_CN">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="张靓颖 Jane Zhang · 个人档案 | 正式专辑 / 巡演 / 最新动态">
 <meta name="twitter:description" content="张靓颖粉丝资料站：6 张正式录音室专辑、巡回演唱会与最新动态。">
 <meta name="twitter:image" content="https://janez808.github.io/assets/img/hero.jpg">
-<!-- 结构化数据（外链，避开 CSP 对内联 script 的限制；Google 支持 link rel=ld+json） -->
-<link rel="ld+json" href="assets/json/ld.json">
+<!-- 结构化数据（JSON-LD。CSP 的 script-src 只限制可执行脚本；type="application/ld+json" 为纯数据块，浏览器不执行，与 GitHub 官方实践一致） -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://janez808.github.io/#janezhang",
+      "name": "张靓颖",
+      "alternateName": ["Jane Zhang", "井姐", "海豚公主"],
+      "description": "中国内地流行乐女歌手、词曲作者、音乐制作人，被誉为「OST 女王」，2005 年《超级女声》全国季军出道，代表作《画心》《如果这就是爱情》《终于等到你》《野心家》，首位亮相并三度登上格莱美红毯的华人歌手。",
+      "birthDate": "1984-10-11",
+      "gender": "female",
+      "nationality": "中国",
+      "jobTitle": "歌手 / 词曲作者 / 音乐制作人",
+      "alumniOf": { "@type": "CollegeOrUniversity", "name": "四川大学外国语学院" },
+      "inLanguage": ["zh-Hans", "en"],
+      "genre": ["流行 Pop", "R&B", "Jazz", "灵魂乐 Soul", "影视OST"],
+      "knownFor": ["画心", "如果这就是爱情", "终于等到你", "天下无双", "野心家", "808"],
+      "award": [
+        "第28届香港电影金像奖最佳原创电影歌曲",
+        "第七届TMEA年度女歌手（2026）",
+        "Mnet亚洲音乐大奖亚洲最佳歌手（2011）",
+        "专辑《改变》获IFPI双倍白金唱片认证"
+      ],
+      "sameAs": [
+        "https://weibo.com/zhangliangying",
+        "https://y.qq.com/n/ryqq/search?w=%E5%BC%A0%E9%BA%93%E9%A2%96",
+        "https://music.163.com/#/search/m/?s=%E5%BC%A0%E9%BA%93%E9%A2%96"
+      ],
+      "url": "https://janez808.github.io/"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://janez808.github.io/#website",
+      "url": "https://janez808.github.io/",
+      "name": "张靓颖 Jane Zhang · 资料站",
+      "inLanguage": "zh-CN",
+      "description": "张靓颖（Jane Zhang）粉丝资料站：个人档案、正式专辑、影视金曲 OST、世界巡回演唱会与最新动态。",
+      "publisher": { "@type": "Organization", "name": "JaneZ 资料站" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://janez808.github.io/#breadcrumbs",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "最新动态", "item": "https://janez808.github.io/#news" },
+        { "@type": "ListItem", "position": 2, "name": "个人档案", "item": "https://janez808.github.io/#profile" },
+        { "@type": "ListItem", "position": 3, "name": "正式专辑", "item": "https://janez808.github.io/#music" },
+        { "@type": "ListItem", "position": 4, "name": "巡回演唱会", "item": "https://janez808.github.io/#tour" },
+        { "@type": "ListItem", "position": 5, "name": "绝世美颜", "item": "https://janez808.github.io/#gallery" }
+      ]
+    }
+  ]
+}
+</script>
 <link rel="stylesheet" href="assets/css/style.css?v=35">
 </head>
 <body>
@@ -255,6 +308,18 @@
     <div class="lb-art" id="lbArt"></div>
   </div>
 </div>
+
+<!-- noscript：JS 渲染兜底（百度蜘蛛等不执行 JS 的爬虫可见的静态内链清单） -->
+<noscript>
+  <div style="padding:20px;max-width:900px;margin:0 auto">
+    <p>本站依赖 JavaScript 渲染，您当前浏览器已禁用脚本。以下是全站主要页面索引：</p>
+    <ul>
+      <li><a href="albums/album-1.html">第七感（2014）</a> · <a href="albums/album-2.html">改变（2011）</a> · <a href="albums/album-3.html">我相信（2010）</a> · <a href="albums/album-4.html">张靓颖@音乐（2009）</a> · <a href="albums/album-5.html">UPDATE*JANE（2007）</a> · <a href="albums/album-6.html">The One（2006）</a></li>
+      <li>影视金曲 OST：<a href="osts/ost-1.html">画心</a> · <a href="osts/ost-4.html">终于等到你</a> · <a href="osts/ost-0.html">野心家</a> · <a href="osts/ost-3.html">天下无双</a> · <a href="osts/ost-2.html">我用所有报答爱</a></li>
+      <li><a href="all.html?sec=news">全部最新动态</a> · <a href="all.html?sec=profile">个人档案</a> · <a href="all.html?sec=music">正式专辑</a> · <a href="all.html?sec=tour">巡回演唱会</a> · <a href="all.html?sec=gallery">绝世美颜</a></li>
+    </ul>
+  </div>
+</noscript>
 
 <script src="assets/js/data.js?v=28"></script>
 <script src="assets/js/data-bridge.js?v=13"></script>
