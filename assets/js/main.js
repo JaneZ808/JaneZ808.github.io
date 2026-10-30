@@ -633,14 +633,7 @@
     };
 
     audio.addEventListener('timeupdate', update);
-    lines.forEach(el => {
-      el.addEventListener('click', () => {
-        const t = Number(el.dataset.t || 0);
-        audio.currentTime = t;
-        if (audio.paused) { audio.muted = false; audio.play().catch(() => {}); }
-        update();
-      });
-    });
+    // 纯自动播放：不再绑定点击 seek，避免用户误触打断自动滚动节奏
   }
 
   /* ================= 初始化 ================= */
