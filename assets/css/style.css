@@ -392,33 +392,29 @@ img { max-width: 100%; display: block; }
 .nc-title { font-size: 16.5px; font-weight: 500; line-height: 1.6; margin-bottom: 10px; }
 .nc-desc { font-size: 13.5px; color: var(--muted); line-height: 1.85; }
 
-/* ============ 档案（参考官网 Resume 版式：左侧大图 + 右侧信息面板） ============ */
+/* ============ 档案（参考官网 Resume 版式：左侧文字叠加在背景图上） ============ */
 .sec-profile { padding: 0; }
 .sec-profile::before, .sec-profile::after { display: none; }
 .resume-stage {
-  position: relative; display: grid; grid-template-columns: 1fr 66%;
-  min-height: 620px; background: linear-gradient(180deg, #12111a, #0a090f);
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 66%;
+  min-height: 100vh;
+  background-image: url('../../assets/img/gallery-5.jpg');
+  background-size: cover;
+  background-position: center 28%;
+  background-repeat: no-repeat;
 }
-.rs-photo { position: relative; overflow: hidden; }
-.rs-photo img {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; object-position: center 28%;
-  transform: scale(1.08); transition: transform 1.8s var(--ease);
-}
-.rs-photo.in img { transform: scale(1); }
-/* 左缘融入左侧面板色，上下与相邻区块衔接 */
-.rs-photo::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background:
-    linear-gradient(90deg, #0d0c14 0%, transparent 22%),
-    linear-gradient(180deg, rgba(7,7,11,.6) 0%, transparent 18%, transparent 80%, rgba(7,7,11,.65) 100%);
-}
+/* 左侧文字面板：深色半透明渐变，让文字"印"在图上 */
 .rs-panel {
   position: relative; z-index: 2;
   display: flex; flex-direction: column; justify-content: center;
-  padding: 72px 44px 72px min(6.5vw, 84px); color: #fff;
-  text-shadow: 0 2px 14px rgba(0,0,0,.45);
+  padding: 96px 48px 96px min(7vw, 96px);
+  background: linear-gradient(90deg, rgba(13,12,20,.88) 0%, rgba(13,12,20,.72) 55%, rgba(13,12,20,.25) 100%);
+  color: #fff;
 }
+/* 右侧图片层：保持原图但由 resume-stage 背景图统一覆盖，不再单独渲染 */
+.rs-photo { display: none; }
 .rs-title { text-align: left; line-height: 1; }
 .rs-title b {
   display: block; font-family: "Cormorant Garamond", Georgia, serif;
@@ -1986,18 +1982,13 @@ html[data-theme="light"] .full-head {
 /* 4｜个人档案 Resume 面板：整个区域原本为深色底 + 白色文字，
       浅色模式统一改为浅灰底 + 深色文字 */
 html[data-theme="light"] .resume-stage {
-  background: linear-gradient(180deg, #f3f1f6, #e6e1ec);
-}
-html[data-theme="light"] .rs-photo::after {
-  background:
-    linear-gradient(90deg, #e9e6ef 0%, transparent 22%),
-    linear-gradient(180deg,
-      rgba(247,244,240,.55) 0%,
-      transparent 18%,
-      transparent 80%,
-      rgba(247,244,240,.62) 100%);
+  background-image: url('../../assets/img/gallery-5.jpg');
+  background-size: cover;
+  background-position: center 28%;
+  background-repeat: no-repeat;
 }
 html[data-theme="light"] .rs-panel {
+  background: linear-gradient(90deg, rgba(255,255,255,.88) 0%, rgba(255,255,255,.72) 55%, rgba(255,255,255,.25) 100%);
   color: #17151f;
   text-shadow: none;
 }
