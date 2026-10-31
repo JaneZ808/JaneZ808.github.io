@@ -105,10 +105,8 @@ img { max-width: 100%; display: block; }
   #header.solid { background: var(--bg); }
 }
 .nav-wrap {
-  height: 78px; display: flex; align-items: center; gap: 24px;
+  height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 24px;
 }
-.nav-wrap > #nav,
-.nav-wrap > .nav-tools { margin-left: auto; }
 .brand { display: flex; flex-direction: column; line-height: 1.2; }
 .brand-cn { font-size: 19px; letter-spacing: .18em; font-weight: 500; }
 .brand-en {
