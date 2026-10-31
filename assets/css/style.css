@@ -2234,54 +2234,67 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
 /* ============================================================
  * 桌面歌词字幕条（底部居中，随 BGM 逐句刷新，点击进歌词页）
  * ============================================================ */
-/* ── 9｜导航栏歌词条 ========================================
-   版式：嵌入 nav-wrap 内，横向一句一句滚动，始终可见
-   交互：当前句金色高亮，点击可 seek（由 main.js initNavLyrics 驱动） */
-.nav-lyrics {
-  flex: 1 1 280px;
-  max-width: 420px;
-  height: 38px;
+/* ── 9｜右侧竖排歌词条 ========================================
+   版式：fixed 在页面右侧，竖排从下到上滚动，始终可见
+   交互：当前句金色高亮，纯自动滚动（由 main.js initSideLyrics 驱动） */
+.side-lyrics {
+  position: fixed;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 80;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--surface) 52%, transparent);
+  gap: 10px;
+  padding: 14px 8px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
   border: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  max-height: 60vh;
   overflow: hidden;
+  mask-image: linear-gradient(180deg, transparent, #000 8%, #000 88%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 8%, #000 88%, transparent);
 }
-.nl-dot {
+.sl-dot {
   color: var(--gold);
-  font-size: 12px;
-  flex-shrink: 0;
+  font-size: 11px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  letter-spacing: .2em;
 }
-.nl-track {
-  display: inline-flex;
+.sl-track {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 22px;
-  white-space: nowrap;
+  gap: 18px;
   overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 86%, transparent);
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 86%, transparent);
+  max-height: 54vh;
 }
-.nl-line {
-  display: inline-block;
+.sl-line {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--text-2);
   opacity: 0;
-  transition: opacity .45s var(--ease), color .4s var(--ease), transform .4s var(--ease);
+  transition: opacity .5s var(--ease), color .4s var(--ease), transform .4s var(--ease);
+  letter-spacing: .08em;
+  cursor: default;
+  user-select: none;
 }
-.nl-line.on {
+.sl-line.on {
   opacity: 1;
   color: var(--gold);
   font-weight: 500;
-  transform: translateY(-1px);
+  transform: translateX(-2px);
 }
 @media (max-width: 640px) {
-  .nav-lyrics { max-width: 180px; height: 32px; padding: 0 8px; gap: 6px; }
-  .nl-track { gap: 14px; }
-  .nl-line { font-size: 11.5px; }
+  .side-lyrics { right: 8px; padding: 10px 6px; gap: 8px; border-radius: 14px; }
+  .sl-track { gap: 14px; }
+  .sl-line { font-size: 11.5px; }
 }
 
 /* ── 10｜绝世美颜增强 ==========================================

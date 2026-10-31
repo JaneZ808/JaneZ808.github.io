@@ -556,28 +556,29 @@
     audio.addEventListener('play', sync);
     audio.addEventListener('pause', sync);
 
-    renderNavLyrics();
-    initNavLyrics();
+    renderSideLyrics();
+    initSideLyrics();
   }
 
-  /* ================= 导航栏歌词条（一句一句横向滚动） =================
-   * 在 #navLyrics / #nlTrack 内渲染全部歌词句，随曲高亮并横向滚动；点击可 seek。 */
-  function renderNavLyrics() {
-    const track = $('#nlTrack');
+  /* ================= 右侧竖排歌词条 =================
+   * 在 #sideLyrics / #slTrack 内渲染全部歌词句，竖排从下到上，
+   * 当前句金色高亮并自动滚动到视野中央；纯自动播放，无点击交互。 */
+  function renderSideLyrics() {
+    const track = $('#slTrack');
     if (!track) return;
     const LRC = (window.JANEZ_LRC || []).filter(x => !x[2]); // 跳过制作信息
     if (!LRC.length) return;
 
     track.innerHTML = LRC.map((item, i) =>
-      `<span class="nl-line" data-t="${item[0]}" data-i="${i}">${item[1]}</span>`
+      `<span class="sl-line" data-t="${item[0]}" data-i="${i}">${item[1]}</span>`
     ).join('');
   }
 
-  function initNavLyrics() {
+  function initSideLyrics() {
     const audio = bgmAudio || $('#bgm');
-    const track = $('#nlTrack');
+    const track = $('#slTrack');
     if (!audio || !track) return;
-    const lines = $$('.nl-line', track);
+    const lines = $$('.sl-line', track);
     if (!lines.length) return;
 
     let cur = -1;
@@ -592,13 +593,12 @@
       lines.forEach((el, i) => el.classList.toggle('on', i === idx));
       if (idx >= 0) {
         const el = lines[idx];
-        const left = el.offsetLeft - track.clientWidth / 2 + el.clientWidth / 2;
-        track.scrollTo({ left, behavior: 'smooth' });
+        const top = el.offsetTop - track.clientHeight / 2 + el.clientHeight / 2;
+        track.scrollTo({ top, behavior: 'smooth' });
       }
     };
 
     audio.addEventListener('timeupdate', update);
-    // 纯自动播放：不再绑定点击 seek，避免用户误触打断自动滚动节奏
   }
 
   /* ================= 初始化 ================= */
@@ -624,8 +624,8 @@
     initLightbox();
     applyUi();
     observeReveal();
-    renderNavLyrics();
-    initNavLyrics();
+    renderSideLyrics();
+    initSideLyrics();
 
     const toTop = $('#toTop');
     if (toTop) toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
