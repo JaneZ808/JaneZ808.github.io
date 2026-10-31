@@ -2239,39 +2239,28 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
    交互：当前句金色高亮，纯自动滚动（由 main.js initSideLyrics 驱动） */
 .side-lyrics {
   position: fixed;
-  right: 18px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 80;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 14px 8px;
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--bg) 72%, transparent);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  max-height: 60vh;
-  overflow: hidden;
-  mask-image: linear-gradient(180deg, transparent, #000 8%, #000 88%, transparent);
-  -webkit-mask-image: linear-gradient(180deg, transparent, #000 8%, #000 88%, transparent);
+  gap: 6px;
 }
 .sl-dot {
   color: var(--gold);
-  font-size: 11px;
+  font-size: 10px;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   letter-spacing: .2em;
+  opacity: .6;
 }
 .sl-track {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
-  overflow: hidden;
-  max-height: 54vh;
+  gap: 14px;
 }
 .sl-line {
   writing-mode: vertical-rl;
@@ -2281,7 +2270,7 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
   color: var(--text-2);
   opacity: 0;
   transition: opacity .5s var(--ease), color .4s var(--ease), transform .4s var(--ease);
-  letter-spacing: .08em;
+  letter-spacing: .06em;
   cursor: default;
   user-select: none;
 }
@@ -2292,9 +2281,9 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
   transform: translateX(-2px);
 }
 @media (max-width: 640px) {
-  .side-lyrics { right: 8px; padding: 10px 6px; gap: 8px; border-radius: 14px; }
-  .sl-track { gap: 14px; }
-  .sl-line { font-size: 11.5px; }
+  .side-lyrics { right: 4px; gap: 4px; }
+  .sl-track { gap: 10px; }
+  .sl-line { font-size: 11px; }
 }
 
 /* ── 10｜绝世美颜增强 ==========================================
