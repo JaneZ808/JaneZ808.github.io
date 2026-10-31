@@ -520,36 +520,10 @@
   function initBgm() {
     const audio = $('#bgm');
     const btn = $('#bgmBtn');
-    const cap = $('#bgmCaption');
     if (!audio || !btn) return;
-    bgmAudio = audio; // 共享给歌词面板
-    const LRC = (window.JANEZ_LRC || []).filter(x => !x[2]); // 仅歌词行，跳过 credits
+    bgmAudio = audio; // 共享给导航歌词条
 
-    const sync = () => {
-      btn.classList.toggle('is-playing', !audio.paused);
-      if (cap) cap.classList.toggle('is-on', !audio.paused);
-    };
-
-    /* ---- 桌面歌词字幕条 ---- */
-    let curLine = -1;
-    function updateCaption() {
-      if (!cap || audio.paused) return;
-      let cur = -1;
-      for (let i = 0; i < LRC.length; i++) {
-        if (LRC[i][0] <= audio.currentTime + 0.05) cur = i; else break;
-      }
-      if (cur !== curLine) {
-        curLine = cur;
-        const txt = cur >= 0 ? LRC[cur][1] : '';
-        const span = cap.querySelector('.bgm-cap-text');
-        if (span) span.textContent = txt;
-        /* 换句动画：重触发 fade-slide */
-        cap.classList.remove('cap-flip');
-        void cap.offsetWidth;
-        cap.classList.add('cap-flip');
-      }
-    }
-    audio.addEventListener('timeupdate', updateCaption);
+    const sync = () => btn.classList.toggle('is-playing', !audio.paused);
 
     /* ---- 按钮控制 ---- */
     btn.addEventListener('click', () => {
@@ -566,7 +540,7 @@
       audio.play().then(() => {}).catch(() => {});
     };
 
-    const pr = audio.play(); // ① 有声直播
+    const pr = audio.play(); // ① 有声直放
     if (pr && pr.catch) {
       pr.then(() => { /* 直接成功 */ })
         .catch(() => {
@@ -574,10 +548,6 @@
           audio.muted = true;
           const pr2 = audio.play();
           if (pr2 && pr2.catch) pr2.catch(() => {});
-          if (cap) {
-            const span = cap.querySelector('.bgm-cap-text');
-            if (span) span.textContent = '♪ 轻触任意处开启声音';
-          }
           ['pointerdown', 'keydown', 'touchstart', 'scroll', 'wheel'].forEach(ev =>
             document.addEventListener(ev, unlock, { capture: true, passive: true }));
         });
@@ -585,11 +555,6 @@
 
     audio.addEventListener('play', sync);
     audio.addEventListener('pause', sync);
-    /* 点击字幕条聚焦到导航歌词条 */
-    if (cap) cap.addEventListener('click', () => {
-      const track = $('#nlTrack');
-      if (track) track.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    });
 
     renderNavLyrics();
     initNavLyrics();
