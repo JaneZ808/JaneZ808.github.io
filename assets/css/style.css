@@ -113,21 +113,23 @@ img { max-width: 100%; display: block; }
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 9px; letter-spacing: .34em; color: var(--gold);
 }
-#nav { display: flex; gap: 6px; }
+#nav { display: flex; gap: 14px; }
 .nl {
-  position: relative; padding: 8px 14px; font-size: 15.5px; color: var(--text-2);
-  transition: color .3s;
+  position: relative; padding: 10px 20px; font-size: 17.5px; letter-spacing: .04em;
+  color: var(--text-2); border-radius: 10px;
+  transition: color .3s, background .3s;
 }
 .nl em {
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-style: normal; font-size: 12.5px; letter-spacing: .14em;
-  color: var(--muted); margin-right: 7px; transition: color .3s;
+  font-style: normal; font-size: 13px; letter-spacing: .16em;
+  color: var(--muted); margin-right: 9px; transition: color .3s;
 }
-.nl:hover, .nl.active { color: var(--text); }
+.nl:hover, .nl.active { color: var(--text); background: color-mix(in srgb, var(--gold) 12%, transparent); }
 .nl.active em, .nl:hover em { color: var(--gold); }
 .nl::after {
-  content: ""; position: absolute; left: 12px; right: 12px; bottom: 2px; height: 1px;
-  background: var(--gold); transform: scaleX(0); transform-origin: left;
+  content: ""; position: absolute; left: 20px; right: 20px; bottom: 4px; height: 2px;
+  border-radius: 2px; background: var(--gold);
+  transform: scaleX(0); transform-origin: center;
   transition: transform .35s var(--ease);
 }
 .nl.active::after { transform: scaleX(1); }
