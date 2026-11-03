@@ -113,15 +113,15 @@ img { max-width: 100%; display: block; }
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 9px; letter-spacing: .34em; color: var(--gold);
 }
-#nav { display: flex; gap: 4px; }
+#nav { display: flex; gap: 6px; }
 .nl {
-  position: relative; padding: 8px 12px; font-size: 13.5px; color: var(--text-2);
+  position: relative; padding: 8px 14px; font-size: 15.5px; color: var(--text-2);
   transition: color .3s;
 }
 .nl em {
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-style: normal; font-size: 11px; letter-spacing: .12em;
-  color: var(--muted); margin-right: 6px; transition: color .3s;
+  font-style: normal; font-size: 12.5px; letter-spacing: .14em;
+  color: var(--muted); margin-right: 7px; transition: color .3s;
 }
 .nl:hover, .nl.active { color: var(--text); }
 .nl.active em, .nl:hover em { color: var(--gold); }
