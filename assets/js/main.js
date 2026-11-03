@@ -427,14 +427,13 @@
   /* ================= 导航状态 ================= */
   function initNav() {
     const header = $('#header');
-    if (!header) return;
     const navs = $$('#nav .nl');
     const bar = $('#progressBar');
     const sections = navs.map(a => $(a.getAttribute('href'))).filter(Boolean);
 
     function onScroll() {
       const y = window.scrollY;
-      header.classList.toggle('solid', y > 40);
+      if (header) header.classList.toggle('solid', y > 40);
       const toTop = $('#toTop');
       if (toTop) toTop.classList.toggle('show', y > 600);
       if (bar) {
