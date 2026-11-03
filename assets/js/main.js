@@ -250,9 +250,6 @@
         <div class="gi-art" style="${grad(g.tone)}">
           ${g.img ? `<img class="gi-img" src="${g.img}" alt="${g.title}" loading="lazy" decoding="async">` : ''}
         </div>
-        <div class="gi-overlay">
-          <span class="gi-title">${g.title}${g.sub ? ' · ' + g.sub : ''}</span>
-        </div>
       </div>`).join('');
 
     $$('#galleryGrid .gg-item').forEach(el =>

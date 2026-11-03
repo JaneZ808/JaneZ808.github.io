@@ -652,14 +652,6 @@ img { max-width: 100%; display: block; }
   content: ""; position: absolute; inset: 0;
   background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.22), transparent 55%);
 }
-.gi-mask {
-  position: absolute; inset: 0; display: flex; flex-direction: column;
-  justify-content: flex-end; padding: 22px;
-  background: linear-gradient(0deg, rgba(0, 0, 0, .72) 0%, transparent 62%);
-  color: #fff;
-}
-.gi-title { font-size: 15.5px; font-weight: 500; }
-.gi-sub { font-size: 12px; opacity: .78; margin-top: 4px; font-family: "Cormorant Garamond", Georgia, serif; letter-spacing: .1em; }
 .gallery-note { margin-top: 22px; font-size: 12px; color: var(--muted); }
 .gallery-note code { background: var(--surface); padding: 2px 7px; border-radius: 4px; font-size: 11.5px; }
 
@@ -2324,30 +2316,6 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
 }
 .gg-grid .gi-img.ready { opacity: 1; transform: scale(1); }
 
-.gi-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.18) 55%, transparent 78%);
-  opacity: .5;
-  transition: opacity .5s var(--ease);
-  display: flex;
-  align-items: flex-end;
-  padding: 20px;
-  pointer-events: none;
-  z-index: 2;
-}
-.gg-item:hover .gi-overlay { opacity: 1; }
-.gi-title {
-  color: #fff;
-  font-size: 13.5px;
-  letter-spacing: .1em;
-  transform: translateY(8px);
-  transition: transform .5s var(--ease), font-size .5s var(--ease), opacity .5s var(--ease);
-  text-shadow: 0 2px 12px rgba(0,0,0,.8);
-  opacity: .9;
-}
-.gg-item:hover .gi-title { transform: none; font-size: 14.5px; opacity: 1; }
-
 /* 灯箱增强：背景模糊 + 内容缩放入场 + 更宽展示 */
 .lightbox {
   backdrop-filter: blur(18px);
@@ -2393,13 +2361,8 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
 /* 响应式微调 */
 @media (max-width: 1000px) {
   .gg-grid { gap: 12px; }
-  .gi-title { font-size: 12px; }
-  .gg-item:hover .gi-title { font-size: 13px; }
 }
 @media (max-width: 640px) {
   .gg-item { border-radius: 14px; }
-  .gi-overlay { padding: 14px; }
-  .gi-title { font-size: 11px; transform: translateY(5px); }
-  .gg-item:hover .gi-title { font-size: 12px; }
   .gg-grid { gap: 10px; }
 }
