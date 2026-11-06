@@ -1544,42 +1544,62 @@ html[data-theme="light"] .hero-photo-overlay {
 }
 .sec-enter.in { opacity: 1; transform: none; }
 
-/* ── 7｜绝世美颜 · 3 列中图模式 ─────────────────────────────
-   版式：3 列等宽，每格 4:3 高宽比
-   动画：淡入 + 上浮 */
+/* ── 7｜绝世美颜 · 杂志画报式聚光布局 ─────────────────────
+   版式：首图全宽大图 + 双图半宽 + 余下三列竖图，简约大气、图上无文字
+   动画：错峰淡入上浮；hover 图片缓慢放大提亮 + 卡片轻抬 + 金色描边 + 光影扫过 */
 .gg-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 18px;
 }
 .gg-item {
   position: relative;
-  aspect-ratio: 4 / 3;
   overflow: hidden;
-  border-radius: var(--radius);
+  border-radius: 16px;
   cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, .16);
   opacity: 0;
-  transform: translateY(32px);
-  transition: opacity .9s var(--ease) var(--d, 0ms), transform .9s var(--ease) var(--d, 0ms);
+  transform: translateY(34px);
+  transition:
+    opacity .9s var(--ease) var(--d, 0ms),
+    transform .9s var(--ease) var(--d, 0ms),
+    translate .5s var(--ease),
+    box-shadow .5s var(--ease),
+    border-color .5s var(--ease);
 }
-.gg-item.in { opacity: 1; transform: none; }
-.gg-item:hover .gi-art { transform: scale(1.06); }
-.gg-grid .gi-art {
-  position: absolute;
-  inset: 0;
-  transition: transform 1.2s var(--ease);
+.gg-item.in { opacity: 1; transform: translateY(0); }
+/* 布局跨度：首图大图、紧接双图半宽、余下竖图三列 */
+.gg-hero  { grid-column: span 12; aspect-ratio: 21 / 9; }
+.gg-half  { grid-column: span 6;  aspect-ratio: 3 / 2; }
+.gg-third { grid-column: span 4;  aspect-ratio: 3 / 4; }
+.gg-item .gi-art {
+  position: absolute; inset: 0;
+  background: linear-gradient(150deg, var(--c1), var(--c2));
+  transition: transform 1.2s var(--ease), filter .6s var(--ease);
 }
-.gg-grid .gi-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transform: scale(1.04);
-  transition: opacity 1s var(--ease), transform 1.3s var(--ease);
+.gg-item .gi-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0; transform: scale(1.06);
+  transition: opacity .9s var(--ease), transform 1.4s var(--ease);
 }
-.gg-grid .gi-img.ready { opacity: 1; transform: scale(1); }
+.gg-item .gi-img.ready { opacity: 1; transform: scale(1); }
+/* hover：图片放大提亮 + 卡片轻抬 + 金色描边 */
+.gg-item:hover {
+  translate: 0 -6px;
+  border-color: color-mix(in srgb, var(--gold) 55%, transparent);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, .38);
+}
+.gg-item:hover .gi-art { transform: scale(1.07); filter: brightness(1.06) saturate(1.06); }
+/* 光影扫过 */
+.gg-item::after {
+  content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: linear-gradient(110deg, transparent 32%, rgba(255, 255, 255, .14) 50%, transparent 68%);
+  transform: translateX(-100%);
+  transition: transform .9s var(--ease);
+}
+.gg-item:hover::after { transform: translateX(100%); }
 
 /* ── 8｜聆听与关注 · 平台徽章 + 邮箱 ─────────────────────────
    版式：居中平台徽章一排
@@ -1752,7 +1772,7 @@ html[data-theme="light"] .hero-photo-overlay {
   .nx-item--hero { grid-column: auto; }
   .alb-grid { grid-template-columns: repeat(2, 1fr); }
   .ct-grid { grid-template-columns: repeat(2, 1fr); }
-  .gg-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .gg-grid { gap: 14px; }
   .sg-row { grid-template-columns: 48px 1fr auto auto 24px; column-gap: 12px; padding: 14px 4px; }
   .sg-no { font-size: 24px; }
   .sg-kind { display: none; }
@@ -1772,7 +1792,7 @@ html[data-theme="light"] .hero-photo-overlay {
   .gl-row { grid-template-columns: auto 1fr; row-gap: 4px; }
   .gl-year { grid-column: 2; }
   .alb-grid { grid-template-columns: 1fr; }
-  .gg-grid { grid-template-columns: 1fr; gap: 10px; }
+  .gg-grid { gap: 10px; }
   .sg-row { grid-template-columns: 40px 1fr auto; padding: 12px 2px; }
   .sg-go { display: none; }
   .ct-grid { grid-template-columns: 1fr; }
@@ -2269,54 +2289,7 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
   .sl-line { font-size: 11px; }
 }
 
-/* ── 10｜绝世美颜增强 ==========================================
-   大气水晶玻璃卡片 + 光效扫过 + 灯箱模糊放大；区块头装饰线 */
-.gg-item {
-  isolation: isolate;
-  border-radius: 18px;
-  border: 1px solid var(--border-strong);
-  background: color-mix(in srgb, var(--surface) 55%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0,0,0,.25);
-  transition: transform .55s var(--ease), box-shadow .55s var(--ease), border-color .55s var(--ease);
-}
-.gg-item:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 50px rgba(0,0,0,.45);
-  border-color: rgba(255,255,255,.28);
-}
-/* 光效扫过 */
-.gg-item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.12) 50%, transparent 70%);
-  transform: translateX(-100%);
-  transition: transform .8s var(--ease);
-  pointer-events: none;
-  z-index: 3;
-}
-.gg-item:hover::after { transform: translateX(100%); }
-
-.gi-art {
-  position: absolute;
-  inset: 0;
-  transition: transform .8s var(--ease);
-}
-.gg-item:hover .gi-art { transform: scale(1.08); }
-.gg-grid .gi-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transform: scale(1.04);
-  transition: opacity 1s var(--ease), transform 1.3s var(--ease);
-}
-.gg-grid .gi-img.ready { opacity: 1; transform: scale(1); }
+/* ── 10｜绝世美颜 hover 动效已并入第 7 节基础规则；此处仅保留灯箱增强 ── */
 
 /* 灯箱增强：背景模糊 + 内容缩放入场 + 更宽展示 */
 .lightbox {
@@ -2360,11 +2333,17 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
 }
 .sec-head:hover::after { width: 80px; }
 
-/* 响应式微调 */
+/* 响应式微调 · 绝世美颜聚光布局 */
 @media (max-width: 1000px) {
-  .gg-grid { gap: 12px; }
+  .gg-grid { gap: 14px; }
+  .gg-hero  { grid-column: span 12; aspect-ratio: 16 / 9; }
+  .gg-half  { grid-column: span 6;  aspect-ratio: 3 / 2; }
+  .gg-third { grid-column: span 6;  aspect-ratio: 4 / 5; }
 }
 @media (max-width: 640px) {
-  .gg-item { border-radius: 14px; }
   .gg-grid { gap: 10px; }
+  .gg-item { border-radius: 14px; }
+  .gg-hero  { grid-column: span 12; aspect-ratio: 16 / 9; }
+  .gg-half  { grid-column: span 12; aspect-ratio: 3 / 2; }
+  .gg-third { grid-column: span 12; aspect-ratio: 3 / 4; }
 }
