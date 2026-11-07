@@ -246,9 +246,8 @@
     const all = src('GALLERY').map((g, gi) => ({ g, gi }));
 
     host.innerHTML = all.map(({ g, gi }, i) => {
-      const span = i === 0 ? 'gg-hero' : (i <= 2 ? 'gg-half' : 'gg-third');
       return `
-      <div class="gg-item ${span} reveal" data-i="${gi}" style="--d:${dly(i, 70)}ms">
+      <div class="gg-item reveal" data-i="${gi}" style="--d:${dly(i, 70)}ms">
         <div class="gi-art" style="${grad(g.tone)}">
           ${g.img ? `<img class="gi-img" src="${g.img}" alt="${g.title}" loading="lazy" decoding="async">` : ''}
         </div>
