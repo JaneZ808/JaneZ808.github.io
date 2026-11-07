@@ -1544,62 +1544,56 @@ html[data-theme="light"] .hero-photo-overlay {
 }
 .sec-enter.in { opacity: 1; transform: none; }
 
-/* ── 7｜绝世美颜 · 编辑画廊（无框大图 / 照片墙）─────────────────
-   版式：12 栏编辑式拼贴，首尾横幅 + 方幅 + 竖幅 + 横幅，纯净无框、图上无文字
-   动画：错峰淡入上浮；hover 图片缓慢放大提亮 + 金色取景内框 */
+/* ── 7｜绝世美颜 · 瀑布流照片墙 ───────────────────────────
+   版式：2 列瀑布流，每张图按原始比例完整展示（容器比例=原图比例，
+        object-fit:cover 零裁切，不遮挡人脸）；偶数项下移形成列间错落
+   动画：错峰淡入上浮；hover 图片轻微放大提亮，无框无文字 */
 .gg-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 12px;
+  column-count: 2;
+  column-gap: 16px;
 }
 .gg-item {
   position: relative;
-  overflow: hidden;
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  margin-bottom: 14px;
   cursor: pointer;
-  grid-column: span 4;
-  aspect-ratio: 3 / 4;
-  border-radius: 4px;
+  border-radius: 3px;
+  overflow: hidden;
   background: var(--surface);
   opacity: 0;
   transform: translateY(30px);
   transition:
     opacity .9s var(--ease) var(--d, 0ms),
-    transform .9s var(--ease) var(--d, 0ms),
-    translate .5s var(--ease);
+    transform .9s var(--ease) var(--d, 0ms);
 }
 .gg-item.in { opacity: 1; transform: translateY(0); }
-/* 编辑式拼贴节奏（按出现顺序） */
-.gg-item:nth-child(1) { grid-column: span 12; aspect-ratio: 2.4 / 1; }
-.gg-item:nth-child(2) { grid-column: span 6;  aspect-ratio: 1 / 1; }
-.gg-item:nth-child(3) { grid-column: span 6;  aspect-ratio: 1 / 1; }
-.gg-item:nth-child(4) { grid-column: span 4;  aspect-ratio: 3 / 4; }
-.gg-item:nth-child(5) { grid-column: span 4;  aspect-ratio: 3 / 4; }
-.gg-item:nth-child(6) { grid-column: span 4;  aspect-ratio: 3 / 4; }
-.gg-item:nth-child(7) { grid-column: span 6;  aspect-ratio: 4 / 3; }
-.gg-item:nth-child(8) { grid-column: span 6;  aspect-ratio: 4 / 3; }
-.gg-item:nth-child(9) { grid-column: span 12; aspect-ratio: 2.4 / 1; }
+/* 列间错落：偶数项整体下移，两列形成阶梯节奏 */
+.gg-item:nth-child(even) { margin-top: 40px; }
 .gg-item .gi-art {
-  position: absolute; inset: 0;
+  position: relative;
+  display: block;
   background: linear-gradient(150deg, var(--c1), var(--c2));
-  transition: transform 1.1s var(--ease), filter .6s var(--ease);
 }
 .gg-item .gi-img {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; opacity: 0; transform: scale(1.05);
-  transition: opacity 1s var(--ease), transform 1.3s var(--ease), filter .6s var(--ease);
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .9s var(--ease), transform .8s var(--ease), filter .5s var(--ease);
 }
-.gg-item .gi-img.ready { opacity: 1; transform: scale(1); }
-/* hover：图片放大提亮 + 卡片轻抬 */
-.gg-item:hover { translate: 0 -5px; }
-.gg-item:hover .gi-img { transform: scale(1.06); filter: brightness(1.06) saturate(1.05); }
-/* 金色取景内框 */
+.gg-item .gi-img.ready { opacity: 1; }
+/* hover：图片轻微放大提亮（无框、无文字、纯净） */
+.gg-item:hover .gi-img { transform: scale(1.02); filter: brightness(1.06) saturate(1.03); }
+/* hover 摄影暗角：四缘轻压暗，突出主体，增加"上墙"感 */
 .gg-item::after {
-  content: ''; position: absolute; inset: 11px; z-index: 2; pointer-events: none;
-  border: 1px solid var(--gold);
-  opacity: 0; transform: scale(1.05);
-  transition: opacity .45s var(--ease), transform .45s var(--ease);
+  content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  box-shadow: inset 0 0 70px rgba(0, 0, 0, .38);
+  opacity: 0; transition: opacity .5s var(--ease);
 }
-.gg-item:hover::after { opacity: .9; transform: scale(1); }
+.gg-item:hover::after { opacity: 1; }
 /* 区块标题提升（仅美颜）：标题加大 + 雅致副题 */
 #gallery .sh-cn { font-size: 34px; }
 .gg-tag {
@@ -1782,7 +1776,7 @@ html[data-theme="light"] .hero-photo-overlay {
   .nx-item--hero { grid-column: auto; }
   .alb-grid { grid-template-columns: repeat(2, 1fr); }
   .ct-grid { grid-template-columns: repeat(2, 1fr); }
-  .gg-grid { gap: 14px; }
+  .gg-grid { column-gap: 12px; }
   .sg-row { grid-template-columns: 48px 1fr auto auto 24px; column-gap: 12px; padding: 14px 4px; }
   .sg-no { font-size: 24px; }
   .sg-kind { display: none; }
@@ -1802,7 +1796,9 @@ html[data-theme="light"] .hero-photo-overlay {
   .gl-row { grid-template-columns: auto 1fr; row-gap: 4px; }
   .gl-year { grid-column: 2; }
   .alb-grid { grid-template-columns: 1fr; }
-  .gg-grid { gap: 10px; }
+  /* 绝世美颜：手机端单列瀑布流，取消错落下移 */
+  .gg-grid { column-count: 1; column-gap: 10px; }
+  .gg-item:nth-child(even) { margin-top: 0; }
   .sg-row { grid-template-columns: 40px 1fr auto; padding: 12px 2px; }
   .sg-go { display: none; }
   .ct-grid { grid-template-columns: 1fr; }
@@ -2343,19 +2339,5 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
 }
 .sec-head:hover::after { width: 80px; }
 
-/* 响应式微调 · 绝世美颜编辑画廊 */
-@media (max-width: 1000px) {
-  .gg-grid { gap: 12px; }
-  .gg-item:nth-child(1), .gg-item:nth-child(9) { grid-column: span 12; aspect-ratio: 16 / 9; }
-  .gg-item:nth-child(2), .gg-item:nth-child(3) { grid-column: span 6; aspect-ratio: 1 / 1; }
-  .gg-item:nth-child(4), .gg-item:nth-child(5), .gg-item:nth-child(6) { grid-column: span 6; aspect-ratio: 3 / 4; }
-  .gg-item:nth-child(7), .gg-item:nth-child(8) { grid-column: span 6; aspect-ratio: 4 / 3; }
-}
-@media (max-width: 640px) {
-  .gg-grid { gap: 10px; }
-  .gg-item:nth-child(n) { grid-column: span 12; }
-  .gg-item:nth-child(1), .gg-item:nth-child(9) { aspect-ratio: 16 / 9; }
-  .gg-item:nth-child(2), .gg-item:nth-child(3) { aspect-ratio: 1 / 1; }
-  .gg-item:nth-child(4), .gg-item:nth-child(5), .gg-item:nth-child(6) { aspect-ratio: 3 / 4; }
-  .gg-item:nth-child(7), .gg-item:nth-child(8) { aspect-ratio: 4 / 3; }
-}
+/* 响应式微调 · 绝世美颜瀑布流照片墙
+   （≤1000px 收紧列间距；≤640px 单列 + 取消错落，见上方「响应式」区块） */

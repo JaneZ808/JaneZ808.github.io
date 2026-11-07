@@ -235,10 +235,15 @@
     bindCoverFallback();
   }
 
-  /* ================= 渲染：绝世美颜 · 3 列网格 + 灯箱（回滚恢复版） =================
-   * 大图模式：3 列等宽，每格 1 张，点击放大查看。
+  /* ================= 渲染：绝世美颜 · 瀑布流照片墙 + 灯箱 =================
+   * 版式：2 列瀑布流，每张图按原始比例完整展示（不裁切、不遮挡人脸）
    * data-i 携带数组原始下标，灯箱据此索引。 */
   let galleryIndex = 0;
+
+  /* 9 张美颜图的真实宽高比（与 assets/img/gallery-*.jpg 实际像素一致，
+     容器比例 = 原图比例，object-fit:cover 也不会裁掉人脸；
+     更换图片文件时需同步更新此处数值（可用 node 解析 JPEG SOF 获取） */
+  const GG_RATIO = ['1.499', '1.499', '1.499', '1.564', '1.499', '1.777', '1.501', '1.501', '1.481'];
 
   function renderGallery() {
     const host = $('#galleryGrid');
@@ -246,9 +251,10 @@
     const all = src('GALLERY').map((g, gi) => ({ g, gi }));
 
     host.innerHTML = all.map(({ g, gi }, i) => {
+      const ratio = GG_RATIO[gi] || '3 / 2';
       return `
       <div class="gg-item reveal" data-i="${gi}" style="--d:${dly(i, 70)}ms">
-        <div class="gi-art" style="${grad(g.tone)}">
+        <div class="gi-art" style="${grad(g.tone)};aspect-ratio:${ratio}">
           ${g.img ? `<img class="gi-img" src="${g.img}" alt="${g.title}" loading="lazy" decoding="async">` : ''}
         </div>
       </div>`;
