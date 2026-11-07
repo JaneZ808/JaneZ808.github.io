@@ -323,13 +323,15 @@ img { max-width: 100%; display: block; }
 #tour::before    { background-image: url('../../assets/img/gallery-1.jpg'); }  /* 追 世界巡演 */
 #gallery::before { background-image: url('../../assets/img/gallery-2.jpg'); opacity: .22; }  /* 光 世界巡演：减弱以免抢网格视觉 */
 #contact::before { background-image: url('../../assets/img/gallery-3.jpg'); }  /* 珍相 巡演 */
-.sh-left { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.sh-left { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+/* 英文小字：衬线斜体金色——节目单式题注，替代全大写 tracked eyebrow（模板感来源） */
 .sh-en {
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 46px; line-height: 1; color: transparent;
-  -webkit-text-stroke: 1px var(--border-strong);
+  font-style: italic;
+  font-size: 17px; line-height: 1; color: var(--gold);
+  letter-spacing: .02em;
 }
-.sh-cn { font-size: 30px; font-weight: 400; letter-spacing: .12em; }
+.sh-cn { font-size: 36px; font-weight: 300; letter-spacing: .16em; line-height: 1.2; }
 .sh-desc { margin-top: 14px; color: var(--muted); font-size: 14px; }
 .sub-head {
   margin: 76px 0 30px;
@@ -2324,20 +2326,189 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
   object-fit: contain;
 }
 
-/* 区块头部装饰线 */
-.sec-head { position: relative; }
+/* 区块头部分隔线：通栏发丝线 + 左侧金色段（节目单式），滚动到位时展开 */
+.sec-head { position: relative; padding-bottom: 22px; }
 .sec-head::after {
   content: '';
   position: absolute;
-  bottom: -10px;
+  bottom: 0;
   left: 0;
-  width: 44px;
-  height: 2px;
-  background: var(--gold);
-  border-radius: 2px;
-  transition: width .6s var(--ease);
+  right: 0;
+  height: 1px;
+  background: var(--border);
 }
-.sec-head:hover::after { width: 80px; }
+.sec-head::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 64px;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  z-index: 1;
+}
 
 /* 响应式微调 · 绝世美颜瀑布流照片墙
    （≤1000px 收紧列间距；≤640px 单列 + 取消错落，见上方「响应式」区块） */
+
+/* ============================================================
+   ── 12｜滚动驱动动效系统（聚光灯下的节目单）
+   零 JS：animation-timeline: view() 由浏览器合成线程驱动，
+   比 IO + transition 更顺滑；@supports 渐进增强，
+   不支持的浏览器保持内容直接可见；reduced-motion 全量降级。
+   进场一律使用独立的 translate / filter 属性，绝不碰 transform，
+   避免与 hover 的 transform 动画互相覆盖。
+   ============================================================ */
+@keyframes sd-head-in {
+  from { opacity: 0; translate: 0 40px; filter: blur(8px); }
+}
+@keyframes sd-item-in {
+  from { opacity: 0; translate: 0 44px; filter: blur(6px); }
+}
+@keyframes sd-card-in {
+  from { opacity: 0; translate: 0 52px; }
+}
+@keyframes sd-row-in {
+  from { opacity: 0; translate: -36px 0; }
+}
+@keyframes sd-line-grow {
+  from { transform: scaleX(0); }
+}
+@keyframes sd-soft-in {
+  from { opacity: 0; translate: 0 20px; }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* ---- 区块头序列：题注 → 中文大标题 → 副题，依次浮现 ---- */
+    .sec-head .sh-left > * {
+      animation: sd-head-in 1s var(--ease) both;
+      animation-timeline: view();
+      animation-range: entry 14% cover 28%;
+    }
+    .sec-head .sh-left > *:nth-child(2) { animation-range: entry 18% cover 32%; }
+    .sec-head .sh-left > *:nth-child(3) { animation-range: entry 22% cover 36%; }
+    /* 「查看全部」入口略迟于标题 */
+    .sec-head > .sec-more {
+      animation: sd-head-in 1s var(--ease) both;
+      animation-timeline: view();
+      animation-range: entry 24% cover 38%;
+    }
+    /* 金色段从左侧展开（transform 专用，不与进场属性冲突） */
+    .sec-head::before {
+      animation: sd-line-grow .9s var(--ease) both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 34%;
+    }
+
+    /* ---- 档案：标题揭示 + 事实行逐行自左滑入 ---- */
+    .rs-title {
+      animation: sd-head-in 1.1s var(--ease) both;
+      animation-timeline: view();
+      animation-range: entry 6% cover 22%;
+    }
+    .rs-facts .fact-row {
+      animation: sd-row-in .8s var(--ease) both;
+      animation-timeline: view();
+    }
+    .rs-facts .fact-row:nth-child(2) { animation-range: entry 12% cover 30%; }
+    .rs-facts .fact-row:nth-child(3) { animation-range: entry 14% cover 32%; }
+    .rs-facts .fact-row:nth-child(4) { animation-range: entry 16% cover 34%; }
+    .rs-facts .fact-row:nth-child(5) { animation-range: entry 18% cover 36%; }
+    .rs-facts .fact-row:nth-child(6) { animation-range: entry 20% cover 38%; }
+
+    /* ---- 音乐：专辑卡错峰立起 ---- */
+    .alb-grid .album-card {
+      animation: sd-card-in .9s var(--ease) both;
+      animation-timeline: view();
+    }
+    .alb-grid .album-card:nth-child(2) { animation-range: entry 16% cover 30%; }
+    .alb-grid .album-card:nth-child(3) { animation-range: entry 18% cover 32%; }
+    .alb-grid .album-card:nth-child(4) { animation-range: entry 20% cover 34%; }
+    .alb-grid .album-card:nth-child(5) { animation-range: entry 22% cover 36%; }
+    .alb-grid .album-card:nth-child(6) { animation-range: entry 24% cover 38%; }
+
+    /* ---- 美颜：瀑布流错峰浮现 ---- */
+    .gg-grid .gg-item {
+      animation: sd-card-in .9s var(--ease) both;
+      animation-timeline: view();
+    }
+    .gg-grid .gg-item:nth-child(2) { animation-range: entry 14% cover 28%; }
+    .gg-grid .gg-item:nth-child(3) { animation-range: entry 16% cover 30%; }
+    .gg-grid .gg-item:nth-child(4) { animation-range: entry 18% cover 32%; }
+    .gg-grid .gg-item:nth-child(5) { animation-range: entry 20% cover 34%; }
+    .gg-grid .gg-item:nth-child(6) { animation-range: entry 22% cover 36%; }
+    .gg-grid .gg-item:nth-child(7) { animation-range: entry 24% cover 38%; }
+    .gg-grid .gg-item:nth-child(8) { animation-range: entry 26% cover 40%; }
+    .gg-grid .gg-item:nth-child(9) { animation-range: entry 28% cover 42%; }
+
+    /* ---- 联系：信息行淡入（卡片保留 JS 入场 + 呼吸浮动，不叠加 scroll-driven） ---- */
+    .ct-info {
+      animation: sd-soft-in .9s var(--ease) both;
+      animation-timeline: view();
+      animation-range: entry 12% cover 26%;
+    }
+  }
+}
+
+/* ---- 全站电影颗粒：SVG 噪点 fixed 覆盖，极低透明度 ---- */
+.grain {
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 700;
+  pointer-events: none;
+  opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-drift 1.4s steps(4) infinite;
+}
+@keyframes grain-drift {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2%, 3%); }
+  50% { transform: translate(3%, -2%); }
+  75% { transform: translate(-3%, -3%); }
+  100% { transform: translate(2%, 2%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .grain { animation: none; }
+}
+
+/* ---- 音乐板块：发行日期改衬线金色（曲目单质感） ---- */
+.ac-date {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 19px;
+  color: var(--gold);
+  letter-spacing: .06em;
+  line-height: 1;
+}
+
+/* ---- 联系卡片 hover：中心暖金光晕（替代生硬边框变色） ---- */
+.ct-grid .contact-card { position: relative; overflow: hidden; }
+.ct-grid .contact-card::before {
+  content: '';
+  position: absolute;
+  left: 50%; top: 60%;
+  width: 130%; aspect-ratio: 1;
+  transform: translate(-50%, -50%) scale(.4);
+  background: radial-gradient(circle, var(--gold-soft) 0%, transparent 62%);
+  opacity: 0;
+  transition: opacity .55s var(--ease), transform .55s var(--ease);
+  pointer-events: none;
+}
+.ct-grid .contact-card:hover::before { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+/* ---- 页脚：顶部一道由中心展开的金线 ---- */
+#footer { position: relative; }
+#footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+  opacity: .55;
+}
