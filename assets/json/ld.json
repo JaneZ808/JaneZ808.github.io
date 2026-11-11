@@ -44,8 +44,7 @@
         { "@type": "ListItem", "position": 1, "name": "最新动态", "item": "https://janez808.github.io/#news" },
         { "@type": "ListItem", "position": 2, "name": "个人档案", "item": "https://janez808.github.io/#profile" },
         { "@type": "ListItem", "position": 3, "name": "音乐作品", "item": "https://janez808.github.io/#music" },
-        { "@type": "ListItem", "position": 4, "name": "巡回演唱会", "item": "https://janez808.github.io/#tour" },
-        { "@type": "ListItem", "position": 5, "name": "光影瞬间", "item": "https://janez808.github.io/#gallery" }
+        { "@type": "ListItem", "position": 4, "name": "巡回演唱会", "item": "https://janez808.github.io/#tour" }
       ]
     }
   ]

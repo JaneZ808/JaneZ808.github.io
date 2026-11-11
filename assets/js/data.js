@@ -436,19 +436,6 @@ const PLATFORMS = [
   { name: '微博', url: 'https://weibo.com/zhangliangying' }
 ];
 
-/* ---------- 11. 图集（光影瞬间） ---------- */
-const GALLERY = [
-  { title: '「追」世界巡回演唱会', sub: '2025 — 至今', tone: 0, img: 'assets/img/gallery-1.jpg' },
-  { title: '「光」世界巡回演唱会', sub: '2023 — 2024', tone: 1, img: 'assets/img/gallery-2.jpg' },
-  { title: '珍相 Jane\'s Secret', sub: '2018 世界巡演', tone: 2, img: 'assets/img/gallery-3.jpg' },
-  { title: 'TMEA 腾讯音乐娱乐盛典', sub: '2026 年度女歌手', tone: 3, img: 'assets/img/gallery-4.jpg' },
-  { title: '央视春晚舞台', sub: '2013 / 2014 / 2026', tone: 4, img: 'assets/img/gallery-5.jpg' },
-  { title: 'Past Progressive', sub: '2019 全英文专辑', tone: 5, img: 'assets/img/gallery-6.jpg' },
-  { title: '维多利亚的秘密时尚秀', sub: '2017 首位亚洲歌手', tone: 6, img: 'assets/img/gallery-7.jpg' },
-  { title: '格莱美红毯', sub: '2010 首位华人歌手', tone: 7, img: 'assets/img/gallery-8.jpg' },
-  { title: '影视金曲之夜', sub: 'OST 女王', tone: 8, img: 'assets/img/gallery-9.jpg' }
-];
-
 /* ---------- 封面 / 背景映射（本地图片，由抓取脚本生成；缺失时前端回退渐变占位） ---------- */
 const COVER_MAP = {
   album: [],
@@ -472,39 +459,6 @@ const COVER_MAP = {
     'assets/img/globals/DustMyShouldersOffSteveAokiRemix.jpg', 'assets/img/globals/MakeItBig.jpg', '', ''
   ]
 };
-/* 星路历程每项对应的背景图：
-   优先使用站内已有真实照片（gallery-*.jpg，均为张靓颖真实舞台/奖项影像）中与事件相符者；
-   无相符真实照片者留空，前端回退为渐变占位（绝不放置错误图片）。
-   注：专辑/OST 真实封面需联网抓取（沙箱当前外网不通），待可联网时填入 assets/img/covers、osts 即可自动生效。 */
-const TIMELINE_BG = [
-  '', '', '', '', '',
-  '',
-  'assets/img/gallery-9.jpg',
-  '',
-  'assets/img/gallery-8.jpg',
-  '',
-  '',
-  'assets/img/gallery-5.jpg',
-  '',
-  '',
-  '',
-  '',
-  'assets/img/gallery-7.jpg',
-  'assets/img/gallery-6.jpg',
-  'assets/img/gallery-6.jpg',
-  '',
-  'assets/img/gallery-2.jpg',
-  'assets/img/gallery-1.jpg',
-  'assets/img/gallery-4.jpg'
-];
-/* 统一封面大图：所有事件暂用同一张（gallery-5，2013 央视春晚舞台现场）。
-   后续逐事件补真实图时：把 TIMELINE_PER_EVENT 改为 true，
-   即按上方 TIMELINE_BG 取各事件图片，未配置者仍回退 TIMELINE_COVER。 */
-const TIMELINE_COVER = 'assets/img/gallery-5.jpg';
-const TIMELINE_PER_EVENT = false;
 if (typeof window !== 'undefined') {
   window.COVER_MAP = COVER_MAP;
-  window.TIMELINE_BG = TIMELINE_BG;
-  window.TIMELINE_COVER = TIMELINE_COVER;
-  window.TIMELINE_PER_EVENT = TIMELINE_PER_EVENT;
 }

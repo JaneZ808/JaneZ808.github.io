@@ -36,8 +36,7 @@
   /* 板块登记表：主页「查看全部」与 all.html 顶部 tabs 共用 */
   const SECS = [
     { k: 'profile', cn: '个人档案',   en: 'Profile', desc: '完整档案信息，含简介、全部条目与音乐标签。' },
-    { k: 'music',   cn: '正式专辑',   en: 'Music',   desc: '出道至今 6 张正式录音室专辑（The One / UPDATE*JANE / 张靓颖@音乐 / 我相信 / 改变 / 第七感），点击封面查看该专辑信息。' },
-    { k: 'gallery', cn: '绝世美颜',   en: 'Beauty',  desc: '舞台、红毯与高光时刻精选图集，点击任一张即可放大浏览。' }
+    { k: 'music',   cn: '正式专辑',   en: 'Music',   desc: '出道至今 6 张正式录音室专辑（The One / UPDATE*JANE / 张靓颖@音乐 / 我相信 / 改变 / 第七感），点击封面查看该专辑信息。' }
   ];
 
   /* ---------- 限时活动主题（自动到期回滚，无需人工干预） ----------
@@ -235,175 +234,6 @@
     bindCoverFallback();
   }
 
-  /* ================= 渲染：绝世美颜 · 一帧一幕横向影像卷轴 =============
-   * 主张：不是相册网格，是放映机里的一卷胶片——整块 bleed 出容器，
-   *       一次只放一帧全幅大图，横向拉片切换，展签像电影字幕卡压在图上。
-   * 不裁脸：中央清晰大图 contain 完整呈现；画幅外由同一张图放大模糊压暗
-   *        铺满作影院光晕，既"整块都是这张图"又零裁切。舞台高度锁一屏内。
-   * 切换：原生 scroll-snap（手指/触控板）+ 箭头/进度齿/方向键。 */
-  let galleryIndex = 0;
-  let ggCurrent = 0;
-
-  function renderGallery() {
-    const host = $('#galleryGrid');
-    if (!host) return;
-    const all = src('GALLERY');
-    if (!all.length) return;
-    const pad2 = n => String(n).padStart(2, '0');
-
-    /* 覆盖旧网格类名，避免旧 CSS 规则串味 */
-    host.className = 'gg-stage';
-    host.innerHTML = `
-      <div class="gg-reel" id="ggReel" tabindex="0" role="region" aria-label="绝世美颜影像卷轴，可左右滑动切换">
-        ${all.map((g, i) => `
-        <div class="gg-frame${i === 0 ? ' is-active' : ''}" data-i="${i}">
-          <div class="gf-art" style="${grad(g.tone)}${g.img ? `;background-image:url('${g.img}')` : ''}"></div>
-          ${g.img ? `<img class="gf-img" src="${g.img}" alt="${g.title}" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async">` : ''}
-        </div>`).join('')}
-      </div>
-      <div class="gg-hud">
-        <div class="gg-caption">
-          <span class="gg-no"><em id="ggNo">01</em><i>/</i><span id="ggTotal">${pad2(all.length)}</span></span>
-          <div class="gg-meta">
-            <h3 class="gg-title" id="ggTitle">${all[0].title}</h3>
-            <p class="gg-sub" id="ggSub">${all[0].sub || ''}</p>
-          </div>
-        </div>
-        <div class="gg-ctrl">
-          <div class="gg-track" id="ggTrack">
-            ${all.map((g, i) => `<button class="gg-tick${i === 0 ? ' on' : ''}" type="button" data-go="${i}" aria-label="第 ${i + 1} 帧：${g.title}"></button>`).join('')}
-          </div>
-          <div class="gg-arrows">
-            <button class="gg-arrow" type="button" data-dir="-1" aria-label="上一帧">&#10094;</button>
-            <button class="gg-arrow" type="button" data-dir="1" aria-label="下一帧">&#10095;</button>
-          </div>
-        </div>
-      </div>`;
-
-    $$('#ggReel .gg-frame').forEach(el =>
-      el.addEventListener('click', () => openLightbox(Number(el.dataset.i))));
-
-    $$('#ggReel .gf-img').forEach(img => {
-      const done = () => img.classList.add('ready');
-      if (img.complete && img.naturalWidth > 0) done();
-      else {
-        img.addEventListener('load', done, { once: true });
-        img.addEventListener('error', () => img.remove(), { once: true });
-      }
-    });
-
-    initGalleryReel(all);
-  }
-
-  function initGalleryReel(all) {
-    const reel = $('#ggReel');
-    if (!reel) return;
-    const frames = $$('#ggReel .gg-frame');
-    const ticks = $$('#ggTrack .gg-tick');
-    const caption = $('.gg-caption');
-    const elNo = $('#ggNo'), elTitle = $('#ggTitle'), elSub = $('#ggSub');
-    const pad2 = n => String(n).padStart(2, '0');
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    ggCurrent = 0;
-
-    function setCurrent(i) {
-      i = Math.max(0, Math.min(all.length - 1, i));
-      if (i === ggCurrent) return;
-      ggCurrent = i;
-      const g = all[i];
-      if (elNo) elNo.textContent = pad2(i + 1);
-      if (elTitle) elTitle.textContent = g.title;
-      if (elSub) elSub.textContent = g.sub || '';
-      ticks.forEach((t, k) => t.classList.toggle('on', k === i));
-      frames.forEach((f, k) => f.classList.toggle('is-active', k === i));
-      if (caption) {
-        caption.classList.remove('swap');
-        void caption.offsetWidth;
-        caption.classList.add('swap');
-      }
-    }
-
-    function go(i) {
-      reel.scrollTo({
-        left: Math.max(0, Math.min(all.length - 1, i)) * reel.clientWidth,
-        behavior: reduce ? 'auto' : 'smooth'
-      });
-    }
-
-    let raf = 0;
-    reel.addEventListener('scroll', () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        setCurrent(Math.round(reel.scrollLeft / Math.max(1, reel.clientWidth)));
-      });
-    }, { passive: true });
-
-    $$('.gg-arrow').forEach(b => b.addEventListener('click', () =>
-      go((ggCurrent + Number(b.dataset.dir) + all.length) % all.length)));
-    ticks.forEach((t, i) => t.addEventListener('click', () => go(i)));
-
-    reel.addEventListener('keydown', e => {
-      if (e.key === 'ArrowLeft') { e.preventDefault(); go(ggCurrent - 1); }
-      if (e.key === 'ArrowRight') { e.preventDefault(); go(ggCurrent + 1); }
-    });
-    window.addEventListener('resize', () => {
-      reel.scrollLeft = ggCurrent * reel.clientWidth;
-    }, { passive: true });
-  }
-
-  function openLightbox(i) {
-    galleryIndex = i;
-    const lb = $('#lightbox');
-    if (!lb) return;
-    const g = src('GALLERY')[i];
-    if (g.img) {
-      $('#lbArt').classList.add('has-img');
-      const im = document.createElement('img');
-      im.className = 'lb-img';
-      im.src = g.img;
-      im.alt = g.title;
-      im.addEventListener('error', () => im.remove(), { once: true });
-      $('#lbArt').replaceChildren(im);
-    } else {
-      $('#lbArt').classList.remove('has-img');
-      $('#lbArt').setAttribute('style', grad(g.tone));
-      $('#lbArt').replaceChildren();
-    }
-    lb.classList.add('show');
-    document.body.classList.add('locked');
-  }
-
-  function closeLightbox() {
-    const lb = $('#lightbox');
-    if (!lb) return;
-    lb.classList.remove('show');
-    document.body.classList.remove('locked');
-  }
-
-  function stepLightbox(d) {
-    const n = src('GALLERY').length;
-    galleryIndex = (galleryIndex + d + n) % n;
-    openLightbox(galleryIndex);
-  }
-
-  function initLightbox() {
-    const lb = $('#lightbox');
-    if (!lb) return;
-    $('.lb-close', lb).addEventListener('click', closeLightbox);
-    $('.lb-prev', lb).addEventListener('click', () => stepLightbox(-1));
-    $('.lb-next', lb).addEventListener('click', () => stepLightbox(1));
-    lb.addEventListener('click', e => {
-      if (e.target.id === 'lightbox') closeLightbox();
-    });
-    document.addEventListener('keydown', e => {
-      if (!lb.classList.contains('show')) return;
-      if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowLeft') stepLightbox(-1);
-      if (e.key === 'ArrowRight') stepLightbox(1);
-    });
-  }
-
   /* ================= 渲染：平台直达 ================= */
   const PLAT_EN = { 'QQ音乐': 'QQ MUSIC', '网易云音乐': 'NETEASE MUSIC', '酷狗音乐': 'KUGOU MUSIC', '微博': 'WEIBO' };
   function renderPlatforms() {
@@ -424,8 +254,7 @@
   /* ================= 计数回填：data-count → 各数据源实际条数 ================= */
   function fillCounts() {
     const N = {
-      music: studioAlbums().length,
-      gallery: src('GALLERY').length
+      music: studioAlbums().length
     };
     $$('[data-count]').forEach(el => {
       const v = N[el.getAttribute('data-count')];
@@ -436,7 +265,7 @@
   /* ================= 全量页：标题 + tabs + 区块显隐 ================= */
   function buildFull(sec) {
     // 兼容旧 URL：已删除的板块统一落到档案页
-    if (sec === 'news' || sec === 'tour' || sec === 'album' || sec === 'singles' || sec === 'ost' || sec === 'global') {
+    if (sec === 'news' || sec === 'tour' || sec === 'album' || sec === 'singles' || sec === 'ost' || sec === 'global' || sec === 'gallery') {
       window.location.replace('all.html?sec=profile');
       return;
     }
@@ -451,10 +280,10 @@
       `<a class="full-tab${s.k === meta.k ? ' is-on' : ''}" href="all.html?sec=${s.k}">${s.cn}</a>`).join('');
     $$('.f-sec').forEach(s => { s.hidden = s.getAttribute('data-sec') !== meta.k; });
     // 设置全屏壁纸背景
-    const bgMap = { profile: 'gallery-5.jpg', music: 'gallery-9.jpg', gallery: 'gallery-8.jpg' };
+    const bgMap = { profile: 'profile.jpg', music: 'music-bg.jpg' };
     const shell = $('.full-shell');
     if (shell && bgMap[meta.k]) {
-      shell.style.setProperty('--sec-bg', `linear-gradient(135deg, rgba(18,16,24,.85), rgba(26,22,36,.80)), url('../img/${bgMap[meta.k]}')`);
+      shell.style.setProperty('--sec-bg', `linear-gradient(135deg, rgba(18,16,24,.85), rgba(26,22,36,.80)), url('assets/img/${bgMap[meta.k]}')`);
     }
   }
 
@@ -566,7 +395,7 @@
   }
 
   /* ================= 界面（静态默认值，改样式直接编辑 CSS） ================= */
-  const SECTION_IDS = ['profile', 'music', 'gallery', 'contact'];
+  const SECTION_IDS = ['profile', 'music', 'contact'];
   function applyUi() {
     let ui = (window.JANEZ_DATA && JANEZ_DATA.getUiMerged) ? JANEZ_DATA.getUiMerged() : {};
     const root = document.documentElement;
@@ -697,14 +526,12 @@
 
     renderProfile();
     renderSingles();
-    renderGallery();
     renderPlatforms();
 
     bindFilters();
     initNav();
     initTheme();
     initBgm();
-    initLightbox();
     applyUi();
     observeReveal();
     renderSideLyrics();

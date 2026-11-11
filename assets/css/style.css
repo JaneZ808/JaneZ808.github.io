@@ -318,11 +318,8 @@ img { max-width: 100%; display: block; }
   .sec::before { background-attachment: fixed; }
 }
 /* 各模块对应的真实照片（均为已核实张靓颖舞台/肖像影像，绝不放错图） */
-#news::before    { background-image: url('../../assets/img/gallery-9.jpg'); }  /* 影视金曲之夜 */
-#music::before   { background-image: url('../../assets/img/gallery-6.jpg'); }  /* Past Progressive */
-#tour::before    { background-image: url('../../assets/img/gallery-1.jpg'); }  /* 追 世界巡演 */
-#gallery::before { display: none; }  /* 大图卷轴自身即背景，去掉叠加的氛围照片 */
-#contact::before { background-image: url('../../assets/img/gallery-3.jpg'); }  /* 珍相 巡演 */
+#music::before   { background-image: url('../../assets/img/music-bg.jpg'); }
+#contact::before { background-image: url('../../assets/img/contact-bg.jpg'); }
 .sh-left { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 /* 英文小字：衬线斜体金色——节目单式题注，替代全大写 tracked eyebrow（模板感来源） */
 .sh-en {
@@ -404,7 +401,7 @@ img { max-width: 100%; display: block; }
   display: grid;
   grid-template-columns: 1fr 66%;
   min-height: 100vh;
-  background-image: url('../../assets/img/gallery-5.jpg');
+  background-image: url('../../assets/img/profile.jpg');
   background-size: cover;
   background-position: center 28%;
   background-repeat: no-repeat;
@@ -640,25 +637,6 @@ img { max-width: 100%; display: block; }
 .vi-name { font-size: 14.5px; font-weight: 500; }
 .vi-role { font-size: 12.5px; color: var(--muted); margin-left: auto; text-align: right; }
 
-/* ============ 图集 ============ */
-.gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.gallery-item {
-  position: relative; border-radius: var(--radius); overflow: hidden; cursor: pointer;
-  aspect-ratio: 4 / 3; border: 1px solid var(--border);
-}
-.gi-art {
-  position: absolute; inset: 0;
-  background: linear-gradient(150deg, var(--c1), var(--c2));
-  transition: transform .7s var(--ease);
-}
-.gallery-item:hover .gi-art { transform: scale(1.08); }
-.gi-art::before {
-  content: ""; position: absolute; inset: 0;
-  background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.22), transparent 55%);
-}
-.gallery-note { margin-top: 22px; font-size: 12px; color: var(--muted); }
-.gallery-note code { background: var(--surface); padding: 2px 7px; border-radius: 4px; font-size: 11.5px; }
-
 /* ============ 联系 ============ */
 .contact-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
 .contact-card {
@@ -696,37 +674,6 @@ img { max-width: 100%; display: block; }
 .to-top.show { opacity: 1; visibility: visible; transform: none; }
 .to-top:hover { background: var(--gold); color: #14110a; border-color: var(--gold); }
 
-/* ============ 灯箱 ============ */
-.lightbox {
-  position: fixed; inset: 0; z-index: 1000; background: rgba(4, 4, 8, .94);
-  backdrop-filter: blur(10px); display: grid; place-items: center;
-  opacity: 0; visibility: hidden; transition: all .4s var(--ease);
-}
-.lightbox.show { opacity: 1; visibility: visible; }
-.lb-content { text-align: center; padding: 20px; max-width: 640px; width: 100%; }
-.lb-art {
-  aspect-ratio: 4 / 3; border-radius: 14px;
-  background: linear-gradient(150deg, var(--c1, #6d5bd0), var(--c2, #d8b46c));
-  margin-bottom: 0; border: 1px solid rgba(255, 255, 255, .16);
-  position: relative; overflow: hidden;
-}
-.lb-art::before {
-  content: ""; position: absolute; inset: 0;
-  background: radial-gradient(circle at 32% 26%, rgba(255,255,255,.24), transparent 56%);
-}
-.lb-close {
-  position: absolute; top: 28px; right: 34px; font-size: 34px; color: #fff; line-height: 1;
-  width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2);
-}
-.lb-close:hover { background: rgba(255, 255, 255, .12); }
-.lb-nav {
-  position: absolute; top: 50%; transform: translateY(-50%); font-size: 22px; color: #fff;
-  width: 50px; height: 50px; border-radius: 50%; border: 1px solid rgba(255,255,255,.16);
-}
-.lb-nav:hover { background: rgba(255, 255, 255, .12); }
-.lb-prev { left: 34px; }
-.lb-next { right: 34px; }
-
 /* ============ 响应式 ============ */
 @media (max-width: 1100px) {
   .album-grid { grid-template-columns: repeat(3, 1fr); }
@@ -757,7 +704,7 @@ img { max-width: 100%; display: block; }
   .rs-title span { font-size: 26px; }
   .rs-title b { font-size: 36px; }
   .fact-k { width: 4.6em; margin-right: 16px; }
-  .album-grid, .gallery-grid, .contact-grid { grid-template-columns: repeat(2, 1fr); }
+  .album-grid, .contact-grid { grid-template-columns: repeat(2, 1fr); }
   .hero-inner { gap: 22px; }
   .hero-side { display: none; }
   .timeline::before { left: 14px; }
@@ -773,7 +720,7 @@ img { max-width: 100%; display: block; }
 
 @media (max-width: 560px) {
   .wrap { padding: 0 20px; }
-  .album-grid, .gallery-grid, .contact-grid { grid-template-columns: 1fr; }
+  .album-grid, .contact-grid { grid-template-columns: 1fr; }
   .sh-en { font-size: 34px; }
   .sh-cn { font-size: 24px; }
   .hero-stats { gap: 26px; }
@@ -783,8 +730,6 @@ img { max-width: 100%; display: block; }
   .ost-list { padding: 10px 22px; }
   .ost-row { grid-template-columns: 54px 1fr; }
   .award-item { padding: 16px 18px; gap: 14px; }
-  .lb-prev { left: 8px; }
-  .lb-next { right: 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -810,27 +755,6 @@ html[data-theme="light"] .hero-photo-overlay {
 }
 .hero-bg .grid-lines { opacity: .35; }
 .hero-bg .noise { opacity: .5; }
-
-/* 图集照片 */
-.gi-img {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover;
-  opacity: 0; transform: scale(1.02);
-  transition: opacity .6s ease, transform .7s var(--ease);
-}
-.gi-img.ready { opacity: 1; }
-.gallery-item:hover .gi-img { transform: scale(1.1); }
-.gallery-item:hover .gi-art { transform: none; }
-
-/* 灯箱大图 */
-.lb-art.has-img { aspect-ratio: auto; background: none; border: none; }
-.lb-art.has-img::before { display: none; }
-.lb-img {
-  display: block; width: auto; height: auto;
-  max-width: 100%; max-height: 72vh;
-  border-radius: 14px; margin: 0 auto;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, .55);
-}
 
 /* ============ 登录 / 注册 页 ============ */
 .auth-body {
@@ -1546,133 +1470,6 @@ html[data-theme="light"] .hero-photo-overlay {
 }
 .sec-enter.in { opacity: 1; transform: none; }
 
-/* ── 7｜绝世美颜 · 一帧一幕（横向影像卷轴） ─────────────────────
-   主张：不是相册网格，是放映机里的一卷胶片。整块 bleed 出 .wrap 容器，
-        一次只放一帧全幅大图；舞台比例=原图比例(1.5)，cover 零裁切不遮人脸。
-   切换：原生 scroll-snap，手指/触控板/箭头/进度齿/方向键 五种方式
-   克制：唯一动效是当前帧缓缓推近 + 展签切帧淡入；无卡片、无 hover 缩放 */
-.gg-stage {
-  position: relative;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  isolation: isolate;
-}
-.gg-reel {
-  display: flex;
-  height: clamp(460px, 76vh, 820px);
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  background: #07070b;
-  outline: none;
-}
-.gg-reel::-webkit-scrollbar { display: none; }
-.gg-reel:focus-visible { outline: 2px solid var(--gold); outline-offset: -4px; }
-.gg-frame {
-  position: relative;
-  flex: 0 0 100%;
-  width: 100%;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  overflow: hidden;
-  cursor: zoom-in;
-  background: #07070b;
-}
-/* 背景层：同一张图放大模糊压暗铺满画幅，形成影院光晕 */
-.gf-art {
-  position: absolute; inset: 0;
-  background-color: #07070b;
-  background-image: linear-gradient(150deg, var(--c1), var(--c2));
-  background-size: cover;
-  background-position: center;
-  filter: blur(30px) brightness(.44) saturate(1.15);
-  transform: scale(1.16);
-}
-/* 前景层：完整大图，contain 零裁切（人脸绝不被切） */
-.gf-img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: contain;
-  object-position: center;
-  opacity: 0;
-  /* 左右缘羽化，让清晰画面溶解进同图光晕，避免"贴图"的硬边 */
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 3.5%, #000 96.5%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, #000 3.5%, #000 96.5%, transparent 100%);
-  transition: opacity .8s var(--ease);
-}
-.gf-img.ready { opacity: 1; }
-/* 唯一动效：当前帧的氛围光晕缓缓流动，清晰大图始终静止完整 */
-.gg-frame.is-active .gf-art { animation: gf-drift 18s linear both; }
-@keyframes gf-drift { from { transform: scale(1.16); } to { transform: scale(1.24); } }
-
-/* 展签：压在图上像电影字幕卡；左侧金色竖线 + 衬线帧序号 */
-.gg-hud {
-  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
-  display: flex; align-items: flex-end; justify-content: space-between; gap: 32px;
-  padding: 90px clamp(24px, 5vw, 72px) clamp(24px, 4vw, 46px);
-  background: linear-gradient(to top, rgba(7, 7, 11, .9) 0%, rgba(7, 7, 11, .55) 38%, transparent 100%);
-  color: #f4f2f7;
-  pointer-events: none;
-}
-.gg-hud button { pointer-events: auto; }
-.gg-caption { display: flex; align-items: center; gap: 26px; min-width: 0; }
-.gg-caption::before { content: ''; width: 2px; height: 54px; background: var(--gold); flex: none; }
-.gg-caption.swap .gg-meta { animation: gg-swap .45s var(--ease) both; }
-@keyframes gg-swap { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-.gg-no {
-  font-family: "Cormorant Garamond", Georgia, serif;
-  display: flex; align-items: baseline; gap: 6px;
-  color: rgba(244, 242, 247, .55); font-size: 20px; letter-spacing: .06em; flex: none;
-}
-.gg-no em { font-style: normal; font-size: 58px; line-height: .9; color: #f4f2f7; }
-.gg-no i { font-style: normal; color: var(--gold); }
-.gg-meta { min-width: 0; }
-.gg-title { font-size: clamp(18px, 2vw, 26px); font-weight: 400; letter-spacing: .06em; line-height: 1.4; }
-.gg-sub {
-  margin-top: 6px; font-size: 13px; letter-spacing: .22em;
-  color: rgba(244, 242, 247, .62);
-  font-family: "Cormorant Garamond", Georgia, serif;
-}
-.gg-ctrl { display: flex; align-items: center; gap: 26px; flex: none; }
-.gg-track { display: flex; align-items: center; gap: 7px; }
-.gg-tick {
-  width: 22px; height: 2px; padding: 0; border: 0; cursor: pointer;
-  background: rgba(244, 242, 247, .28);
-  transition: background .4s var(--ease), height .4s var(--ease);
-}
-.gg-tick:hover { background: rgba(244, 242, 247, .72); }
-.gg-tick.on { background: var(--gold); height: 4px; }
-.gg-tick:focus-visible, .gg-arrow:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
-.gg-arrows { display: flex; gap: 8px; }
-.gg-arrow {
-  width: 44px; height: 44px; display: grid; place-items: center;
-  border: 1px solid rgba(244, 242, 247, .3); border-radius: 50%;
-  background: transparent; color: #f4f2f7; font-size: 15px; line-height: 1;
-  cursor: pointer;
-  transition: border-color .35s var(--ease), color .35s var(--ease), background .35s var(--ease);
-}
-.gg-arrow:hover { border-color: var(--gold); color: var(--gold); background: rgba(216, 180, 108, .1); }
-
-@media (prefers-reduced-motion: reduce) {
-  .gg-reel { scroll-behavior: auto; }
-  .gg-frame.is-active .gf-art { animation: none; }
-  .gg-caption.swap .gg-meta { animation: none; }
-}
-/* 区块标题提升（仅美颜）：标题加大 + 雅致副题 */
-#gallery .sh-cn { font-size: 34px; }
-.gg-tag {
-  flex: 1 1 100%;
-  margin-top: 14px;
-  font-size: 13px;
-  letter-spacing: .3em;
-  color: var(--muted);
-}
-.gg-tag i { color: var(--gold); font-style: normal; margin: 0 .15em; }
-
 /* ── 8｜聆听与关注 · 平台徽章 + 邮箱 ─────────────────────────
    版式：居中平台徽章一排
    动画：依次上浮落地后进入轻微呼吸浮动（各自错相位） */
@@ -1844,9 +1641,6 @@ html[data-theme="light"] .hero-photo-overlay {
   .nx-item--hero { grid-column: auto; }
   .alb-grid { grid-template-columns: repeat(2, 1fr); }
   .ct-grid { grid-template-columns: repeat(2, 1fr); }
-  .gg-hud { padding-left: 30px; padding-right: 30px; }
-  .gg-caption { gap: 18px; }
-  .gg-no em { font-size: 48px; }
   .sg-row { grid-template-columns: 48px 1fr auto auto 24px; column-gap: 12px; padding: 14px 4px; }
   .sg-no { font-size: 24px; }
   .sg-kind { display: none; }
@@ -1866,27 +1660,6 @@ html[data-theme="light"] .hero-photo-overlay {
   .gl-row { grid-template-columns: auto 1fr; row-gap: 4px; }
   .gl-year { grid-column: 2; }
   .alb-grid { grid-template-columns: 1fr; }
-  /* 绝世美颜：手机上画幅回到原图比例（清晰图正好铺满），展签移到图下方 */
-  .gg-reel { height: auto; aspect-ratio: 1.5; }
-  .gf-art { display: none; }
-  .gf-img { -webkit-mask-image: none; mask-image: none; }
-  .gg-hud {
-    position: static;
-    flex-direction: column; align-items: flex-start; gap: 20px;
-    padding: 22px 20px 4px;
-    background: none; color: var(--text);
-  }
-  .gg-caption { gap: 16px; }
-  .gg-caption::before { height: 44px; }
-  .gg-no { color: var(--muted); font-size: 17px; }
-  .gg-no em { font-size: 44px; color: var(--text); }
-  .gg-title { font-size: 17px; }
-  .gg-sub { color: var(--muted); font-size: 12px; }
-  .gg-ctrl { width: 100%; justify-content: space-between; gap: 16px; }
-  .gg-track { gap: 5px; }
-  .gg-tick { width: 14px; background: var(--border-strong); }
-  .gg-tick:hover { background: var(--muted); }
-  .gg-arrow { width: 38px; height: 38px; border-color: var(--border-strong); color: var(--text); }
   .sg-row { grid-template-columns: 40px 1fr auto; padding: 12px 2px; }
   .sg-go { display: none; }
   .ct-grid { grid-template-columns: 1fr; }
@@ -2090,7 +1863,7 @@ html[data-theme="light"] .full-head {
 /* 4｜个人档案 Resume 面板：整个区域原本为深色底 + 白色文字，
       浅色模式统一改为浅灰底 + 深色文字 */
 html[data-theme="light"] .resume-stage {
-  background-image: url('../../assets/img/gallery-5.jpg');
+  background-image: url('../../assets/img/profile.jpg');
   background-size: cover;
   background-position: center 28%;
   background-repeat: no-repeat;
@@ -2118,11 +1891,8 @@ html[data-theme="light"] #header.solid {
 
 /* 6｜区块标题左侧竖线（v-line）已用 --border-strong 变量，浅色下自动为深描边，无需覆盖 */
 
-/* 7｜相册/专辑封面艺术层（.ac-art / .gi-art）使用固定深色渐变作作品视觉，
+/* 7｜专辑封面艺术层（.ac-art）使用固定深色渐变作作品视觉，
       其上的 #fff 文字/边框均位于彩色渐变之上，两种主题下都清晰，无需覆盖 */
-
-/* 8｜灯箱（.lightbox）背景 rgba(4,4,8,.94) 为固定深色遮罩（模态层），
-      其内部按钮 rgba(255,255,255,...) 保持白色，无需覆盖 */
 
 /* 9｜sec-more / sub-more / full-tab.is-on 等按钮使用 --gold / --gold-soft 变量，
       已在 :root 变量层完成浅色模式覆盖 */
@@ -2130,150 +1900,6 @@ html[data-theme="light"] #header.solid {
 /* 10｜.nx-item / .sg-row / .tr-row / .album-card 等卡片背景
       使用 var(--surface) 或 color-mix(var(--surface), transparent)，
       浅色模式下自动为白色 / 浅白，无需覆盖 */
-
-/* ============================================================
- * 绝世美颜 · 单大图简约轮播（2026-10-30 重构）
- * 全部帧预铺叠放，is-on 控制 opacity/transform 渐隐渐显；
- * 底部渐变遮罩上的 caption 随帧切换；hover 暂停自动播放。
- * ============================================================ */
-.bg-stage {
-  position: relative;
-  border-radius: 22px;
-  overflow: hidden;
-  aspect-ratio: 16 / 9;
-  background: var(--surface, #16131f);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, .35);
-}
-.bg-frames,
-.bg-frame {
-  position: absolute;
-  inset: 0;
-}
-.bg-frame {
-  opacity: 0;
-  transform: scale(1.045);
-  transition: opacity 1.15s ease, transform 1.35s ease;
-  pointer-events: none;
-}
-.bg-frame.is-on {
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: auto;
-}
-.bg-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* 底部渐变遮罩 + 标题 */
-.bg-stage::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  height: 46%;
-  background: linear-gradient(to top, rgba(5, 4, 10, .78), rgba(5, 4, 10, 0));
-  pointer-events: none;
-  z-index: 1;
-}
-.bg-caption {
-  position: absolute;
-  left: 34px;
-  bottom: 58px;
-  z-index: 2;
-  pointer-events: none;
-}
-.bg-cap {
-  position: absolute;
-  left: 0; bottom: 0;
-  display: grid;
-  gap: 6px;
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity .8s ease .12s, transform .8s ease .12s;
-  white-space: nowrap;
-}
-.bg-cap.is-on {
-  opacity: 1;
-  transform: none;
-}
-.bg-cap b {
-  font-size: clamp(20px, 3vw, 30px);
-  font-weight: 500;
-  letter-spacing: .06em;
-  color: #fff;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, .55);
-}
-.bg-cap i {
-  font-style: normal;
-  font-size: 13.5px;
-  letter-spacing: .14em;
-  color: rgba(255, 255, 255, .82);
-}
-
-/* 指示点 */
-.bg-dots {
-  position: absolute;
-  left: 34px;
-  bottom: 26px;
-  display: flex;
-  gap: 10px;
-  z-index: 2;
-}
-.bg-dot {
-  width: 26px;
-  height: 3px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, .32);
-  cursor: pointer;
-  padding: 0;
-  transition: background .4s ease;
-}
-.bg-dot:hover { background: rgba(255, 255, 255, .6); }
-.bg-dot.is-on { background: var(--gold, #d8b46c); }
-
-/* 左右箭头 */
-.bg-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 46px;
-  height: 46px;
-  border: 1px solid rgba(255, 255, 255, .22);
-  border-radius: 50%;
-  background: rgba(10, 8, 16, .32);
-  color: rgba(255, 255, 255, .85);
-  font-size: 15px;
-  cursor: pointer;
-  z-index: 2;
-  backdrop-filter: blur(6px);
-  opacity: 0;
-  transition: opacity .4s ease, background .3s ease, border-color .3s ease;
-}
-.bg-stage:hover .bg-arrow { opacity: 1; }
-.bg-arrow:hover {
-  background: rgba(10, 8, 16, .55);
-  border-color: rgba(255, 255, 255, .45);
-}
-.bg-prev { left: 22px; }
-.bg-next { right: 22px; }
-
-/* 响应式 */
-@media (max-width: 760px) {
-  .bg-stage { border-radius: 14px; }
-  .bg-caption { left: 18px; bottom: 48px; }
-  .bg-dots { left: 18px; bottom: 20px; }
-  .bg-arrow {
-    width: 38px; height: 38px;
-    opacity: .9; /* 触屏无 hover，常显 */
-  }
-  .bg-prev { left: 12px; }
-  .bg-next { right: 12px; }
-}
-
-/* 浅色主题：遮罩/箭头保持深色玻璃（图片上永远可读），无需 light 覆盖 */
 
 /* ============================================================
  * 背景音乐按钮（全站常驻右下角，唱片造型）
@@ -2383,35 +2009,6 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
   .sl-line { font-size: 11px; }
 }
 
-/* ── 10｜绝世美颜 hover 动效已并入第 7 节基础规则；此处仅保留灯箱增强 ── */
-
-/* 灯箱增强：背景模糊 + 内容缩放入场 + 更宽展示 */
-.lightbox {
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  background: rgba(4,4,8,.88);
-}
-.lb-art {
-  transform: scale(.92);
-  opacity: 0;
-  transition: transform .5s var(--ease), opacity .4s var(--ease);
-  max-width: 92vw;
-  max-height: 88vh;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 30px 80px rgba(0,0,0,.6);
-}
-.lightbox.show .lb-art {
-  transform: scale(1);
-  opacity: 1;
-}
-.lb-img {
-  transition: transform .6s var(--ease), opacity .5s var(--ease);
-  max-width: 100%;
-  max-height: 88vh;
-  object-fit: contain;
-}
-
 /* 区块头部分隔线：通栏发丝线 + 左侧金色段（节目单式），滚动到位时展开 */
 .sec-head { position: relative; padding-bottom: 22px; }
 .sec-head::after {
@@ -2435,9 +2032,6 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
   transform-origin: left;
   z-index: 1;
 }
-
-/* 响应式微调 · 绝世美颜瀑布流照片墙
-   （≤1000px 收紧列间距；≤640px 单列 + 取消错落，见上方「响应式」区块） */
 
 /* ============================================================
    ── 12｜滚动驱动动效系统（聚光灯下的节目单）
@@ -2515,13 +2109,6 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
     .alb-grid .album-card:nth-child(4) { animation-range: entry 20% cover 34%; }
     .alb-grid .album-card:nth-child(5) { animation-range: entry 22% cover 36%; }
     .alb-grid .album-card:nth-child(6) { animation-range: entry 24% cover 38%; }
-
-    /* ---- 美颜：整块卷轴一次柔和浮现（切帧动效由 JS/CSS 独立承担） ---- */
-    .gg-stage {
-      animation: sd-soft-in .9s var(--ease) both;
-      animation-timeline: view();
-      animation-range: entry 8% cover 24%;
-    }
 
     /* ---- 联系：信息行淡入（卡片保留 JS 入场 + 呼吸浮动，不叠加 scroll-driven） ---- */
     .ct-info {
