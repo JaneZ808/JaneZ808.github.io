@@ -36,7 +36,7 @@
   /* 板块登记表：主页「查看全部」与 all.html 顶部 tabs 共用 */
   const SECS = [
     { k: 'profile', cn: '个人档案',   en: 'Profile', desc: '完整档案信息，含简介、全部条目与音乐标签。' },
-    { k: 'music',   cn: '正式专辑',   en: 'Music',   desc: '出道至今 6 张正式录音室专辑（The One / UPDATE*JANE / 张靓颖@音乐 / 我相信 / 改变 / 第七感），点击封面查看该专辑信息。' }
+    { k: 'music',   cn: '正式专辑',   en: 'Music',   desc: '出道至今 21 张音乐作品：录音室专辑、迷你 EP、现场专辑与影视金曲精选辑，含 2026 年新作《过期食品》与第八张中文专辑先行曲《不知道说什么》。点击封面查看该专辑真实封面、完整曲目与发行信息。' }
   ];
 
   /* ---------- 限时活动主题（自动到期回滚，无需人工干预） ----------
@@ -133,7 +133,7 @@
   }
 
   /* ================= 渲染：音乐专辑 · 封面方阵 ================= */
-  const TYPE_LABEL = { studio: '录音室专辑', ep: '迷你专辑 EP', live: '现场专辑', best: '精选辑' };
+  const TYPE_LABEL = { studio: '录音室专辑', ep: '迷你专辑 EP', live: '现场专辑', best: '精选辑', upcoming: '全新专辑 · 先行曲' };
 
   function bindCoverFallback() {
     $$('.ac-img').forEach(img => img.addEventListener('error', () => img.remove(), { once: true }));
@@ -178,20 +178,19 @@
   }
 
   /* ================= 渲染：正式专辑 · 专辑卡片网格
-   * 本板块仅展示 6 张正式录音室专辑（排除英文专辑 Past Progressive、迷你 EP、
-   * 现场辑、精选辑）；被过滤掉的专辑及其详情页 albums/album-N.html 保留但不再
-   * 从本板块渲染。数据层 OSTS / GLOBAL_SONGS / VARIETY 亦保留不渲染。
+   * 本板块展示 ALBUMS 全部作品（录音室专辑 / 英文专辑 / 迷你 EP / 现场辑 /
+   * 精选辑 / 2026 新作），按发行日期倒序，最新作品排在最前。
+   * 卡片上的 ac-type 标签区分作品类型；每张卡片均可点进详情页查看真实封面
+   * 与完整曲目。数据层 OSTS / GLOBAL_SONGS / VARIETY 仍保留不渲染。
    *
    * gi = 在原始 ALBUMS 数组中的下标，决定详情页文件名与 COVER_MAP 取值；
-   * 过滤发生在 map 之后、排序之前，不影响 gi 与详情页/封面的对齐。 */
-  const ALBUM_LIMIT_HOME = 6;  // 首页展示 6 张（实际就 6 张，全量）
+   * 排序发生在 map 之后，不影响 gi 与详情页/封面的对齐；故只能追加不能中间插入。 */
+  const ALBUM_LIMIT_HOME = 9;  // 首页展示 9 张；全量页展示全部 21 张
 
-  /* 正式专辑视图：仅保留 type === 'studio' 且非英文的录音室专辑。
-   * 返回 [{ a, gi }]，gi 为原始下标，用于详情页 URL 与封面映射。 */
+  /* 专辑视图：返回全部作品 [{ a, gi }]，gi 为原始下标，
+   * 用于详情页 URL 与 COVER_MAP.album 封面映射。 */
   function studioAlbums() {
-    return src('ALBUMS')
-      .map((a, gi) => ({ a, gi }))
-      .filter(x => x.a.type === 'studio' && !x.a.english);
+    return src('ALBUMS').map((a, gi) => ({ a, gi }));
   }
 
   function renderSingles() {

@@ -9,7 +9,7 @@ zhangliangying/
 ├── index.html              # 主页面（单页锚点导航，含 CSP 安全头）
 ├── assets/
 │   ├── css/style.css       # 全部样式（含深浅两套主题变量）
-│   ├── img/                # 照片素材（hero / avatar / profile / 音乐封面）
+│   ├── img/                # 照片素材（hero / avatar / profile / albums 真实专辑封面 / osts / globals）
 │   └── js/
 │       ├── data.js         # 数据层：所有人物资料都在这里，改内容只需改这一个文件
 │       └── main.js         # 渲染与交互逻辑
@@ -26,7 +26,7 @@ zhangliangying/
 | News 最新动态 | 2025—2026 年重要动态卡片 |
 | Profile 个人档案 | 16 项基本信息参数表 + 个人简介 |
 | Journey 星路历程 | 1984—2026 双列时间线 |
-| Music 音乐作品 | 15 张专辑（可按录音室/EP/现场/精选筛选）、18 首影视金曲 OST、6 首英文作品 |
+| Music 音乐作品 | 21 张专辑（含真实封面与完整曲目，可按录音室/EP/现场/精选筛选）、影视金曲 OST、英文作品 |
 | Tour 巡回演唱会 | 7 轮巡演，含「追」进行中标记 |
 | Awards 荣誉记录 | 29 条奖项，可按 5 类筛选 |
 | Screen 影像与舞台 | 参演影视/音乐剧 + 常驻综艺 |
