@@ -321,7 +321,7 @@ img { max-width: 100%; display: block; }
 #news::before    { background-image: url('../../assets/img/gallery-9.jpg'); }  /* 影视金曲之夜 */
 #music::before   { background-image: url('../../assets/img/gallery-6.jpg'); }  /* Past Progressive */
 #tour::before    { background-image: url('../../assets/img/gallery-1.jpg'); }  /* 追 世界巡演 */
-#gallery::before { background-image: url('../../assets/img/gallery-2.jpg'); opacity: .22; }  /* 光 世界巡演：减弱以免抢网格视觉 */
+#gallery::before { display: none; }  /* 大图卷轴自身即背景，去掉叠加的氛围照片 */
 #contact::before { background-image: url('../../assets/img/gallery-3.jpg'); }  /* 珍相 巡演 */
 .sh-left { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 /* 英文小字：衬线斜体金色——节目单式题注，替代全大写 tracked eyebrow（模板感来源） */
@@ -1546,56 +1546,122 @@ html[data-theme="light"] .hero-photo-overlay {
 }
 .sec-enter.in { opacity: 1; transform: none; }
 
-/* ── 7｜绝世美颜 · 瀑布流照片墙 ───────────────────────────
-   版式：2 列瀑布流，每张图按原始比例完整展示（容器比例=原图比例，
-        object-fit:cover 零裁切，不遮挡人脸）；偶数项下移形成列间错落
-   动画：错峰淡入上浮；hover 图片轻微放大提亮，无框无文字 */
-.gg-grid {
-  column-count: 2;
-  column-gap: 16px;
-}
-.gg-item {
+/* ── 7｜绝世美颜 · 一帧一幕（横向影像卷轴） ─────────────────────
+   主张：不是相册网格，是放映机里的一卷胶片。整块 bleed 出 .wrap 容器，
+        一次只放一帧全幅大图；舞台比例=原图比例(1.5)，cover 零裁切不遮人脸。
+   切换：原生 scroll-snap，手指/触控板/箭头/进度齿/方向键 五种方式
+   克制：唯一动效是当前帧缓缓推近 + 展签切帧淡入；无卡片、无 hover 缩放 */
+.gg-stage {
   position: relative;
-  break-inside: avoid;
-  -webkit-column-break-inside: avoid;
-  margin-bottom: 14px;
-  cursor: pointer;
-  border-radius: 3px;
-  overflow: hidden;
-  background: var(--surface);
-  opacity: 0;
-  transform: translateY(30px);
-  transition:
-    opacity .9s var(--ease) var(--d, 0ms),
-    transform .9s var(--ease) var(--d, 0ms);
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  isolation: isolate;
 }
-.gg-item.in { opacity: 1; transform: translateY(0); }
-/* 列间错落：偶数项整体下移，两列形成阶梯节奏 */
-.gg-item:nth-child(even) { margin-top: 40px; }
-.gg-item .gi-art {
+.gg-reel {
+  display: flex;
+  height: clamp(460px, 76vh, 820px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  background: #07070b;
+  outline: none;
+}
+.gg-reel::-webkit-scrollbar { display: none; }
+.gg-reel:focus-visible { outline: 2px solid var(--gold); outline-offset: -4px; }
+.gg-frame {
   position: relative;
-  display: block;
-  background: linear-gradient(150deg, var(--c1), var(--c2));
-}
-.gg-item .gi-img {
-  position: absolute;
-  inset: 0;
+  flex: 0 0 100%;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
+  cursor: zoom-in;
+  background: #07070b;
+}
+/* 背景层：同一张图放大模糊压暗铺满画幅，形成影院光晕 */
+.gf-art {
+  position: absolute; inset: 0;
+  background-color: #07070b;
+  background-image: linear-gradient(150deg, var(--c1), var(--c2));
+  background-size: cover;
+  background-position: center;
+  filter: blur(30px) brightness(.44) saturate(1.15);
+  transform: scale(1.16);
+}
+/* 前景层：完整大图，contain 零裁切（人脸绝不被切） */
+.gf-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  object-position: center;
   opacity: 0;
-  transition: opacity .9s var(--ease), transform .8s var(--ease), filter .5s var(--ease);
+  /* 左右缘羽化，让清晰画面溶解进同图光晕，避免"贴图"的硬边 */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 3.5%, #000 96.5%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 3.5%, #000 96.5%, transparent 100%);
+  transition: opacity .8s var(--ease);
 }
-.gg-item .gi-img.ready { opacity: 1; }
-/* hover：图片轻微放大提亮（无框、无文字、纯净） */
-.gg-item:hover .gi-img { transform: scale(1.02); filter: brightness(1.06) saturate(1.03); }
-/* hover 摄影暗角：四缘轻压暗，突出主体，增加"上墙"感 */
-.gg-item::after {
-  content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  box-shadow: inset 0 0 70px rgba(0, 0, 0, .38);
-  opacity: 0; transition: opacity .5s var(--ease);
+.gf-img.ready { opacity: 1; }
+/* 唯一动效：当前帧的氛围光晕缓缓流动，清晰大图始终静止完整 */
+.gg-frame.is-active .gf-art { animation: gf-drift 18s linear both; }
+@keyframes gf-drift { from { transform: scale(1.16); } to { transform: scale(1.24); } }
+
+/* 展签：压在图上像电影字幕卡；左侧金色竖线 + 衬线帧序号 */
+.gg-hud {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 32px;
+  padding: 90px clamp(24px, 5vw, 72px) clamp(24px, 4vw, 46px);
+  background: linear-gradient(to top, rgba(7, 7, 11, .9) 0%, rgba(7, 7, 11, .55) 38%, transparent 100%);
+  color: #f4f2f7;
+  pointer-events: none;
 }
-.gg-item:hover::after { opacity: 1; }
+.gg-hud button { pointer-events: auto; }
+.gg-caption { display: flex; align-items: center; gap: 26px; min-width: 0; }
+.gg-caption::before { content: ''; width: 2px; height: 54px; background: var(--gold); flex: none; }
+.gg-caption.swap .gg-meta { animation: gg-swap .45s var(--ease) both; }
+@keyframes gg-swap { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.gg-no {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  display: flex; align-items: baseline; gap: 6px;
+  color: rgba(244, 242, 247, .55); font-size: 20px; letter-spacing: .06em; flex: none;
+}
+.gg-no em { font-style: normal; font-size: 58px; line-height: .9; color: #f4f2f7; }
+.gg-no i { font-style: normal; color: var(--gold); }
+.gg-meta { min-width: 0; }
+.gg-title { font-size: clamp(18px, 2vw, 26px); font-weight: 400; letter-spacing: .06em; line-height: 1.4; }
+.gg-sub {
+  margin-top: 6px; font-size: 13px; letter-spacing: .22em;
+  color: rgba(244, 242, 247, .62);
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
+.gg-ctrl { display: flex; align-items: center; gap: 26px; flex: none; }
+.gg-track { display: flex; align-items: center; gap: 7px; }
+.gg-tick {
+  width: 22px; height: 2px; padding: 0; border: 0; cursor: pointer;
+  background: rgba(244, 242, 247, .28);
+  transition: background .4s var(--ease), height .4s var(--ease);
+}
+.gg-tick:hover { background: rgba(244, 242, 247, .72); }
+.gg-tick.on { background: var(--gold); height: 4px; }
+.gg-tick:focus-visible, .gg-arrow:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+.gg-arrows { display: flex; gap: 8px; }
+.gg-arrow {
+  width: 44px; height: 44px; display: grid; place-items: center;
+  border: 1px solid rgba(244, 242, 247, .3); border-radius: 50%;
+  background: transparent; color: #f4f2f7; font-size: 15px; line-height: 1;
+  cursor: pointer;
+  transition: border-color .35s var(--ease), color .35s var(--ease), background .35s var(--ease);
+}
+.gg-arrow:hover { border-color: var(--gold); color: var(--gold); background: rgba(216, 180, 108, .1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .gg-reel { scroll-behavior: auto; }
+  .gg-frame.is-active .gf-art { animation: none; }
+  .gg-caption.swap .gg-meta { animation: none; }
+}
 /* 区块标题提升（仅美颜）：标题加大 + 雅致副题 */
 #gallery .sh-cn { font-size: 34px; }
 .gg-tag {
@@ -1778,7 +1844,9 @@ html[data-theme="light"] .hero-photo-overlay {
   .nx-item--hero { grid-column: auto; }
   .alb-grid { grid-template-columns: repeat(2, 1fr); }
   .ct-grid { grid-template-columns: repeat(2, 1fr); }
-  .gg-grid { column-gap: 12px; }
+  .gg-hud { padding-left: 30px; padding-right: 30px; }
+  .gg-caption { gap: 18px; }
+  .gg-no em { font-size: 48px; }
   .sg-row { grid-template-columns: 48px 1fr auto auto 24px; column-gap: 12px; padding: 14px 4px; }
   .sg-no { font-size: 24px; }
   .sg-kind { display: none; }
@@ -1798,9 +1866,27 @@ html[data-theme="light"] .hero-photo-overlay {
   .gl-row { grid-template-columns: auto 1fr; row-gap: 4px; }
   .gl-year { grid-column: 2; }
   .alb-grid { grid-template-columns: 1fr; }
-  /* 绝世美颜：手机端单列瀑布流，取消错落下移 */
-  .gg-grid { column-count: 1; column-gap: 10px; }
-  .gg-item:nth-child(even) { margin-top: 0; }
+  /* 绝世美颜：手机上画幅回到原图比例（清晰图正好铺满），展签移到图下方 */
+  .gg-reel { height: auto; aspect-ratio: 1.5; }
+  .gf-art { display: none; }
+  .gf-img { -webkit-mask-image: none; mask-image: none; }
+  .gg-hud {
+    position: static;
+    flex-direction: column; align-items: flex-start; gap: 20px;
+    padding: 22px 20px 4px;
+    background: none; color: var(--text);
+  }
+  .gg-caption { gap: 16px; }
+  .gg-caption::before { height: 44px; }
+  .gg-no { color: var(--muted); font-size: 17px; }
+  .gg-no em { font-size: 44px; color: var(--text); }
+  .gg-title { font-size: 17px; }
+  .gg-sub { color: var(--muted); font-size: 12px; }
+  .gg-ctrl { width: 100%; justify-content: space-between; gap: 16px; }
+  .gg-track { gap: 5px; }
+  .gg-tick { width: 14px; background: var(--border-strong); }
+  .gg-tick:hover { background: var(--muted); }
+  .gg-arrow { width: 38px; height: 38px; border-color: var(--border-strong); color: var(--text); }
   .sg-row { grid-template-columns: 40px 1fr auto; padding: 12px 2px; }
   .sg-go { display: none; }
   .ct-grid { grid-template-columns: 1fr; }
@@ -2430,19 +2516,12 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
     .alb-grid .album-card:nth-child(5) { animation-range: entry 22% cover 36%; }
     .alb-grid .album-card:nth-child(6) { animation-range: entry 24% cover 38%; }
 
-    /* ---- 美颜：瀑布流错峰浮现 ---- */
-    .gg-grid .gg-item {
-      animation: sd-card-in .9s var(--ease) both;
+    /* ---- 美颜：整块卷轴一次柔和浮现（切帧动效由 JS/CSS 独立承担） ---- */
+    .gg-stage {
+      animation: sd-soft-in .9s var(--ease) both;
       animation-timeline: view();
+      animation-range: entry 8% cover 24%;
     }
-    .gg-grid .gg-item:nth-child(2) { animation-range: entry 14% cover 28%; }
-    .gg-grid .gg-item:nth-child(3) { animation-range: entry 16% cover 30%; }
-    .gg-grid .gg-item:nth-child(4) { animation-range: entry 18% cover 32%; }
-    .gg-grid .gg-item:nth-child(5) { animation-range: entry 20% cover 34%; }
-    .gg-grid .gg-item:nth-child(6) { animation-range: entry 22% cover 36%; }
-    .gg-grid .gg-item:nth-child(7) { animation-range: entry 24% cover 38%; }
-    .gg-grid .gg-item:nth-child(8) { animation-range: entry 26% cover 40%; }
-    .gg-grid .gg-item:nth-child(9) { animation-range: entry 28% cover 42%; }
 
     /* ---- 联系：信息行淡入（卡片保留 JS 入场 + 呼吸浮动，不叠加 scroll-driven） ---- */
     .ct-info {

@@ -235,35 +235,55 @@
     bindCoverFallback();
   }
 
-  /* ================= 渲染：绝世美颜 · 瀑布流照片墙 + 灯箱 =================
-   * 版式：2 列瀑布流，每张图按原始比例完整展示（不裁切、不遮挡人脸）
-   * data-i 携带数组原始下标，灯箱据此索引。 */
+  /* ================= 渲染：绝世美颜 · 一帧一幕横向影像卷轴 =============
+   * 主张：不是相册网格，是放映机里的一卷胶片——整块 bleed 出容器，
+   *       一次只放一帧全幅大图，横向拉片切换，展签像电影字幕卡压在图上。
+   * 不裁脸：中央清晰大图 contain 完整呈现；画幅外由同一张图放大模糊压暗
+   *        铺满作影院光晕，既"整块都是这张图"又零裁切。舞台高度锁一屏内。
+   * 切换：原生 scroll-snap（手指/触控板）+ 箭头/进度齿/方向键。 */
   let galleryIndex = 0;
-
-  /* 9 张美颜图的真实宽高比（与 assets/img/gallery-*.jpg 实际像素一致，
-     容器比例 = 原图比例，object-fit:cover 也不会裁掉人脸；
-     更换图片文件时需同步更新此处数值（可用 node 解析 JPEG SOF 获取） */
-  const GG_RATIO = ['1.499', '1.499', '1.499', '1.564', '1.499', '1.777', '1.501', '1.501', '1.481'];
+  let ggCurrent = 0;
 
   function renderGallery() {
     const host = $('#galleryGrid');
     if (!host) return;
-    const all = src('GALLERY').map((g, gi) => ({ g, gi }));
+    const all = src('GALLERY');
+    if (!all.length) return;
+    const pad2 = n => String(n).padStart(2, '0');
 
-    host.innerHTML = all.map(({ g, gi }, i) => {
-      const ratio = GG_RATIO[gi] || '3 / 2';
-      return `
-      <div class="gg-item reveal" data-i="${gi}" style="--d:${dly(i, 70)}ms">
-        <div class="gi-art" style="${grad(g.tone)};aspect-ratio:${ratio}">
-          ${g.img ? `<img class="gi-img" src="${g.img}" alt="${g.title}" loading="lazy" decoding="async">` : ''}
+    /* 覆盖旧网格类名，避免旧 CSS 规则串味 */
+    host.className = 'gg-stage';
+    host.innerHTML = `
+      <div class="gg-reel" id="ggReel" tabindex="0" role="region" aria-label="绝世美颜影像卷轴，可左右滑动切换">
+        ${all.map((g, i) => `
+        <div class="gg-frame${i === 0 ? ' is-active' : ''}" data-i="${i}">
+          <div class="gf-art" style="${grad(g.tone)}${g.img ? `;background-image:url('${g.img}')` : ''}"></div>
+          ${g.img ? `<img class="gf-img" src="${g.img}" alt="${g.title}" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async">` : ''}
+        </div>`).join('')}
+      </div>
+      <div class="gg-hud">
+        <div class="gg-caption">
+          <span class="gg-no"><em id="ggNo">01</em><i>/</i><span id="ggTotal">${pad2(all.length)}</span></span>
+          <div class="gg-meta">
+            <h3 class="gg-title" id="ggTitle">${all[0].title}</h3>
+            <p class="gg-sub" id="ggSub">${all[0].sub || ''}</p>
+          </div>
+        </div>
+        <div class="gg-ctrl">
+          <div class="gg-track" id="ggTrack">
+            ${all.map((g, i) => `<button class="gg-tick${i === 0 ? ' on' : ''}" type="button" data-go="${i}" aria-label="第 ${i + 1} 帧：${g.title}"></button>`).join('')}
+          </div>
+          <div class="gg-arrows">
+            <button class="gg-arrow" type="button" data-dir="-1" aria-label="上一帧">&#10094;</button>
+            <button class="gg-arrow" type="button" data-dir="1" aria-label="下一帧">&#10095;</button>
+          </div>
         </div>
       </div>`;
-    }).join('');
 
-    $$('#galleryGrid .gg-item').forEach(el =>
+    $$('#ggReel .gg-frame').forEach(el =>
       el.addEventListener('click', () => openLightbox(Number(el.dataset.i))));
 
-    $$('#galleryGrid .gi-img').forEach(img => {
+    $$('#ggReel .gf-img').forEach(img => {
       const done = () => img.classList.add('ready');
       if (img.complete && img.naturalWidth > 0) done();
       else {
@@ -271,6 +291,65 @@
         img.addEventListener('error', () => img.remove(), { once: true });
       }
     });
+
+    initGalleryReel(all);
+  }
+
+  function initGalleryReel(all) {
+    const reel = $('#ggReel');
+    if (!reel) return;
+    const frames = $$('#ggReel .gg-frame');
+    const ticks = $$('#ggTrack .gg-tick');
+    const caption = $('.gg-caption');
+    const elNo = $('#ggNo'), elTitle = $('#ggTitle'), elSub = $('#ggSub');
+    const pad2 = n => String(n).padStart(2, '0');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    ggCurrent = 0;
+
+    function setCurrent(i) {
+      i = Math.max(0, Math.min(all.length - 1, i));
+      if (i === ggCurrent) return;
+      ggCurrent = i;
+      const g = all[i];
+      if (elNo) elNo.textContent = pad2(i + 1);
+      if (elTitle) elTitle.textContent = g.title;
+      if (elSub) elSub.textContent = g.sub || '';
+      ticks.forEach((t, k) => t.classList.toggle('on', k === i));
+      frames.forEach((f, k) => f.classList.toggle('is-active', k === i));
+      if (caption) {
+        caption.classList.remove('swap');
+        void caption.offsetWidth;
+        caption.classList.add('swap');
+      }
+    }
+
+    function go(i) {
+      reel.scrollTo({
+        left: Math.max(0, Math.min(all.length - 1, i)) * reel.clientWidth,
+        behavior: reduce ? 'auto' : 'smooth'
+      });
+    }
+
+    let raf = 0;
+    reel.addEventListener('scroll', () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        setCurrent(Math.round(reel.scrollLeft / Math.max(1, reel.clientWidth)));
+      });
+    }, { passive: true });
+
+    $$('.gg-arrow').forEach(b => b.addEventListener('click', () =>
+      go((ggCurrent + Number(b.dataset.dir) + all.length) % all.length)));
+    ticks.forEach((t, i) => t.addEventListener('click', () => go(i)));
+
+    reel.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(ggCurrent - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(ggCurrent + 1); }
+    });
+    window.addEventListener('resize', () => {
+      reel.scrollLeft = ggCurrent * reel.clientWidth;
+    }, { passive: true });
   }
 
   function openLightbox(i) {
