@@ -1,0 +1,25 @@
+{
+  "name": "张靓颖 Jane Zhang 资料站",
+  "short_name": "JaneZ 资料站",
+  "description": "张靓颖个人档案、7 张正式专辑完整曲目与真实封面、影视金曲 OST 全集",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#07070b",
+  "theme_color": "#07070b",
+  "icons": [
+    {
+      "src": "assets/img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

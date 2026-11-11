@@ -2217,3 +2217,49 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
   .alb-notice { gap: 10px; padding: 16px; }
   .an-text { min-width: 100%; }
 }
+/* ★ 站内分享条（纯链接，不引第三方 SDK） ------------------------------------ */
+.sbar-wrap { padding: 26px 0 40px; border-top: 1px solid var(--border); }
+.sbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.sbar-label { font-size: 12px; color: var(--muted); letter-spacing: .1em; margin-right: 4px; }
+.sbar-item {
+  display: inline-block; padding: 7px 15px; border: 1px solid var(--border);
+  border-radius: 999px; font-size: 12.5px; line-height: 1.5; color: var(--text-2);
+  background: none; font-family: inherit; text-decoration: none; cursor: pointer;
+  transition: border-color .35s var(--ease), color .35s var(--ease);
+}
+.sbar-item:hover { border-color: var(--gold); color: var(--gold); }
+.sbar-item.is-done { border-color: var(--gold); color: var(--gold); }
+.sbar-note { font-size: 11.5px; color: var(--muted); margin-left: auto; }
+@media (max-width: 720px) { .sbar-note { width: 100%; margin-left: 0; } }
+
+/* ★ 资料专题页（长尾聚合） ------------------------------------------------ */
+.guide-hero { padding: 70px 0 30px; }
+.guide-hero h1 { font-size: 34px; font-weight: 500; line-height: 1.4; margin: 8px 0 14px; }
+.guide-hero p { color: var(--text-2); font-size: 14.5px; line-height: 1.9; max-width: 760px; }
+.guide-back { display: inline-block; font-size: 13px; color: var(--gold); text-decoration: none; margin-bottom: 20px; }
+.guide-block { margin: 46px 0; padding-top: 30px; border-top: 1px solid var(--border); }
+.guide-block-hd { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+.guide-block-hd h2 { font-size: 24px; font-weight: 500; }
+.guide-block-hd .g-meta { font-size: 12.5px; color: var(--muted); }
+.guide-cols { columns: 3; column-gap: 30px; list-style: none; padding: 0; margin: 0; }
+.guide-cols li { break-inside: avoid; padding: 6px 0; font-size: 14px; color: var(--text-2); border-bottom: 1px solid var(--border); }
+.guide-cols .g-no { color: var(--gold); font-family: Georgia, serif; font-size: 12.5px; margin-right: 10px; font-variant-numeric: tabular-nums; }
+.guide-cover { width: 120px; float: left; margin: 0 20px 14px 0; border-radius: 8px; }
+.guide-album-link { font-size: 13px; color: var(--gold); text-decoration: none; }
+.guide-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.guide-table th, .guide-table td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.guide-table th { color: var(--muted); font-weight: 400; font-size: 12px; letter-spacing: .08em; }
+.guide-table td a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--border); }
+.guide-table td a:hover { color: var(--gold); border-color: var(--gold); }
+.guide-table .g-year { color: var(--gold); font-family: Georgia, serif; white-space: nowrap; }
+.guide-note { margin-top: 30px; font-size: 12px; color: var(--muted); line-height: 1.9; }
+@media (max-width: 860px) {
+  .guide-cols { columns: 2; }
+  .guide-hero h1 { font-size: 27px; }
+}
+@media (max-width: 620px) {
+  .guide-cols { columns: 1; }
+  .guide-cover { width: 88px; }
+  .guide-table { font-size: 12.5px; }
+  .guide-table th, .guide-table td { padding: 9px 6px; }
+}
