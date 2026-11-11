@@ -2195,3 +2195,25 @@ html[data-theme="light"] .bgm-disc { opacity: .5; }
   .al-track-head h2 { font-size: 24px; }
   .al-track-section { margin-top: 48px; padding-top: 32px; }
 }
+/* ★ 正式专辑 · 第八张专辑先行曲动态（不计入 7 张正式专辑） ------------------ */
+.alb-notice-host { margin: 0 0 28px; }
+.alb-notice {
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  padding: 18px 22px; border: 1px solid var(--border);
+  border-left: 2px solid var(--gold); background: var(--gold-soft);
+  border-radius: 0 10px 10px 0; color: var(--text-2);
+  text-decoration: none; transition: border-color .35s var(--ease);
+}
+.alb-notice:hover { border-color: var(--gold); }
+.an-badge {
+  flex: none; font-size: 11px; letter-spacing: .12em; color: var(--gold);
+  border: 1px solid var(--gold); padding: 5px 11px; border-radius: 999px;
+  white-space: nowrap;
+}
+.an-text { flex: 1; min-width: 220px; font-size: 14px; line-height: 1.7; }
+.an-text b { color: var(--text); font-weight: 600; }
+.an-go { flex: none; font-size: 13px; color: var(--gold); white-space: nowrap; }
+@media (max-width: 720px) {
+  .alb-notice { gap: 10px; padding: 16px; }
+  .an-text { min-width: 100%; }
+}
