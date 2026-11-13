@@ -685,3 +685,269 @@ html[data-theme="light"] .resume-stage::before {
   .nv-emblem { animation: none; opacity: .4; }
   *, *::before, *::after { scroll-behavior: auto !important; }
 }
+
+/* ==========================================================================
+   15. MOTION · 与参考站同款动效编排
+   参考站的动画不是「淡入」，是三件事叠在一起：
+     ① 常驻仪表流动：纵向扫描线 15s / 横向扫掠 / 旋转刻度 / 上下浮动 / 偶发 glitch
+     ② 载入 0→100% 进度编排，随后整屏上滑退出（翻页感）
+     ③ 板块进入：细线先伸展 → 英文小标 → 中文标题遮罩揭示 → 内容错峰
+   全部纯 CSS：不改 DOM、不引脚本、不放宽 CSP。
+   ========================================================================== */
+
+/* 15.1 板块吸附：只在带首屏的门面页启用，proximity 温和吸附，不劫持长内容页 */
+html { scroll-padding-top: 0; }
+@supports selector(:has(*)) {
+  html:has(#hero) { scroll-snap-type: y proximity; }
+  #hero, #profile, #music, #contact {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+}
+
+/* 15.2 全站常驻：两条纵向流动扫描线（对应 line-move-y / line-move-y2，15s） */
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 56;
+  pointer-events: none;
+  background-image:
+    linear-gradient(180deg, transparent, rgba(30, 200, 255, .55) 47%, rgba(30, 200, 255, .55) 53%, transparent),
+    linear-gradient(180deg, transparent, rgba(30, 200, 255, .30) 47%, rgba(30, 200, 255, .30) 53%, transparent);
+  background-size: 2px 190px, 1px 190px;
+  background-repeat: no-repeat, no-repeat;
+  background-position: 17% -190px, 83% -420px;
+  animation: nvLineY 15s linear infinite;
+  opacity: .5;
+}
+@keyframes nvLineY {
+  from { background-position: 17% -190px, 83% -420px; }
+  to   { background-position: 17% calc(100vh + 190px), 83% calc(100vh + 190px); }
+}
+html[data-theme="light"]::before { opacity: .28; }
+
+/* 15.3 顶部滚动进度条：滚动驱动，无脚本；不支持时自动降级为不可见 */
+html::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  z-index: 998;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--nv-blue), #8ce9ff);
+  box-shadow: 0 0 14px rgba(30, 200, 255, .55);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+@supports (animation-timeline: scroll()) {
+  html::after {
+    animation: nvProgress linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+@keyframes nvProgress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* 15.4 HUD 仪表：旋转刻度环 + 顶部横向扫掠（对应 rotate-360 / right-move） */
+.nv-hud::before {
+  content: "";
+  position: absolute;
+  right: 26px; top: 56px;
+  width: 30px; height: 30px;
+  border: 1px dashed rgba(30, 200, 255, .22);
+  border-top-color: var(--nv-blue);
+  border-radius: 50%;
+  animation: nvRotate 8s linear infinite;
+}
+@keyframes nvRotate { to { transform: rotate(360deg); } }
+.nv-hud::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 140px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--nv-blue), transparent);
+  opacity: .22;
+  animation: nvScanX 2.6s linear infinite;
+}
+@keyframes nvScanX {
+  from { transform: translateX(-140px); }
+  to   { transform: translateX(100vw); }
+}
+
+/* 15.5 上下浮动提示 / 英文铺排带扫光（对应 up-down 1.3s） */
+.scroll-hint .mouse i { animation: nvUpDown 1.3s ease-in-out infinite; }
+@keyframes nvUpDown {
+  0%, 100% { transform: translateY(0); opacity: .45; }
+  50%      { transform: translateY(9px); opacity: 1; }
+}
+/* 英文铺排带保持安静；横向扫掠只由 HUD 顶部那一条细线承担 */
+
+/* 15.6 Glitch：HUD 小标每 12s 闪一次；主标题只在 hover 触发一次，绝不常驻晃眼 */
+.nv-hud .nv-tr { animation: nvGlitch 12s linear infinite; }
+@keyframes nvGlitch {
+  0%, 95.9%, 99.1%, 100% { opacity: 1; text-shadow: none; }
+  96%   { opacity: .65; text-shadow: 2px 0 var(--nv-blue), -2px 0 rgba(255, 90, 130, .55); }
+  97.4% { text-shadow: -2px 0 var(--nv-blue), 2px 0 rgba(255, 90, 130, .55); }
+  98.6% { opacity: .9; text-shadow: 1px 0 var(--nv-blue); }
+}
+.ht-cn:hover, .sh-cn:hover { animation: nvGlitchHit .42s steps(2) 1; }
+@keyframes nvGlitchHit {
+  0%, 100% { text-shadow: 0 0 70px rgba(30, 200, 255, .18); filter: none; }
+  25% { text-shadow: 3px 0 var(--nv-blue), -3px 0 rgba(255, 90, 130, .4); filter: brightness(1.25); }
+  60% { text-shadow: -2px 0 var(--nv-blue), 2px 0 rgba(255, 90, 130, .35); filter: brightness(1.1); }
+}
+
+/* 15.7 静态影像代偿循环视频背景：极慢推镜，26s 一轮 */
+.hero-photo { animation: nvKenBurns 26s ease-in-out infinite alternate; will-change: transform; }
+@keyframes nvKenBurns {
+  from { transform: scale(1) translate3d(0, 0, 0); }
+  to   { transform: scale(1.055) translate3d(-.8%, -.6%, 0); }
+}
+
+/* 15.8 载入编排：0→100% 进度 + 分层揭示 + 整屏上滑退出 */
+#preloader {
+  transition: opacity .55s var(--ease) .3s, transform .72s var(--ease) .3s, visibility 0s 1.05s;
+}
+#preloader.done { transform: translateY(-100%); }
+/* 退出瞬间把进度定格在 100%，避免快加载时停在半程就翻页 */
+#preloader.done .pl-inner::after { content: "100%" !important; animation: none !important; }
+#preloader.done .pl-bar i { width: 100% !important; animation: none !important; }
+.pl-inner::before {
+  content: "";
+  position: absolute;
+  left: 50%; top: -58px;
+  width: 240px; height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, var(--nv-line-strong) 18%, var(--nv-blue) 50%, var(--nv-line-strong) 82%, transparent);
+  opacity: .75;
+}
+.pl-inner::after {
+  content: "0%";
+  display: block;
+  margin-top: 16px;
+  font-family: var(--nv-mono);
+  font-size: 10px;
+  letter-spacing: .3em;
+  color: var(--nv-blue);
+  animation: nvCount .8s linear forwards;
+}
+@keyframes nvCount {
+  0%   { content: "0%"; }
+  10%  { content: "10%"; }
+  20%  { content: "20%"; }
+  30%  { content: "30%"; }
+  40%  { content: "40%"; }
+  50%  { content: "50%"; }
+  60%  { content: "60%"; }
+  70%  { content: "70%"; }
+  80%  { content: "80%"; }
+  90%  { content: "90%"; }
+  100% { content: "100%"; }
+}
+#preloader .pl-name { animation: nvMaskReveal .7s var(--ease) .02s both; }
+#preloader .pl-en   { animation: nvFadeUp .45s var(--ease) .16s both; }
+#preloader .pl-bar  { animation: nvFadeUp .45s var(--ease) .26s both; }
+#preloader .pl-bar i { animation: nvLoadBar .8s linear forwards; }
+@keyframes nvLoadBar { from { width: 0; } to { width: 100%; } }
+
+/* 15.9 入场编排：板块整体利落上浮，内部按「线 → 小标 → 标题 → 内容」分层揭示 */
+.sec-enter {
+  opacity: 0;
+  transform: translateY(42px);
+  transition: opacity .6s var(--ease), transform .75s var(--ease);
+}
+.sec-enter.in { opacity: 1; transform: none; }
+@keyframes nvFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes nvMaskReveal {
+  from { opacity: 0; clip-path: inset(0 0 100% 0); transform: translateY(14px); }
+  to   { opacity: 1; clip-path: inset(0 0 0 0); transform: none; }
+}
+@keyframes nvLineGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.sec-enter.in .sh-en,
+.sec-enter.in .rs-title b { animation: nvFadeUp .55s var(--ease) .06s both; }
+.sec-enter.in .sh-cn,
+.sec-enter.in .rs-title span { animation: nvMaskReveal .8s var(--ease) .16s both; }
+.sec-enter.in .sec-head::after { transform-origin: left center; animation: nvLineGrow .9s var(--ease) .34s both; }
+.sec-enter.in .sh-desc { animation: nvFadeUp .6s var(--ease) .3s both; }
+
+/* 卡片：沿用 main.js 注入的 --d 做错峰，改成自上而下的遮罩揭示 */
+.reveal {
+  transition: opacity .55s var(--ease) var(--d, 0ms), transform .7s var(--ease) var(--d, 0ms);
+}
+.album-card.reveal { clip-path: inset(0 0 100% 0); }
+.album-card.reveal,
+.alb-grid .album-card {
+  transition:
+    opacity .55s var(--ease) var(--d, 0ms),
+    transform .7s var(--ease) var(--d, 0ms),
+    clip-path .8s var(--ease) var(--d, 0ms);
+}
+.album-card.reveal.in,
+.alb-grid .album-card.in { clip-path: inset(0 0 0 0); }
+
+/* 15.10 Hover：切角扫光（width .6s）+ 抬升 .25s，对应参考站的过渡节奏 */
+.btn {
+  position: relative;
+  overflow: hidden;
+  transition: transform .25s linear, filter .5s ease, box-shadow .3s ease,
+              background .25s linear, border-color .25s linear, color .25s linear;
+}
+.btn::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 0; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .28), transparent);
+  transition: width .6s var(--ease);
+  pointer-events: none;
+}
+.btn:hover::after { width: 100%; }
+.album-card, .contact-card, .global-card, .award-item, .tl-card {
+  transition: transform .25s linear, border-color .25s linear, box-shadow .3s ease, filter .5s ease;
+}
+.sec-more, .sub-more, .full-tab, .fb, .sbar-item {
+  transition: transform .25s linear, border-color .25s linear, color .25s linear, background .25s linear;
+}
+.sec-more:hover b, .sub-more:hover b {
+  display: inline-block;
+  transform: translateX(4px);
+  transition: transform .25s linear;
+}
+
+/* 15.11 动效降级：移动端 / 无障碍一律收掉持续动效 */
+@media (max-width: 900px) {
+  html:has(#hero) { scroll-snap-type: none; }
+  html::before { opacity: .26; }
+  .nv-hud::before, .nv-hud::after { display: none; }
+  .ht-cn:hover, .sh-cn:hover { animation: none; }
+}
+@media (max-width: 560px) {
+  .pl-inner::after { font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html::before, html::after,
+  .nv-hud::before, .nv-hud::after, .nv-hud .nv-tr,
+  .hero-photo, .nv-emblem,
+  .scroll-hint .mouse i, .pl-inner::after,
+  #preloader .pl-name, #preloader .pl-en, #preloader .pl-bar, .pl-bar i,
+  .sec-enter.in .sh-en, .sec-enter.in .sh-cn, .sec-enter.in .sh-desc,
+  .sec-enter.in .sec-head::after, .sec-enter.in .rs-title b, .sec-enter.in .rs-title span {
+    animation: none !important;
+  }
+  html:has(#hero) { scroll-snap-type: none !important; }
+  html::after { transform: scaleX(0) !important; }
+  #preloader.done { transform: none !important; }
+  .reveal, .sec-enter, .album-card.reveal, .alb-grid .album-card {
+    clip-path: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .btn::after { display: none; }
+  .ht-cn:hover, .sh-cn:hover { animation: none !important; }
+}
