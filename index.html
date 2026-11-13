@@ -74,7 +74,7 @@
 }
 </script>
 <link rel="stylesheet" href="assets/css/style.css?v=53">
-<link rel="stylesheet" href="assets/css/skin-nova.css?v=2">
+<link rel="stylesheet" href="assets/css/skin-nova.css?v=3">
 <link rel="alternate" type="application/rss+xml" title="张靓颖资料站更新" href="feed.xml">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#06090d">
@@ -276,7 +276,7 @@
     </div>
   </div>
   <div class="nv-band" aria-hidden="true">JANE ZHANG · SINCE 2005 · 7 STUDIO ALBUMS · 33 OST</div>
-  <a href="#news" class="scroll-hint" aria-label="向下滚动">
+  <a href="#profile" class="scroll-hint" aria-label="向下翻页">
     <span class="mouse"><i></i></span>
     <span class="sh-text">SCROLL</span>
   </a>
@@ -415,6 +415,16 @@
 
 <!-- 全站电影颗粒氛围层（SVG 噪点 data-URI，pointer-events:none 不挡交互） -->
 <div class="grain" aria-hidden="true"></div>
+
+<!-- ============ 整屏翻页：右侧分页器 + 换页扫线（仅桌面启用） ============ -->
+<nav class="fp-nav" id="fpNav" aria-label="整屏翻页导航">
+  <span class="fp-label" id="fpLabel">HERO</span>
+  <span class="fp-count"><b id="fpNow">01</b><i>/</i><span id="fpTotal">06</span></span>
+  <div class="fp-dots" id="fpDots"></div>
+</nav>
+<div class="fp-wipe" id="fpWipe" aria-hidden="true"></div>
+
 <script src="assets/js/share.js?v=1"></script>
+<script src="assets/js/fullpage.js?v=1"></script>
 </body>
 </html>

@@ -951,3 +951,120 @@ html::after {
   .btn::after { display: none; }
   .ht-cn:hover, .sh-cn:hover { animation: none !important; }
 }
+
+/* ==========================================================================
+   16. FULLPAGE · 与参考站同款「滚轮一次切一屏」垂直翻页
+   上一版的 proximity 吸附只是长滚动，这里由 fullpage.js 接管：每次滚轮
+   走一整个停点、rAF 缓动位移、右侧分页器、切屏时目标屏分层重新入场。
+   ========================================================================== */
+
+/* 16.1 接管后关闭原生吸附与平滑，避免浏览器和脚本同时驱动滚动 */
+html.fp-on {
+  scroll-snap-type: none !important;
+  scroll-behavior: auto !important;
+  scroll-padding-top: 0 !important;
+  scrollbar-width: none;
+}
+html.fp-on::-webkit-scrollbar { display: none; }
+html.fp-on #hero,
+html.fp-on #profile,
+html.fp-on #music,
+html.fp-on #contact { scroll-snap-align: none; }
+
+/* 16.2 右侧分页器（参考站 swiper-pagination 的 NOVA 版） */
+.fp-nav {
+  position: fixed;
+  right: 30px; top: 50%;
+  transform: translateY(-50%);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 13px;
+  pointer-events: none;
+}
+html.fp-on .fp-nav { display: flex; }
+.fp-label {
+  font: 500 9px/1.4 var(--nv-mono);
+  letter-spacing: .16em;
+  color: var(--muted);
+  text-align: right;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.fp-count {
+  display: flex; align-items: baseline; gap: 5px;
+  font: 700 12px/1 var(--nv-mono);
+  letter-spacing: .14em;
+  color: var(--nv-blue);
+}
+.fp-count i { font-style: normal; opacity: .36; }
+.fp-count span { color: var(--muted); font-weight: 500; }
+.fp-dots {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 11px;
+  pointer-events: auto;
+}
+.fp-dot {
+  display: block; width: 20px; height: 2px;
+  padding: 0; border: 0;
+  background: var(--nv-line-strong);
+  cursor: pointer;
+  transition: width .55s var(--ease), background .45s ease, box-shadow .45s ease;
+}
+.fp-dot:hover { width: 30px; background: var(--text-2); }
+.fp-dot.on {
+  width: 42px; background: var(--nv-blue);
+  box-shadow: 0 0 12px rgba(30, 200, 255, .6);
+}
+.fp-dot:focus-visible { outline: 1px solid var(--nv-blue); outline-offset: 5px; }
+
+html[data-theme="light"].fp-on .fp-dot.on {
+  background: #0b7fb5; box-shadow: 0 0 12px rgba(11, 127, 181, .35);
+}
+html[data-theme="light"].fp-on .fp-count { color: #0b7fb5; }
+html[data-theme="light"].fp-on .fp-label { color: #3d5a68; }
+html[data-theme="light"].fp-on .fp-dot { background: rgba(18, 68, 92, .34); }
+
+/* 16.3 切屏瞬间自上而下掠过的电光细线，对应 Swiper 换页的过渡感 */
+.fp-wipe {
+  position: fixed; left: 0; right: 0; top: 0; height: 2px;
+  z-index: 58; pointer-events: none; opacity: 0;
+  background: linear-gradient(90deg, transparent, var(--nv-blue) 34%, #fff 50%, var(--nv-blue) 66%, transparent);
+  box-shadow: 0 0 18px rgba(30, 200, 255, .5);
+}
+.fp-wipe.run { animation: fpWipe .9s cubic-bezier(.76, 0, .24, 1) both; }
+@keyframes fpWipe {
+  0%   { opacity: .9; transform: translateY(0); }
+  100% { opacity: 0;  transform: translateY(100vh); }
+}
+
+/* 16.4 目标屏分层重新揭示（每次翻页都播，而不是只在首次进入播一次） */
+html.fp-on .fp-enter .sh-en,
+html.fp-on .fp-enter .rs-title b,
+html.fp-on .fp-enter .hero-eyebrow { animation: nvFadeUp .55s var(--ease) .04s both; }
+html.fp-on .fp-enter .sh-cn,
+html.fp-on .fp-enter .rs-title span,
+html.fp-on .fp-enter .ht-cn { animation: nvMaskReveal .8s var(--ease) .14s both; }
+html.fp-on .fp-enter .sec-head::after {
+  transform-origin: left center;
+  animation: nvLineGrow .9s var(--ease) .28s both;
+}
+html.fp-on .fp-enter .ht-en { animation: nvFadeUp .6s var(--ease) .26s both; }
+
+/* 16.5 降级：窄屏 / 无障碍一律不显示翻页控件 */
+@media (max-width: 1023px) {
+  .fp-nav { display: none !important; }
+  .fp-wipe { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fp-nav { display: none !important; }
+  .fp-wipe { display: none !important; animation: none !important; }
+  html.fp-on .fp-enter .sh-en,
+  html.fp-on .fp-enter .sh-cn,
+  html.fp-on .fp-enter .rs-title b,
+  html.fp-on .fp-enter .rs-title span,
+  html.fp-on .fp-enter .sec-head::after,
+  html.fp-on .fp-enter .ht-cn,
+  html.fp-on .fp-enter .ht-en,
+  html.fp-on .fp-enter .hero-eyebrow { animation: none !important; }
+}
