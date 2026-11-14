@@ -173,19 +173,19 @@ body::after {
   opacity: .28;
 }
 .hero-bg .noise { opacity: .07; }
-/* 影像恢复暖橙原色，人脸偏右；左侧另加水平暗幕保证文字对比 */
+/* 影像恢复暖橙原色，人脸已在新构图中落在右上黄金区（约 60% / 45%）；
+   不再整体缩放，避免把精确构图推偏；左侧另加水平暗幕保证文字对比 */
 .hero-photo {
-  filter: saturate(.88) brightness(.82) contrast(1.04);
+  filter: saturate(.94) brightness(.95) contrast(1.02);
   opacity: 1;
-  object-position: 60% 30%;
-  transform: scale(1.05);
+  object-position: 60% 50%;
 }
 .hero-photo-overlay {
   background:
     linear-gradient(90deg,
-      rgba(5, 8, 12, .97) 0%, rgba(5, 8, 12, .92) 24%,
-      rgba(5, 8, 12, .70) 43%, rgba(5, 8, 12, .20) 66%, rgba(5, 8, 12, .06) 100%),
-    linear-gradient(180deg, rgba(5, 8, 12, .58) 0%, transparent 24%, transparent 66%, rgba(5, 8, 12, .78) 100%);
+      rgba(5, 8, 12, .96) 0%, rgba(5, 8, 12, .93) 22%,
+      rgba(5, 8, 12, .68) 40%, rgba(5, 8, 12, .10) 62%, rgba(5, 8, 12, .02) 100%),
+    linear-gradient(180deg, rgba(5, 8, 12, .40) 0%, transparent 20%, transparent 64%, rgba(5, 8, 12, .58) 100%);
 }
 .orb { opacity: .10; filter: blur(90px); }
 .orb-1 { background: radial-gradient(circle, rgba(30, 200, 255, .45), transparent 65%); }
@@ -769,11 +769,11 @@ html[data-theme="light"] .resume-stage::before {
   .nv-hud, .nv-ruler, .nv-band { display: none; }
   .hero-year { right: 6vw; top: 12vh; font-size: clamp(76px, 15vw, 130px); }
   .hero-watermark { font-size: clamp(48px, 11vw, 92px); }
-  .hero-photo { object-position: 64% 30%; }
+  .hero-photo { object-position: 60% 50%; }
   .hero-photo-overlay {
     background:
-      linear-gradient(90deg, rgba(5,8,12,.96) 0%, rgba(5,8,12,.82) 44%, rgba(5,8,12,.38) 100%),
-      linear-gradient(180deg, rgba(5,8,12,.55), transparent 26%, transparent 66%, rgba(5,8,12,.78));
+      linear-gradient(90deg, rgba(5,8,12,.96) 0%, rgba(5,8,12,.80) 42%, rgba(5,8,12,.16) 100%),
+      linear-gradient(180deg, rgba(5,8,12,.50), transparent 24%, transparent 64%, rgba(5,8,12,.70));
   }
   .hero-stats { gap: 8px 14px; max-width: 460px; }
   .hero-actions { margin-bottom: 36px; }
@@ -915,11 +915,12 @@ html::after {
   60% { text-shadow: -2px 0 var(--nv-blue), 2px 0 rgba(255, 90, 130, .35); filter: brightness(1.1); }
 }
 
-/* 15.7 静态影像代偿循环视频背景：极慢推镜，26s 一轮 */
+/* 15.7 静态影像代偿循环视频背景：极慢推镜，26s 一轮。
+   新构图已把人脸精确放在右上黄金区，推镜幅度必须很小，否则脸会漂出取景框 */
 .hero-photo { animation: nvKenBurns 26s ease-in-out infinite alternate; will-change: transform; }
 @keyframes nvKenBurns {
   from { transform: scale(1) translate3d(0, 0, 0); }
-  to   { transform: scale(1.055) translate3d(-.8%, -.6%, 0); }
+  to   { transform: scale(1.022) translate3d(-.3%, -.2%, 0); }
 }
 
 /* 15.8 载入编排：0→100% 进度 + 分层揭示 + 整屏上滑退出 */
