@@ -1278,3 +1278,24 @@ html[data-theme="light"] .fp-veil-rule {
   .fp-veil { display: none !important; }
   .fp-veil.fp-veil-in, .fp-veil.fp-veil-out { animation: none !important; }
 }
+
+/* ==========================================================================
+   18. 矮视口 / 手机横屏（如 844x390）
+   --------------------------------------------------------------------------
+   视口高度不足时，首屏原本 118px/92px 的上下留白 + 大字号会把「了解详情」
+   按钮切在视口边缘、4 条数据整体挤到首屏之外（实测内容高 588 > 390）。
+   这里只压缩间距与字号，不改版式，也不影响正常桌面与手机竖屏。          */
+@media (max-height: 560px) {
+  #hero { padding: 18px 0 20px; }
+  .hero-eyebrow { margin-bottom: 8px; font-size: 9px; }
+  .ht-cn { font-size: clamp(42px, 8.5vh, 60px); }
+  .ht-en { margin-top: 6px; font-size: 10px; }
+  .hero-quote { margin: 10px 0 12px; padding-left: 12px; font-size: 12px; }
+  .hero-actions { margin-bottom: 12px; }
+  .hero-actions .btn { padding: 9px 20px; }
+  .hero-stats { padding-top: 8px; gap: 5px 16px; }
+  .hs-item .hs-n { font-size: 14px; }
+  .hero-year { top: 3vh; font-size: clamp(48px, 11vh, 78px); }
+  .hero-watermark { display: none; }
+  .scroll-hint { display: none; }
+}
