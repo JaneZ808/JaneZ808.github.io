@@ -185,7 +185,8 @@ body::after {
     linear-gradient(90deg,
       rgba(5, 8, 12, .96) 0%, rgba(5, 8, 12, .93) 22%,
       rgba(5, 8, 12, .68) 40%, rgba(5, 8, 12, .10) 62%, rgba(5, 8, 12, .02) 100%),
-    linear-gradient(180deg, rgba(5, 8, 12, .40) 0%, transparent 20%, transparent 64%, rgba(5, 8, 12, .58) 100%);
+    /* 下半幅渐暗提前，让人脸与数据条之间的空区自然退到背景 */
+    linear-gradient(180deg, rgba(5, 8, 12, .40) 0%, transparent 20%, transparent 52%, rgba(5, 8, 12, .72) 100%);
 }
 .orb { opacity: .10; filter: blur(90px); }
 .orb-1 { background: radial-gradient(circle, rgba(30, 200, 255, .45), transparent 65%); }
@@ -1298,4 +1299,30 @@ html[data-theme="light"] .fp-veil-rule {
   .hero-year { top: 3vh; font-size: clamp(48px, 11vh, 78px); }
   .hero-watermark { display: none; }
   .scroll-hint { display: none; }
+}
+
+/* ==========================================================================
+   19. 个人档案：整段铺满写真，消除上下黑边
+   --------------------------------------------------------------------------
+   第 6 段 `.sec { padding: 128px 0 }` 在皮肤层，覆盖了基础样式里的
+   `.sec-profile { padding: 0 }` → #profile 上下各 128px 只剩纯底色，
+   只有中间 .resume-stage 有照片，于是出现上下笔直硬黑边。
+   这里用 ID 级特异性恢复 0 内距，并给 section 本身补同一张写真兜底
+   （板块入场位移、不同视口下都不会再露出纯色边）。其他板块不受影响。  */
+#profile.sec-profile {
+  padding: 0;
+  background:
+    linear-gradient(180deg, rgba(6, 9, 13, .76), rgba(6, 9, 13, .88)),
+    url('../../assets/img/profile.jpg') center 28% / cover no-repeat;
+}
+html[data-theme="light"] #profile.sec-profile {
+  background:
+    linear-gradient(180deg, rgba(233, 239, 243, .78), rgba(233, 239, 243, .90)),
+    url('../../assets/img/profile.jpg') center 28% / cover no-repeat;
+}
+/* 桌面端：档案作为「一个整体板块」留 160px 内部原生滚动空间，
+   板块内正常滑动、只有跨边界才叠化；背景仍是整段连续的一张写真。
+   移动端 (<1024) 本就降级为整页原生滚动，保持 100vh 不额外留白。 */
+@media (min-width: 1024px) {
+  #profile.sec-profile .resume-stage { min-height: calc(100vh + 160px); }
 }
