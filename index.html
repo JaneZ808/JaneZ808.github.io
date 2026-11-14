@@ -74,7 +74,7 @@
 }
 </script>
 <link rel="stylesheet" href="assets/css/style.css?v=53">
-<link rel="stylesheet" href="assets/css/skin-nova.css?v=3">
+<link rel="stylesheet" href="assets/css/skin-nova.css?v=4">
 <link rel="alternate" type="application/rss+xml" title="张靓颖资料站更新" href="feed.xml">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#06090d">
@@ -112,7 +112,7 @@
 <!-- ============ 首屏 ============ -->
 <section id="hero">
   <div class="hero-bg">
-    <img class="hero-photo" src="assets/img/hero-song.jpg" alt="张靓颖《不知道说什么》专辑视觉" fetchpriority="high" decoding="async">
+    <img class="hero-photo" src="assets/img/hero-portrait.jpg" alt="张靓颖《不知道说什么》专辑视觉" fetchpriority="high" decoding="async">
     <div class="hero-photo-overlay"></div>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
@@ -258,12 +258,14 @@
     <path class="nv-cross" d="M585 300 h14 M592 293 v14"/>
     </svg></div>
   </div>
+  <div class="hero-watermark" aria-hidden="true">JANE ZHANG</div>
+  <div class="hero-year" aria-hidden="true">2005<i>—</i></div>
   <div class="wrap hero-inner">
     <div class="hero-side">
       <span class="v-line">SINCE 2005</span>
     </div>
     <div class="hero-main">
-      <p class="hero-eyebrow">中国内地流行乐女歌手 · 词曲作者 · 音乐制作人</p>
+      <p class="hero-eyebrow"><span class="he-mark"></span>中国内地流行乐女歌手 · 词曲作者 · 音乐制作人</p>
       <h1 class="hero-title">
         <span class="ht-cn">张靓颖</span>
         <span class="ht-en">JANE&nbsp;ZHANG</span>
@@ -424,7 +426,14 @@
 </nav>
 <div class="fp-wipe" id="fpWipe" aria-hidden="true"></div>
 
+<!-- ============ 整屏叠化遮蔽层（swiper-fade 同款：旧屏淡出 → 换位 → 新屏淡入） ============ -->
+<div class="fp-veil" id="fpVeil" aria-hidden="true">
+  <span class="fp-veil-no" id="fpVeilNo">01 / 06</span>
+  <span class="fp-veil-rule"></span>
+  <span class="fp-veil-text" id="fpVeilText">JANE ZHANG</span>
+</div>
+
 <script src="assets/js/share.js?v=1"></script>
-<script src="assets/js/fullpage.js?v=1"></script>
+<script src="assets/js/fullpage.js?v=2"></script>
 </body>
 </html>

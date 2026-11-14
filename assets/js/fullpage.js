@@ -1,12 +1,20 @@
 /* ==========================================================================
-   NOVA · FULLPAGE —— 与参考站同款「滚轮一次切一屏」垂直翻页
+   NOVA · FULLPAGE —— 与参考站同款「整屏叠化翻页」(swiper-fade)
    --------------------------------------------------------------------------
-   设计要点：
-   · 不搬动 DOM、不包 stage，用真实文档滚动 + rAF 自定义缓动驱动
-     => position:fixed 的歌词条 / HUD / BGM / 回顶按钮全部原样工作
-     => IntersectionObserver 入场、scroll 进度条、锚点、SEO 全部原样工作
-   · 每个板块顶部是一个停点；超过 1.6 屏的板块额外补一个「底部停点」，
-     保证 7 张专辑等长内容不会被翻页跳过
+   参考站运行时实测参数：
+     new Swiper('.main-swiper-page', { direction:'vertical', effect:'fade',
+                                       speed:1000, ... })
+     .swiper-fade / wrapper transform:none / 各 panel 绝对叠放靠 opacity 切换
+     .m-worldview.blur { filter: blur(...) } —— 转场叠加轻微模糊
+   因此「翻页」不是上下滑动，而是：旧屏淡出 + 轻微模糊/缩放 -> 全遮蔽
+   瞬间换位 -> 新屏淡入 + 分层揭示。全程零可见位移。
+
+   实现要点：
+   · 保留真实文档滚动作为「位置状态」=> position:fixed 的竖排歌词 / HUD /
+     BGM / 回顶按钮、IntersectionObserver 入场、滚动进度条、锚点、SEO 全部原样
+     工作，没有任何 fixed 叠层，也不会让观察器失效
+   · 一次滚轮 = 一次转场；转场由 veil 遮蔽层驱动，遮蔽期间才做 scrollTo
+   · 每个板块顶部是停点；超高板块按整视口步长补停点，保证 7 张专辑不丢
    · 只作用于 index.html（检测 #hero），窄屏与 reduced-motion 自动降级
    · 不引入任何第三方库，CSP script-src 'self' 可直接加载
    ========================================================================== */
@@ -22,16 +30,25 @@
     contact: '聆听与关注 / CONTACT',
     footer: '资料归档 / ARCHIVE'
   };
-  var SPEED = 900;          // 与 Swiper speed 同量级
-  var COOLDOWN = 170;       // 动画结束后的静默期，防触控板连发
-  var MIN_GAP = 80;         // 停点最小间距
+  var VEIL_LABEL = {
+    hero: 'JANE ZHANG',
+    profile: 'PROFILE',
+    music: 'STUDIO ALBUMS',
+    contact: 'LISTEN & FOLLOW',
+    footer: 'ARCHIVE'
+  };
+
+  var FADE_OUT = 400;        // 旧屏淡出 + 模糊（参考站 speed 1000 的前半）
+  var FADE_IN  = 600;        // 新屏淡入 + 分层揭示（后半）
+  var SPEED    = 1000;       // 与 Swiper speed:1000 对齐
+  var COOLDOWN = 140;        // 转场结束后的静默期，防触控板连发
+  var MIN_GAP  = 80;         // 停点最小间距
 
   var stops = [], idx = 0, on = false;
-  var animating = false, lockUntil = 0, raf = 0;
-  var nav, dots, nowEl, totalEl, labelEl, wipe;
+  var animating = false, lockUntil = 0, timers = [];
+  var nav, dots, nowEl, totalEl, labelEl, veil, veilText, veilNo, wipe;
 
   function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
-  function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
   function q(s) { return document.querySelector(s); }
   function byId(s) { return document.getElementById(s); }
   function active() {
@@ -40,6 +57,11 @@
       && !!byId('hero');
   }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function clearTimers() {
+    timers.forEach(clearTimeout);
+    timers = [];
+  }
+  function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
 
   /* ---------- 停点计算 ---------- */
   function buildStops(silent) {
@@ -53,8 +75,6 @@
       var top = clamp(el.getBoundingClientRect().top + window.scrollY, 0, max);
       var h = el.offsetHeight;
       raw.push({ y: top, el: el, key: id });
-      // 板块高于一屏时，按「整视口」步长往下补停点，保证相邻视口连续覆盖，
-      // 不会把卡片或文字从中间跳过（tail = 能看到板块底部的最后位置）。
       if (h > vh * 1.05) {
         var tail = top + h - vh;
         var y = top;
@@ -72,7 +92,6 @@
       if (!stops.length || p.y - stops[stops.length - 1].y >= MIN_GAP) stops.push(p);
     });
 
-    // 停在当前位置最近的一屏，避免 resize 后状态错乱
     var best = 0, bd = Infinity;
     stops.forEach(function (p, i) {
       var d = Math.abs(p.y - window.scrollY);
@@ -112,58 +131,69 @@
     DOC.setAttribute('data-fp-index', String(idx + 1));
     if (!noWipe && wipe) {
       wipe.classList.remove('run');
-      void wipe.offsetWidth;               // 强制重排以重播动画
+      void wipe.offsetWidth;
       wipe.classList.add('run');
     }
   }
 
-  /* ---------- 入场编排：切到的那一屏内容重新分层揭示 ---------- */
+  /* ---------- 入场编排：目标屏内容分层揭示（每次翻页重播） ---------- */
   var lastEnter = null;
   function reveal(el) {
     if (!el) return;
     if (lastEnter && lastEnter !== el) lastEnter.classList.remove('fp-enter');
     el.classList.remove('fp-enter');
-    void el.offsetWidth;                 // 强制重排，让每次翻页都重播入场
+    void el.offsetWidth;
     el.classList.add('in', 'fp-enter');
     var nodes = el.querySelectorAll('.reveal, .album-card, .sec-enter, .rl-left, .rl-right');
     for (var i = 0; i < nodes.length; i++) nodes[i].classList.add('in');
     lastEnter = el;
   }
 
-  /* ---------- 核心：一屏一屏滑动 ---------- */
+  /* ---------- 核心：整屏叠化 (fade)，无任何可见位移 ---------- */
   function go(target, instant) {
     if (!on || !stops.length) return;
     target = clamp(target, 0, stops.length - 1);
     if (target === idx && !instant) return;
-    var from = window.scrollY;
-    var to = stops[target].y;
-    var dist = Math.abs(to - from);
-    idx = target;
-    updateUI(!!instant);
-    reveal(stops[target].el);
+    clearTimers();
 
-    if (raf) cancelAnimationFrame(raf);
-    if (instant || dist < 2) {
+    var to = stops[target].y;
+    var key = stops[target].key;
+    idx = target;
+
+    // 瞬时模式（初始化 / resize / 无障碍）：直接换位，不播转场
+    if (instant || !veil || Math.abs(to - window.scrollY) < 2) {
       window.scrollTo({ top: to, behavior: 'instant' });
+      updateUI(true);
+      reveal(stops[target].el);
       animating = false;
       lockUntil = performance.now() + COOLDOWN;
       return;
     }
 
     animating = true;
-    var dur = SPEED * clamp(0.55 + 0.45 * dist / window.innerHeight, 0.55, 1.12);
-    var t0 = performance.now();
-    (function frame(now) {
-      var p = clamp((now - t0) / dur, 0, 1);
-      window.scrollTo({ top: from + (to - from) * ease(p), behavior: 'instant' });
-      if (p < 1) {
-        raf = requestAnimationFrame(frame);
-      } else {
-        raf = 0;
-        animating = false;
-        lockUntil = performance.now() + COOLDOWN;
-      }
-    })(t0);
+    if (veilText) veilText.textContent = VEIL_LABEL[key] || '';
+    if (veilNo) veilNo.textContent = pad(target + 1) + ' / ' + pad(stops.length);
+    updateUI(true);                          // 序号 / 分页器与幕上目标屏同时切换
+    veil.classList.remove('fp-veil-in', 'fp-veil-out');
+    void veil.offsetWidth;                    // 强制重排，保证每次重播
+    veil.classList.add('fp-veil-in');         // 阶段一：旧屏淡出 + 模糊
+    DOC.classList.add('fp-fading');
+
+    // 阶段二：全遮蔽瞬间换位（此时 veil 不透明，位移不可见）
+    later(function () {
+      window.scrollTo({ top: to, behavior: 'instant' });
+      veil.classList.remove('fp-veil-in');
+      veil.classList.add('fp-veil-out');     // 阶段三：新屏淡入
+      DOC.classList.remove('fp-fading');
+      reveal(stops[target].el);              // 分层揭示与淡入同步
+    }, FADE_OUT);
+
+    // 收尾
+    later(function () {
+      veil.classList.remove('fp-veil-in', 'fp-veil-out');
+      animating = false;
+      lockUntil = performance.now() + COOLDOWN;
+    }, SPEED);
   }
 
   function step(dir) {
@@ -176,9 +206,9 @@
   /* ---------- 输入：滚轮 / 触摸 / 键盘 / 锚点 ---------- */
   function onWheel(e) {
     if (!on || e.ctrlKey) return;
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;   // 横向手势放行
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
     if (e.target && e.target.closest && e.target.closest('.fp-scrollable')) return;
-    e.preventDefault();                                     // 接管纵向滚动
+    e.preventDefault();
     if (Math.abs(e.deltaY) < 2) return;
     step(e.deltaY > 0 ? 1 : -1);
   }
@@ -219,24 +249,19 @@
 
   function onClickCapture(e) {
     if (!on) return;
-
-    // 回到顶部按钮：拦掉 main.js 的 smooth scroll，改走翻页动画
     var top = e.target && e.target.closest && e.target.closest('#toTop');
     if (top) {
-      e.preventDefault();
-      e.stopPropagation();
+      e.preventDefault(); e.stopPropagation();
       go(0);
       return;
     }
-    // 站内锚点（页脚快速导航 / SCROLL 提示）映射到对应屏
     var a = e.target && e.target.closest && e.target.closest('a[href^="#"]');
     if (!a) return;
     var h = a.getAttribute('href');
     if (!h || h.length < 2 || h === '#') return;
     var target = byId(h.slice(1));
     if (!target) return;
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     var i = 0;
     for (var n = 0; n < stops.length; n++) {
       if (stops[n].el === target) { i = n; break; }
@@ -258,6 +283,9 @@
     totalEl = byId('fpTotal');
     labelEl = byId('fpLabel');
     wipe = byId('fpWipe');
+    veil = byId('fpVeil');
+    veilText = byId('fpVeilText');
+    veilNo = byId('fpVeilNo');
     if (!nav || !active()) return;      // 非首页 / 窄屏 / 无障碍：完全不接管
 
     on = true;
@@ -272,7 +300,6 @@
     document.addEventListener('click', onClickCapture, true);
     window.addEventListener('resize', debounceRebuild);
     window.addEventListener('load', function () { setTimeout(function () { buildStops(true); }, 260); });
-    // 专辑卡片由 main.js 渲染后高度才稳定，再校正一次
     setTimeout(function () { buildStops(true); }, 1400);
   }
 
