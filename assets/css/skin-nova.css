@@ -1068,19 +1068,28 @@ html::after {
 }
 
 /* ==========================================================================
-   16. FULLPAGE · 与参考站同款「滚轮一次切一屏」垂直翻页
-   上一版的 proximity 吸附只是长滚动，这里由 fullpage.js 接管：每次滚轮
-   走一整个停点、rAF 缓动位移、右侧分页器、切屏时目标屏分层重新入场。
+   16. FULLPAGE · 板块间叠化，板块内原生滚动
+   一个板块就是一个整体：板块内部完全交还浏览器原生滚动，
+   只有滚到板块边缘仍继续同向，才由 fullpage.js 触发一次整屏叠化。
+   右侧分页器一个板块一个点，板块内滚动不改变当前板块。
    ========================================================================== */
 
-/* 16.1 接管后关闭原生吸附与平滑，避免浏览器和脚本同时驱动滚动 */
+/* 16.1 接管后关闭原生吸附与平滑；保留一条极细滚动条，让板块内滑动可感知 */
 html.fp-on {
   scroll-snap-type: none !important;
   scroll-behavior: auto !important;
   scroll-padding-top: 0 !important;
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(126, 180, 210, .28) transparent;
 }
-html.fp-on::-webkit-scrollbar { display: none; }
+html.fp-on::-webkit-scrollbar { width: 5px; }
+html.fp-on::-webkit-scrollbar-track { background: transparent; }
+html.fp-on::-webkit-scrollbar-thumb {
+  background: rgba(126, 180, 210, .28);
+  border-radius: 3px;
+}
+html[data-theme="light"].fp-on { scrollbar-color: rgba(18, 68, 92, .3) transparent; }
+html[data-theme="light"].fp-on::-webkit-scrollbar-thumb { background: rgba(18, 68, 92, .3); }
 html.fp-on #hero,
 html.fp-on #profile,
 html.fp-on #music,
@@ -1192,6 +1201,7 @@ html.fp-on .fp-enter .ht-en { animation: nvFadeUp .6s var(--ease) .26s both; }
    这里用一层固定遮蔽幕实现同样的观感：旧屏淡出且模糊 -> 全遮蔽时
    瞬间换位（不可见）-> 新屏淡入。全程零可见位移。
    仪表层（网格 / HUD / 歌词 / 分页器）在幕之上常驻，与参考站一致。
+   注意：只在「板块边界」触发；板块内部是原生滚动，不出现这层幕。
    ========================================================================== */
 .fp-veil {
   position: fixed;

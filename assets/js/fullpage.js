@@ -1,134 +1,134 @@
 /* ==========================================================================
-   NOVA · FULLPAGE —— 与参考站同款「整屏叠化翻页」(swiper-fade)
+   NOVA · FULLPAGE —— 板块间叠化，板块内原生滚动
    --------------------------------------------------------------------------
-   参考站运行时实测参数：
-     new Swiper('.main-swiper-page', { direction:'vertical', effect:'fade',
-                                       speed:1000, ... })
-     .swiper-fade / wrapper transform:none / 各 panel 绝对叠放靠 opacity 切换
-     .m-worldview.blur { filter: blur(...) } —— 转场叠加轻微模糊
-   因此「翻页」不是上下滑动，而是：旧屏淡出 + 轻微模糊/缩放 -> 全遮蔽
-   瞬间换位 -> 新屏淡入 + 分层揭示。全程零可见位移。
+   参考站 #worldview 的主 Swiper：effect:'fade' / speed:1000 /
+   wrapper transform:none，各屏靠 opacity 叠化，无位移。
 
-   实现要点：
-   · 保留真实文档滚动作为「位置状态」=> position:fixed 的竖排歌词 / HUD /
-     BGM / 回顶按钮、IntersectionObserver 入场、滚动进度条、锚点、SEO 全部原样
-     工作，没有任何 fixed 叠层，也不会让观察器失效
-   · 一次滚轮 = 一次转场；转场由 veil 遮蔽层驱动，遮蔽期间才做 scrollTo
-   · 每个板块顶部是停点；超高板块按整视口步长补停点，保证 7 张专辑不丢
-   · 只作用于 index.html（检测 #hero），窄屏与 reduced-motion 自动降级
-   · 不引入任何第三方库，CSP script-src 'self' 可直接加载
+   但「板块」才是内容单位：正式专辑有 7 张卡片、高 2.25 屏，
+   把板块内部也拆成翻页停点会让同一个板块被反复遮蔽打断。
+   因此：
+     · 板块内部  -> 完全交还浏览器原生滚动，零脚本动画
+     · 板块边界  -> 一次整屏叠化（旧屏淡出+模糊 → 全遮蔽瞬间换位 → 淡入）
+     · 分页器     -> 一个板块一个点，板块内滚动不改变当前板块
+     · 入场编排   -> 只在跨板块时播一次，板块内沿用 main.js 的观察器
+
+   保留真实文档滚动作为位置状态 => 竖排歌词 / HUD / BGM / 回顶等 fixed
+   控件、IntersectionObserver 入场、滚动进度条、锚点、SEO 全部原样工作。
+   只作用于 index.html，窄屏与 reduced-motion 自动降级；无第三方依赖。
    ========================================================================== */
 (function () {
   'use strict';
 
   var DOC = document.documentElement;
-  var IDS = ['hero', 'profile', 'music', 'contact'];
+  /* 页脚顶部超过文档最大滚动位置，无法单独成屏，归入 contact 板块 */
+  var SECTION_IDS = ['hero', 'profile', 'music', 'contact'];
   var LABEL = {
     hero: '序 / HERO',
     profile: '个人档案 / PROFILE',
     music: '正式专辑 / MUSIC',
-    contact: '聆听与关注 / CONTACT',
-    footer: '资料归档 / ARCHIVE'
+    contact: '聆听与关注 / CONTACT'
   };
   var VEIL_LABEL = {
     hero: 'JANE ZHANG',
     profile: 'PROFILE',
     music: 'STUDIO ALBUMS',
-    contact: 'LISTEN & FOLLOW',
-    footer: 'ARCHIVE'
+    contact: 'LISTEN & FOLLOW'
   };
 
-  var FADE_OUT = 400;        // 旧屏淡出 + 模糊（参考站 speed 1000 的前半）
-  var FADE_IN  = 600;        // 新屏淡入 + 分层揭示（后半）
-  var SPEED    = 1000;       // 与 Swiper speed:1000 对齐
-  var COOLDOWN = 140;        // 转场结束后的静默期，防触控板连发
-  var MIN_GAP  = 80;         // 停点最小间距
+  var FADE_OUT = 400;      // 旧屏淡出 + 模糊
+  var FADE_IN  = 600;      // 新屏淡入
+  var SPEED    = 1000;     // 与 Swiper speed:1000 对齐
+  var COOLDOWN = 140;      // 转场结束后的静默期，防触控板连发
+  var EDGE     = 4;        // 边界容差（px）
+  var GAP_MIN  = 8;        // 板块 top 去重阈值
 
-  var stops = [], idx = 0, on = false;
+  var sections = [], cur = 0, on = false;
+  var vh = 0, docMax = 0;
   var animating = false, lockUntil = 0, timers = [];
   var nav, dots, nowEl, totalEl, labelEl, veil, veilText, veilNo, wipe;
 
   function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
-  function q(s) { return document.querySelector(s); }
   function byId(s) { return document.getElementById(s); }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+  function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
   function active() {
     return !window.matchMedia('(prefers-reduced-motion: reduce)').matches
       && window.innerWidth >= 1024
       && !!byId('hero');
   }
-  function pad(n) { return (n < 10 ? '0' : '') + n; }
-  function clearTimers() {
-    timers.forEach(clearTimeout);
-    timers = [];
-  }
-  function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
 
-  /* ---------- 停点计算 ---------- */
-  function buildStops(silent) {
-    var vh = window.innerHeight;
-    var max = Math.max(0, DOC.scrollHeight - vh);
+  /* ---------- 板块区间：一个板块 = 一个叠化屏 ---------- */
+  function measure() {
+    vh = window.innerHeight;
+    docMax = Math.max(0, DOC.scrollHeight - vh);
     var raw = [];
-
-    IDS.forEach(function (id) {
+    SECTION_IDS.forEach(function (id) {
       var el = byId(id);
       if (!el) return;
-      var top = clamp(el.getBoundingClientRect().top + window.scrollY, 0, max);
-      var h = el.offsetHeight;
-      raw.push({ y: top, el: el, key: id });
-      if (h > vh * 1.05) {
-        var tail = top + h - vh;
-        var y = top;
-        while (y + vh < tail - 2 && y + vh < max) {
-          y += vh;
-          raw.push({ y: y, el: el, key: id });
-        }
-      }
+      raw.push({
+        id: id, key: id, el: el,
+        top: clamp(el.getBoundingClientRect().top + window.scrollY, 0, docMax),
+        h: el.offsetHeight
+      });
     });
-    raw.push({ y: max, el: byId('footer'), key: 'footer' });
+    raw.sort(function (a, b) { return a.top - b.top; });
 
-    raw.sort(function (a, b) { return a.y - b.y; });
-    stops = [];
-    raw.forEach(function (p) {
-      if (!stops.length || p.y - stops[stops.length - 1].y >= MIN_GAP) stops.push(p);
+    sections = [];
+    raw.forEach(function (s) {
+      if (!sections.length || s.top - sections[sections.length - 1].top > GAP_MIN) sections.push(s);
     });
 
-    var best = 0, bd = Infinity;
-    stops.forEach(function (p, i) {
-      var d = Math.abs(p.y - window.scrollY);
-      if (d < bd) { bd = d; best = i; }
+    sections.forEach(function (s, i) {
+      /* 板块下界 = 下一板块顶部；最后一个板块延伸到文档底部（含分享条与页脚） */
+      s.bottom = (i + 1 < sections.length) ? sections[i + 1].top : DOC.scrollHeight;
+      /* 板块内可滚到的最大 scrollY：视口底对齐板块底 */
+      s.maxInside = clamp(Math.min(s.top + s.h - vh, s.bottom - vh, docMax), s.top, docMax);
     });
-    idx = best;
-    renderDots();
-    updateUI(silent !== false);
-    return stops;
+  }
+
+  function sectionAt(y) {
+    var i = 0;
+    for (var n = 0; n < sections.length; n++) {
+      if (y >= sections[n].top - 1) i = n;
+    }
+    return i;
+  }
+
+  /* 板块内部是否还有原生滚动余量 */
+  function insideRoom(dir) {
+    var s = sections[cur];
+    if (!s) return false;
+    var y = window.scrollY;
+    return dir > 0 ? (y < s.maxInside - EDGE) : (y > s.top + EDGE);
   }
 
   /* ---------- 分页器 ---------- */
   function renderDots() {
     if (!dots) return;
     dots.textContent = '';
-    stops.forEach(function (p, i) {
+    sections.forEach(function (s, i) {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'fp-dot';
-      b.setAttribute('aria-label', '跳转到第 ' + (i + 1) + ' 屏：' + LABEL[p.key]);
-      b.title = LABEL[p.key];
+      b.setAttribute('aria-label', '跳转到第 ' + (i + 1) + ' 个板块：' + LABEL[s.key]);
+      b.title = LABEL[s.key];
       b.addEventListener('click', function () { go(i); });
       dots.appendChild(b);
     });
-    if (totalEl) totalEl.textContent = pad(stops.length);
+    if (totalEl) totalEl.textContent = pad(sections.length);
   }
 
   function updateUI(noWipe) {
     if (!nav) return;
     var list = dots ? dots.children : [];
     for (var i = 0; i < list.length; i++) {
-      list[i].classList.toggle('on', i === idx);
-      list[i].setAttribute('aria-current', i === idx ? 'true' : 'false');
+      list[i].classList.toggle('on', i === cur);
+      list[i].setAttribute('aria-current', i === cur ? 'true' : 'false');
     }
-    if (nowEl) nowEl.textContent = pad(idx + 1);
-    if (labelEl) labelEl.textContent = LABEL[stops[idx] ? stops[idx].key : 'hero'];
-    DOC.setAttribute('data-fp-index', String(idx + 1));
+    if (nowEl) nowEl.textContent = pad(cur + 1);
+    if (labelEl) labelEl.textContent = LABEL[sections[cur] ? sections[cur].key : 'hero'];
+    DOC.setAttribute('data-fp-index', String(cur + 1));
     if (!noWipe && wipe) {
       wipe.classList.remove('run');
       void wipe.offsetWidth;
@@ -136,7 +136,7 @@
     }
   }
 
-  /* ---------- 入场编排：目标屏内容分层揭示（每次翻页重播） ---------- */
+  /* ---------- 入场编排：只在跨板块时播一次 ---------- */
   var lastEnter = null;
   function reveal(el) {
     if (!el) return;
@@ -149,46 +149,48 @@
     lastEnter = el;
   }
 
-  /* ---------- 核心：整屏叠化 (fade)，无任何可见位移 ---------- */
+  /* ---------- 核心：板块之间整屏叠化，零可见位移 ---------- */
   function go(target, instant) {
-    if (!on || !stops.length) return;
-    target = clamp(target, 0, stops.length - 1);
-    if (target === idx && !instant) return;
+    if (!on || !sections.length) return;
+    target = clamp(target, 0, sections.length - 1);
+    var from = cur;
+    if (target === from && !instant) return;
     clearTimers();
 
-    var to = stops[target].y;
-    var key = stops[target].key;
-    idx = target;
+    cur = target;
+    var s = sections[target];
+    var to = s.top;
+    /* 反向回到超高板块时落在板块末端，来回浏览保持连续 */
+    if (!instant && target < from && s.maxInside > s.top + EDGE) to = s.maxInside;
+    to = clamp(to, 0, docMax);
 
-    // 瞬时模式（初始化 / resize / 无障碍）：直接换位，不播转场
+    /* 瞬时模式（初始化 / resize）：直接换位，不播转场 */
     if (instant || !veil || Math.abs(to - window.scrollY) < 2) {
       window.scrollTo({ top: to, behavior: 'instant' });
       updateUI(true);
-      reveal(stops[target].el);
+      reveal(s.el);
       animating = false;
       lockUntil = performance.now() + COOLDOWN;
       return;
     }
 
     animating = true;
-    if (veilText) veilText.textContent = VEIL_LABEL[key] || '';
-    if (veilNo) veilNo.textContent = pad(target + 1) + ' / ' + pad(stops.length);
-    updateUI(true);                          // 序号 / 分页器与幕上目标屏同时切换
+    if (veilText) veilText.textContent = VEIL_LABEL[s.key] || '';
+    if (veilNo) veilNo.textContent = pad(target + 1) + ' / ' + pad(sections.length);
+    updateUI(true);
     veil.classList.remove('fp-veil-in', 'fp-veil-out');
-    void veil.offsetWidth;                    // 强制重排，保证每次重播
-    veil.classList.add('fp-veil-in');         // 阶段一：旧屏淡出 + 模糊
+    void veil.offsetWidth;
+    veil.classList.add('fp-veil-in');
     DOC.classList.add('fp-fading');
 
-    // 阶段二：全遮蔽瞬间换位（此时 veil 不透明，位移不可见）
     later(function () {
       window.scrollTo({ top: to, behavior: 'instant' });
       veil.classList.remove('fp-veil-in');
-      veil.classList.add('fp-veil-out');     // 阶段三：新屏淡入
+      veil.classList.add('fp-veil-out');
       DOC.classList.remove('fp-fading');
-      reveal(stops[target].el);              // 分层揭示与淡入同步
+      reveal(s.el);
     }, FADE_OUT);
 
-    // 收尾
     later(function () {
       veil.classList.remove('fp-veil-in', 'fp-veil-out');
       animating = false;
@@ -196,38 +198,29 @@
     }, SPEED);
   }
 
-  function step(dir) {
-    if (animating || performance.now() < lockUntil) return;
-    var pl = byId('preloader');
-    if (pl && !pl.classList.contains('done')) return;
-    go(idx + dir);
-  }
+  function busy() { return animating || performance.now() < lockUntil; }
 
-  /* ---------- 输入：滚轮 / 触摸 / 键盘 / 锚点 ---------- */
+  /* ---------- 输入 ---------- */
   function onWheel(e) {
     if (!on || e.ctrlKey) return;
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
     if (e.target && e.target.closest && e.target.closest('.fp-scrollable')) return;
-    e.preventDefault();
+    if (animating) { e.preventDefault(); return; }   /* 叠化期间冻结文档，保证换位稳定 */
     if (Math.abs(e.deltaY) < 2) return;
-    step(e.deltaY > 0 ? 1 : -1);
+    var dir = e.deltaY > 0 ? 1 : -1;
+    if (insideRoom(dir)) return;                     /* 板块内：完全放行原生滚动 */
+    e.preventDefault();                             /* 板块边界：接管为一次叠化 */
+    if (busy()) return;
+    go(cur + dir);
   }
 
-  var touchY = 0, touchX = 0;
-  function onTouchStart(e) {
-    touchY = e.touches[0].clientY;
-    touchX = e.touches[0].clientX;
-  }
-  function onTouchMove(e) {
-    if (!on) return;
-    if (Math.abs(e.touches[0].clientX - touchX) > Math.abs(e.touches[0].clientY - touchY)) return;
-    if (e.cancelable) e.preventDefault();
-  }
-  function onTouchEnd(e) {
-    if (!on) return;
-    var dy = touchY - e.changedTouches[0].clientY;
-    if (Math.abs(dy) < 46) return;
-    go(idx + (dy > 0 ? 1 : -1));
+  function keyStep(dir) {
+    if (busy()) return;
+    if (insideRoom(dir)) {
+      window.scrollBy(0, dir * Math.round(vh * .82));   /* 板块内：正常滑动 */
+      return;
+    }
+    go(cur + dir);                                      /* 板块边界：叠化 */
   }
 
   function onKey(e) {
@@ -237,23 +230,42 @@
     var k = e.key;
     if (k === 'ArrowDown' || k === 'PageDown' ||
         (k === ' ' && (!t || !/^(BUTTON|A)$/.test(t.tagName)))) {
-      e.preventDefault(); step(1);
+      e.preventDefault(); keyStep(1);
     } else if (k === 'ArrowUp' || k === 'PageUp') {
-      e.preventDefault(); step(-1);
+      e.preventDefault(); keyStep(-1);
     } else if (k === 'Home') {
       e.preventDefault(); go(0);
     } else if (k === 'End') {
-      e.preventDefault(); go(stops.length - 1);
+      e.preventDefault(); go(sections.length - 1);
     }
+  }
+
+  var touchY = 0, touchX = 0;
+  function onTouchStart(e) {
+    touchY = e.touches[0].clientY;
+    touchX = e.touches[0].clientX;
+  }
+  function onTouchMove(e) {
+    if (!on || animating) return;
+    var cy = e.touches[0].clientY;
+    if (Math.abs(e.touches[0].clientX - touchX) > Math.abs(cy - touchY)) return;
+    var dir = (touchY - cy) > 0 ? 1 : -1;
+    if (insideRoom(dir)) return;                     /* 板块内：原生滚动 */
+    if (e.cancelable) e.preventDefault();            /* 板块边界：交给 touchend 叠化 */
+  }
+  function onTouchEnd(e) {
+    if (!on || busy()) return;
+    var dy = touchY - e.changedTouches[0].clientY;
+    if (Math.abs(dy) < 46) return;
+    var dir = dy > 0 ? 1 : -1;
+    if (insideRoom(dir)) return;                     /* 板块内的滑动已经交给原生 */
+    go(cur + dir);
   }
 
   function onClickCapture(e) {
     if (!on) return;
-    var top = e.target && e.target.closest && e.target.closest('#toTop');
-    if (top) {
-      e.preventDefault(); e.stopPropagation();
-      go(0);
-      return;
+    if (e.target && e.target.closest && e.target.closest('#toTop')) {
+      e.preventDefault(); e.stopPropagation(); go(0); return;
     }
     var a = e.target && e.target.closest && e.target.closest('a[href^="#"]');
     if (!a) return;
@@ -263,17 +275,30 @@
     if (!target) return;
     e.preventDefault(); e.stopPropagation();
     var i = 0;
-    for (var n = 0; n < stops.length; n++) {
-      if (stops[n].el === target) { i = n; break; }
+    for (var n = 0; n < sections.length; n++) {
+      if (sections[n].el === target) { i = n; break; }
     }
     go(i);
   }
 
+  /* 原生滚动时只静默同步「当前板块」，不播任何动画 */
+  function onScroll() {
+    if (!on || animating || !sections.length) return;
+    var i = sectionAt(window.scrollY);
+    if (i !== cur) { cur = i; updateUI(true); }
+  }
+
   /* ---------- 生命周期 ---------- */
   var rt = 0;
+  function rebuild() {
+    measure();
+    renderDots();
+    onScroll();
+    updateUI(true);
+  }
   function debounceRebuild() {
     clearTimeout(rt);
-    rt = setTimeout(function () { buildStops(true); }, 180);
+    rt = setTimeout(rebuild, 180);
   }
 
   function init() {
@@ -286,21 +311,22 @@
     veil = byId('fpVeil');
     veilText = byId('fpVeilText');
     veilNo = byId('fpVeilNo');
-    if (!nav || !active()) return;      // 非首页 / 窄屏 / 无障碍：完全不接管
+    if (!nav || !active()) return;
 
     on = true;
     DOC.classList.add('fp-on');
-    buildStops(true);
+    rebuild();
 
     window.addEventListener('wheel', onWheel, { passive: false, capture: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchmove', onTouchMove, { passive: false });
     window.addEventListener('touchend', onTouchEnd, { passive: true });
     window.addEventListener('keydown', onKey);
     document.addEventListener('click', onClickCapture, true);
     window.addEventListener('resize', debounceRebuild);
-    window.addEventListener('load', function () { setTimeout(function () { buildStops(true); }, 260); });
-    setTimeout(function () { buildStops(true); }, 1400);
+    window.addEventListener('load', function () { setTimeout(rebuild, 260); });
+    setTimeout(rebuild, 1400);
   }
 
   if (document.readyState === 'loading') {
