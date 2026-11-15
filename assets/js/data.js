@@ -223,14 +223,14 @@ const ALBUMS = [
     "cover": "assets/img/albums/album-4.jpg"
   },
   {
-    "name": "UPDATE*JANE",
+    "name": "Update",
     "cn": "原创作曲专辑",
     "date": "2007.08.02",
     "type": "studio",
     "studioNo": 2,
     "label": "华谊兄弟",
     "songs": 10,
-    "desc": "收录《我们说好的》《G大调的悲伤》《Dream Party》等作品。由她谱曲的《我们在一起》被联合国儿童基金会选为高校志愿者项目主题曲。",
+    "desc": "收录《我们说好的》《G大调的悲伤》《Dream Party》等作品。由她谱曲的《我们在一起》被联合国儿童基金会选为高校志愿者项目主题曲。部分资料亦将专辑名记作《UPDATE*JANE》或《Update·Jane》。",
     "tags": [
       "原创作曲"
     ],

@@ -164,7 +164,7 @@
             <span class="ac-date">${a.date}</span>
             <span>${a.songs ? '· ' + a.songs + ' 首曲目' : ''}</span>
           </div>
-          <h3 class="ac-cn">${a.cn}</h3>
+          <h3 class="ac-cn">${a.name}</h3>
           ${FULL ? `
           <p class="ac-desc">${a.desc}</p>
           <div class="ac-foot">
@@ -242,7 +242,7 @@
             <span class="ac-date">${a.date}</span>
             <span>${a.songs ? '· ' + a.songs + ' 首曲目' : ''}</span>
           </div>
-          <h3 class="ac-cn">${a.cn}</h3>
+          <h3 class="ac-cn">${a.name}</h3>
           ${FULL ? `
           <p class="ac-desc">${a.desc}</p>
           <div class="ac-foot">
