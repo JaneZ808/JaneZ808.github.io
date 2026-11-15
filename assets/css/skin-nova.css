@@ -185,8 +185,8 @@ body::after {
     linear-gradient(90deg,
       rgba(5, 8, 12, .96) 0%, rgba(5, 8, 12, .93) 22%,
       rgba(5, 8, 12, .68) 40%, rgba(5, 8, 12, .10) 62%, rgba(5, 8, 12, .02) 100%),
-    /* 下半幅渐暗提前，让人脸与数据条之间的空区自然退到背景 */
-    linear-gradient(180deg, rgba(5, 8, 12, .40) 0%, transparent 20%, transparent 52%, rgba(5, 8, 12, .72) 100%);
+    /* 下半幅改为真实肩颈/长发影像，渐暗只做收尾，不再重压 */
+    linear-gradient(180deg, rgba(5, 8, 12, .40) 0%, transparent 20%, transparent 64%, rgba(5, 8, 12, .50) 100%);
 }
 .orb { opacity: .10; filter: blur(90px); }
 .orb-1 { background: radial-gradient(circle, rgba(30, 200, 255, .45), transparent 65%); }
